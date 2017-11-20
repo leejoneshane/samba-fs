@@ -1,6 +1,6 @@
 FROM alpine
 
-COPY entrypoint.sh /
+COPY entrypoint.sh /usr/bin/
 COPY smb.conf /etc/samba/
 
 RUN apk update \
