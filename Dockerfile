@@ -11,4 +11,4 @@ RUN apk update \
 
 EXPOSE 137/udp 138/udp 139 445
 VOLUME ["/etc/samba", "/mnt"]
-ENTRYPOINT ["entrypoint.sh"]
+CMD /etc/sbin/samba -i
