@@ -5,7 +5,7 @@ COPY smb.conf /etc/samba/
 
 RUN apk update \
     && apk --no-cache --no-progress add bash sudo samba shadow \
-    && adduser -G admin -h /mnt admin \
+    && adduser -G admin,users -h /mnt admin \
     && echo "admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/admin; \
     && chmod 0440 /etc/sudoers.d/admin
 
