@@ -1,0 +1,13 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer\AdvancedOptions\BROWSE\UTF8]
+"RegPath"="SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
+"Text"="永遠將 URL 傳送成 UTF-8 (需要重新啟動)"
+"PlugUIText"="@inetcplc.dll,-4839"
+"Type"="checkbox"
+"CheckedValue"=dword:00000000
+"UncheckedValue"=dword:00000000
+"ValueName"="UrlEncoding"
+"DefaultValue"=dword:00000000
+"HKeyRoot"=dword:80000000
+"HelpID"="iexplore.hlp#50535"

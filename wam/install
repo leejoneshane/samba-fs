@@ -1,0 +1,248 @@
+#!/bin/sh
+# This script should be run after the WAM archive is unpacked
+
+src=`pwd`
+ver=`cat version`
+apdir="/usr/libexec/apache_wam"
+wadir="/usr/libexec/wam"
+vadir="/var/wam"
+apache=0
+
+clear
+echo '===================================================================='
+echo "　　　　　　　歡迎使用 WAM 安裝程式 version $ver"
+echo '===================================================================='
+echo '■《WAM》是一個Web介面的帳號管理程式,同時結合了好用的webmail(Neo-mail Pro1.01)'
+echo '　WAM不但提供系統管理人員透過網頁方便的管理使用者帳號,同時也提供一般使用者'
+echo '　，透過 WEB 介面輕鬆的管理上傳或下載自己的檔案和郵件。'
+echo '■共享資料夾的設計，更可使學生回到家後仍然能透過WEB，存取主機上資源，'
+echo '　做到家裡如學校一般的網路環境'
+echo "  現在安裝的這個WAM版本版次為 version $ver "
+echo '===================================================================='
+echo "請按 [ENTER] 繼續......."
+read yesno
+
+
+# Only root can run this
+id | grep "uid=0(" >/dev/null
+if [ $? != "0" ]; then
+	echo "→錯誤: 安裝本程式請確定使用的是 root 帳號"
+	exit 1
+fi
+
+# Display install directory
+echo "→正在安裝 WAM 到 $wadir 目錄中..."
+echo ""
+
+if [ ! -d $wadir ]; then
+	mkdir $wadir
+else
+	echo "→在 $wadir 目錄中找到 WAM ， 升級中 ......"
+	echo ""
+	mv $src/wam.conf $src/wam.conf.new >/dev/null 2>/dev/null
+	mv $src/share.conf $src/share.conf.new >/dev/null 2>/dev/null
+	cp $wadir/*.conf $src >/dev/null 2>/dev/null
+	upgrading=1
+fi
+
+# find perl path
+perl=`whereis perl`
+perl=${perl##*: }
+perl=${perl%% /*}
+	
+echo "檢查 Perl ..."
+$perl -e 'print "foobar\n"' 2>/dev/null | grep foobar >/dev/null
+if [ $? != "0" ]; then
+	echo "→錯誤:無法執行 Perl 程式，請檢查 perl 是否安裝正確！"
+	exit 3
+fi
+$perl -e 'exit ($] < 5.002 ? 1 : 0)'
+if [ $? = "1" ]; then
+	echo "→錯誤: Perl 版本太舊，請更新至至少 5.002 以後的版本！"
+	exit 4
+fi
+
+echo "現在幫您安裝 cpan，安裝完成後將會進入設定畫面，請一律按 [Enter] 鍵！"
+yum -y install gcc
+yum -y install cpan
+cpan
+cpan YAML
+
+$perl -e 'use IO::Socket; print "foobar\n"' 2>/dev/null | grep foobar >/dev/null
+if [ $? != "0" ]; then
+	echo "→錯誤: Perl Socket 模組未安裝或安裝不正確！"
+	cpan IO::Socket
+fi
+$perl -e 'use MD5; print "foobar\n"' 2>/dev/null | grep foobar >/dev/null
+if [ $? != "0" ]; then
+	echo "→→→警告: Perl MD5 套件未安裝！"
+	echo -n "是否現在安裝(y/n): "
+	read yesno
+	if [ "$yesno" = "y" ]; then
+		cpan MD5
+	fi
+fi
+$perl -e 'use FCGI; print "foobar\n"' 2>/dev/null | grep foobar >/dev/null
+if [ $? != "0" ]; then
+	echo "→→→警告: Perl FastCGI 套件未安裝！"
+	echo -n "是否現在安裝(y/n): "
+	read yesno
+	if [ "$yesno" = "y" ]; then
+		cpan FCGI
+	fi
+fi
+$perl -e 'use Quota; print "foobar\n"' 2>/dev/null | grep foobar >/dev/null
+if [ $? != "0" ]; then
+	echo "→→→警告: Perl Quota 套件未安裝！"
+	echo -n "是否現在安裝(y/n): "
+	read yesno
+	if [ "$yesno" = "y" ]; then
+		yum -y install quota-devel
+		cpan Quota
+	fi
+fi
+echo "Perl 檢查完畢！"
+echo ""
+
+echo "檢查 netpbm ..."
+# find netpbm path
+netpbm=`whereis pnmscale`
+netpbm=${netpbm##*: }
+netpbm=${netpbm%% /*}
+if [ "x$netpbm" = "x" ]; then
+	echo "→→→警告: netpbm 套件未安裝！"
+	echo "電子相簿程式將無法自動產生縮圖, 現在使用 yum 安裝該套件！"
+	yum -y install netpbm
+fi
+echo "netpbm 檢查完畢！"
+echo ""
+
+if [ ! -d $apdir ]; then
+	echo "→→→警告: Apache for Wam 尚未安裝！"
+	echo -n "是否現在安裝(y/n): "
+	read yesno
+	if [ "$yesno" = "y" ]; then
+		tar xzf apache4wam_1.3.42.tar.gz
+		cd apache4wam_1.3.42
+		./configure --prefix=$apdir
+		make
+		make install
+		cd ..
+		rm -rf apache4wam_1.3.42
+		apache=1
+	fi
+fi
+
+echo "現在產生開機自動執行程序，寫入 /etc/rc.d/rc.local 中......"
+echo '' >> /etc/rc.d/rc.local
+echo '/usr/libexec/apachw_wam/bin/apachectl start' >> /etc/rc.d/rc.local
+echo '' >> /etc/rc.d/rc.local
+
+wamgrp=`cat /etc/group | grep wam`
+if [ "x$wamgrp" = "x" ]; then
+	echo "建立 WAM 管理群組......"
+	/usr/sbin/groupadd wam
+	echo "作為管理員的帳號必須已經存在於系統中。"
+	echo "為了增強安全性,建議不要使用 root 作為 WAM 系統管理員！"
+	echo -n "請輸入管理員的帳號(root): "
+	read admin
+	if [ "x$admin" = "x" ]; then
+		admin="root"
+	fi
+	cat /etc/group | sed "s/wam:x:[0-9]*:/&$admin/" > /etc/group
+fi
+
+if [ ! -d $vadir ]; then
+	echo "建立 $vadir 目錄"
+	mkdir $vadir
+fi
+chmod 0700 $vadir
+
+if [ ! -d "$wadir/help" ]; then
+	echo "建立 $wadir/help 目錄，拷貝檔案中......"
+	mkdir -p $wadir/help
+fi
+cp -uR $src/help/* $wadir/help
+
+if [ ! -d "$wadir/img" ]; then
+	echo "建立 $wadir/img 目錄，拷貝檔案中......"
+	mkdir -p $wadir/img
+fi
+cp -uR $src/img/* $wadir/img
+
+if [ ! -d "$wadir/digits" ]; then
+	echo "建立 $wadir/digits 目錄，拷貝檔案中......"
+	mkdir -p $wadir/digits
+fi
+cp -uR $src/digits/* $wadir/digits
+
+if [ ! -d "$wadir/neomail" ]; then
+	echo "建立 $wadir/neomail 目錄，拷貝檔案中......"
+	mkdir -p $wadir/neomail
+fi
+cp -uR $src/neomail/* $wadir/neomail
+
+if [ ! -d "$wadir/lang" ]; then
+	echo "建立 $wadir/lang 目錄，拷貝檔案中......"
+	mkdir -p $wadir/lang
+fi
+cp -uR $src/lang/* $wadir/lang
+
+echo "→→→拷貝 WAM 主程式，和設定系統權限...請勿中斷程式..→→→."
+rm -f $wadir/* 2>/dev/null
+cp -u $src/* $wadir >/dev/null 2>/dev/null
+chmod -R 0700 $wadir
+
+if [ ! -L "/sbin/wamd" ]; then
+	echo "建立 Apache for WAM 的啟動程式連結......"
+	ln $apdir/bin/apachectl /sbin/wamd 2>/dev/null
+	chmod 0755 /sbin/wamd
+fi
+
+cd $wadir
+if [ "$perl" != "/usr/bin/perl" ]; then
+	echo "修改 CGI 程式中的 Perl 路徑......"
+	perlpath=`echo $perl | sed "s%\/%\\\\\/%g"`
+	for cgifile in `(find $wadir -name '*.cgi' -print ; find $wadir -name '*.pl' -print)`
+	do
+		echo $cgifile..............
+		sed "1s/\/usr\/bin\/perl.*-U/$perlpath -U/" $cgifile > $cgifile.new
+		rm -rf $cgifile
+		mv $cgifile.new $cgifile
+		chmod -R 0755 $cgifile
+	done
+fi
+
+if [ "$perl" != "/usr/bin/sendmail" ]; then
+	echo "現在為您設定 sendmail 的路徑到 wam.conf 中..."
+	mailprog=`whereis sendmail`
+	mailprog=${mailprog##*: }
+	mailprog=${mailprog%% /*}
+	mailpath=`echo $mailprog | sed "s%\/%\\\\\/%g"`
+	sed "s/\/usr\/bin\/sendmail/$mailpath/g" $wadir/wam.conf > $wadir/wam.new
+	cp -f $wadir/wam.new $wadir/wam.conf
+fi
+
+echo "現在為您重組群組設定組態..."
+perl $wadir/fixgconf.cgi
+
+if [ $apache = 1 ]; then
+	echo "現在為您啟動 WAM 在１２０００port 上的服務..."
+	$apdir/bin/apachectl start
+fi
+echo "恭喜，安裝完成！"
+host=`/bin/hostname`
+
+echo '===================================================================='
+echo '開啟 Apache for WAM 服務,請輸入 wamd start 指令'
+echo '關閉 Apache for WAM 服務,請輸入 wamd stop 指令'
+echo '重新啟動 Apache for WAM 服務,請輸入 wamd restart 指令'
+echo "請打開瀏覽器輸入網址 http://$host:12000/ 來使用 WAM 服務！"
+echo '■程式設計：李忠憲 (hp2013@ms8.hinet.net)'
+echo '■頁面美工：黃自強 (dd@mail.ysps.tp.edu.tw)'
+echo '■特別感謝半點心工作坊林朝敏(prolin@sy3es.tnc.edu.tw)提供密碼檢查java'
+echo '　script程式'
+echo '■使用本程式必須遵守以下版權規定：'
+echo '　本程式遵守GPL 開放原始碼之精神，但僅授權教育單位及您個人使用'
+echo '■免費下載新版WAM網址 : http://webmail.ysps.tp.edu.tw/download/ '
+echo '===================================================================='
