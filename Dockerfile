@@ -1,6 +1,6 @@
 FROM alpine
 
-COPY entrypoint.sh /usr/bin/
+COPY entrypoint.sh /usr/sbin/
 COPY smb.conf /etc/samba/
 
 RUN apk update \
@@ -12,4 +12,4 @@ RUN apk update \
 
 EXPOSE 137/udp 138/udp 139 445
 VOLUME ["/etc/samba", "/mnt"]
-CMD /etc/sbin/samba -i
+ENTRYPOINT ["entrypoint.sh"]
