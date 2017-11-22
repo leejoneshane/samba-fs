@@ -1,0 +1,759 @@
+#==============================
+charset:::text/html; charset=Big5
+variable_font:::Arial
+help:::User Manual
+root_help:::Admin User Manual
+logon:::Login WAM
+logon_alt:::Please type your Account & Password below first!!
+loginname:::Account
+loginpasswd:::Password
+user:::User Name
+username:::UserName
+password:::Password
+groupname:::GroupName
+group_hint:::(Orgnization Unit)
+everyone:::AllUser
+everygrp:::AllGroup
+pattern_search:::Account Search
+pattern_match:::Pattern Search
+group_member:::Group Member
+user_search_result:::User Search Result
+group_search_result:::Group Search Result
+confirm:::OK
+cancle:::Cancle
+undo:::Undo
+save:::Save
+save_and_exit:::Save And Exit
+dir:::Directory
+file:::File
+share:::Share Folder
+folder:::Folder
+program:::Program
+partition:::Partition
+used:::Used
+total:::Total
+records:::Records
+page_no:::Page#
+parrent:::Parrent
+prev_page:::PageUP
+next_page:::PageDOWN
+quick_jump:::PageJUMP
+upload:::Upload
+files:::Files
+upload_file:::Upload Files
+backto_homepage:::回首頁
+backto_index:::回目錄
+backto_prev_page:::BACK
+backto_main_menu:::Back to Menu
+backto_filemgr:::Back to Filemanager
+backto_sharemgr:::Back to share Folder
+download_wam:::Download Wam (Chinese Big-5 Only)
+wam:::Web-Base Account Manager And File Manager 
+from_wam:::From WAM System：
+author:::Desinger：Shane Lee
+sign_left:::【
+sign_right:::】
+sign_up:::▲
+sign_down:::▼
+sign_separate:::：
+ten_up:::perv 10 pages
+ten_down:::next 10 pages
+
+#==============================
+title_main:::MENU
+title_setup:::Setup
+title_upgrade:::Upgrade
+title_manager:::Choose the manager
+title_addgrp:::Add New Group
+title_addoneuser:::Add one Account
+title_manuadd:::Add Account by Manual
+title_autoadd:::Add Account by Auto
+title_resetpw:::Rest User Password
+title_chgpw:::Change your Password
+title_delacc:::Delete Account
+title_checkacc:::Account Check
+title_viewstruct:::View Account Struct
+title_trace:::Tracy User's Record
+title_userquota:::Set User's Quota
+title_viewquota:::View User's Quota
+title_mailsmgr:::Mail Manager
+title_filesmgr:::File Manager
+title_savefile:::Save File
+title_sharemgr:::Share Folder
+title_digitsmgr:::Manage Counter GIF
+title_setcnt:::Setup your Counter
+title_viewcnt:::Check Counter Record
+title_delcnt:::Delete Counter
+title_resetcnt:::Reset Counter
+title_setgb:::GuestBook Setup
+title_gbmgr:::GuestBook Manager
+title_gbsubmgr:::Manage GBook Subscriber
+title_system_info:::WAM System Infomation
+title_add_counter:::Add new Counter GIF
+title_edit_file:::Edit files
+title_setnotice:::Notice Setup
+title_noticemgr:::Notice Manager
+title_setalbum:::Album Setup
+title_setcalendar:::Calendar Setup
+title_calendarmgr:::Calendar Manager
+title_sethomepage:::Build Web-Site
+
+#==============================
+submenu_system:::System Management
+submenu_account:::Account
+submenu_homepage:::HomePage
+submenu_mail:::Mail
+
+#==============================
+set_config:::Config your System
+#==============================
+config_language:::Choose Language
+config_aclcontrol:::ACL Control
+config_allow_ip:::Allow IP
+config_deny_ip:::Deny IP
+config_acl_rule:::Rules
+config_upgrade_proxy:::Upgrade Through Proxy
+config_proxy_hostname:::Proxy hostname
+config_proxy_port:::Port number:
+config_shell_dir:::Shell
+config_group_file:::Group config File
+config_group_shadow:::Group Shadow
+config_passwd_file:::System Password file  
+config_shadow_file:::System Password Shadow file
+config_mail_prog:::Sendmail Program
+config_mail_aliase:::Aliase  
+config_samba_prog:::Samba programe
+config_samba_passwd_file:::Samba Passowrd file
+config_samba_passwd_sync:::Sync. change Samba passwd
+config_samba_use_codepage:::Samba use CodePage
+config_account_nest:::Use Nesting Account
+config_account_auto_homepage:::Auto Creat HomePge index.html
+config_account_nest_level:::Auto Creat Nesting Account Level
+config_account_auto_passwd_style:::Auto Creating Account Style
+config_account_auto_passwd_style_username:::Same as Account
+config_account_auto_passwd_style_random:::Random
+config_account_auto_passwd_style_single:::All set to passwd 
+config_account_auto_passwd_range:::Set Random password Range
+config_account_passwd_style_no:::Number
+config_account_passwd_style_LCase:::Lower Case
+config_account_passwd_style_UCase:::Upper Case
+config_account_passwd_style_U&LCase:::Upper & Upper Case
+config_account_passwd_style_no&LCase:::Number & Lower Case
+config_account_passwd_style_no&UCase:::Number & Upper Case
+config_account_passwd_style_any_Case:::Any Number & Any Case
+config_account_passwd_change_rule:::Change Password Rule
+config_account_passwd_limit_428:::Lenght Limit 4-8 
+config_account_passwd_limit_no&letter:::Only Number & Letter
+config_account_passwd_limit_diffrent:::Limit diffrent Letter
+config_account_passwd_limit_keyboard:::Not allow Keyboard seq.
+config_user_home_dir:::User Home Directory
+config_user_skel:::User Skel  
+config_user_shell:::User Shell allow
+config_user_homepage_dir:::User HomePage Directory
+config_edit_user_homepage_sample:::Edit HomePage Sample
+config_days_to_change:::Days Can Change Password
+config_days_to_force_change:::Days to Force Change Password 
+config_days_to_hint:::Days to Change Password Hint
+config_days_to_inact:::Days to inactive Password
+config_days_to_expire:::Days to Expire Password
+config_account_flag_status:::Account Status
+config_account_quota_sample:::Choose User Quota Sampler
+config_save_config:::Save all Configuration
+config_completed:::Configuration Saved！
+
+#==============================
+set_wam_manager:::Setup WAM Manager
+#==============================
+wam_manager_add:::Choose New WAM Manager
+wam_manager_now:::Wam Manager
+wam_manager_addnew:::Add New WAM Manager
+wam_manager_delete:::Del WAM Manager
+wam_manager_add_completed:::WAM Manager Add OK：
+wam_manager_del_action:::Delete Wam Manager：
+wam_manager_del_completed:::Delete OK！
+
+#==============================
+file_manager:::File Manager
+#==============================
+filemgr_current_dir:::Current Dir：
+filemgr_goto_sharemgr:::Go to Share Folder
+filemgr_total_quota:::Your Disk Space：
+filemgr_total_quota_used:::Used：
+filemgr_total_quota_left:::Left：
+filemgr_total_quota_use:::Percent：
+filemgr_file_name:::Name
+filemgr_file_type:::FileType
+filemgr_file_priv:::Privelege
+filemgr_file_owner:::Owner
+filemgr_file_owner_group:::Group
+filemgr_file_size:::Size
+filemgr_file_date:::Update
+filemgr_pannel:::Pannel
+filemgr_gohome:::《HomeDir》
+filemgr_pannel_minihelp:::The Function Below<font color=yellow>Rename、Move<br>、Copy</font>Must choose single Dir or<br>File<font color=yellow>.But Change Mode、Change<br>Owner、Delete、Download</font>Can<br>use Multi-Choice
+filemgr_pannel_hint_1:::please input dir name！
+filemgr_pannel_hint_2:::please input Dir name！
+filemgr_pannel_hint_3:::please check files checkbox then input priv. for ex.755
+filemgr_pannel_hint_4:::please check files checkbox then input owner name. for ex.user
+filemgr_pannel_hint_5:::please check one file checkbox then input new file name.
+filemgr_pannel_hint_6:::please check files checkbox then input the filename you want move to.
+filemgr_pannel_hint_7:::please check files checkbox then input the filename your want to copy to.
+filemgr_pannel_hint_8:::please check files checkbox you want to delete then click delete.
+filemgr_pannel_hint_9:::please check files checkbox you want to download then click download.
+filemgr_pannel_hint_10:::please check files checkbox you want to setup to share folder  then click ShareFolder.
+filemgr_pannel_chdir:::Change Dir
+filemgr_pannel_mkdir:::Make Dir
+filemgr_pannel_chmod:::Change mode
+filemgr_pannel_chown:::Change Ownner
+filemgr_pannel_rename:::Rename
+filemgr_pannel_move:::Move
+filemgr_pannel_copy:::Copy
+filemgr_pannel_delete:::Delete
+filemgr_pannel_download:::Download
+filemgr_pannel_share:::Share this Folder
+filemgr_upload_where:::Upload files to
+filemgr_upload_unzip:::Please unpack Winzip file
+filemgr_upload_confirm:::Upload!
+filemgr_upload_cannot_open_editfile:::Cannot open file to edit!
+filemgr_upload_completed:::Files Saved!
+filemgr_cannot_chown:::files are not belongs to you
+filemgr_cannot_priv:::files are not belongs to you,you cannot change ownner !
+filemgr_cannot_del:::files or folder are not belongs to you,you cannot delete it  !
+
+#==============================
+share_folder:::Share Folder
+#==============================
+share_current_dir:::CurrentDir：
+share_title:::Share name
+share_readonly:::《Read only!》
+share_backto_filemgr:::Back to FileManager
+share_grant:::Grant to
+share_make_group:::Please Add new Group first!
+share_to_what:::Groups to share？
+share_dir:::Dir：
+share_share_name:::Share name：
+share_config_these:::Set to share Folder：
+share_name:::share name
+share_download:::Download
+share_upload:::Upload
+share_mkdir:::MkDir
+share_edit:::Edit
+share_delete:::Delete
+share_realpath:::Real Path
+share_rename:::Rename
+share_uplevel:::up to
+share_pannel_minihelp:::<b>attention：</b><br><font color=yellow>rename</font> must choose<br>one Dir or file<br><font color=yellow>.But Delete and Download</font> can choose multi files and Directory.
+share_pannel_hint_1:::Please check the left checkbok,and then click unshare to remove the share directory！
+share_pannel_hint_2:::Please check the left checkbok,and then click share to add the share directory！
+share_pannel_hint_3:::Please input new directory name on the right.and click creat new dir to creat new directory.
+share_pannel_hint_4:::Please check the left checkbok,and then input newname and click rename to rename checked file.
+share_pannel_hint_5:::Please check the left checkbok,and then click delete to delete.
+share_pannel_hint_6:::Please check the left checkbok,and then click download to download.
+share_cancel_share:::delete share directory
+share_config_share:::change share configuration.
+share_completed:::share configured.
+share_cancel_completed:::share dir removed.
+
+#==============================
+quota_setup:::Quota setup 
+#==============================
+quota_select_not_yet:::You have select nothing.
+quota_status:::'s QUOTA is
+quota_group_member_checkout:::view Group member's quota info
+quota_search_result_checkout:::view search result and Quota info
+quota_group_change:::Group member's quota set to :
+quota_user_change:::Change those users' quota to:
+quota_confirm:::Save change!
+quota_completed:::User Quota info Saved！
+quota_hard_limit:::Hard Limit
+quota_soft_limit:::Soft Limit
+quota_group_member_list:::Group member's quota list
+quota_search_result_list:::Search users' quota info:
+quota_set_these:::Reset users quota info! 
+
+#==============================
+group_add:::Add Group 
+#==============================
+group_home_dir:::Home directory
+group_add_this:::Creat this group
+group_now:::Created Groups
+group_empty_name:::Cannot Creat Empty group 
+group_add_completed:::Creat new group ok!
+
+#==============================
+account_add_one:::Creat one account
+#==============================
+account_add_group:::Add this one to Group:
+account_add_to_manager:::Join WAM Manager Group
+account_add_confirm:::Confirm Creat new User
+
+#==============================
+del_group_account:::Delete User or Group
+#==============================
+del_user_select_not_yet:::You Have not Select any yet!
+del_user_confirm:::Confirm
+del_user_cancel:::Cancle
+del_user_completed:::Delete Ok!
+del_user_grp_question:::Confirm to delete this Group?
+del_user_search_question:::Confirm delete those user and group?
+del_user_del_these:::Will Delete all selected user and group ?
+del_user_now:::Deleting Selected User now....
+
+#==============================
+autoadd_account:::Auto Create user Account 
+#==============================
+autoadd_blank_1:::Group and user name cann't be blank!
+autoadd_blank_2:::Group and user pre-letter and number cann't be blank!
+autoadd_blank_3:::prename and number cann't be blank!
+autoadd_pre:::Accounts' Prename (Ex:stu)→
+autoadd_level_2:::The secend level number.(Grade):
+autoadd_level_3:::The third level number(Class):
+autoadd_level_4:::Seat numbers:
+autoadd_from:::From
+autoadd_to:::To
+autoadd_grade:::Grade
+autoadd_class:::Class
+autoadd_num:::Number
+autoadd_addzero:::Add Zero 
+autoadd_hint_2:::Attention:Creat new Account will be<br>”Prename+Number. Ex:stu23”
+autoadd_hint_3:::Attention:Creat new Account will be<br>”Prename+Second Lever number+ number。Ex:stu523”
+autoadd_hint_4:::Attention:Creat new Account will be<br> ”Prename+Second Lever number+ number+Third level number。Ex:stu50308” 
+autoadd_confirm:::Create all users
+autoadd_add_these:::Now Adding ...
+
+#==============================
+add_account_from_file:::Manual Creat User Account
+#==============================
+manuadd_minihelp:::You MUST upload a UNIX Compatable text file to Create Accounts! Like this:
+manuadd_minihelp_1:::Username Groupname Password
+manuadd_minihelp_2:::Ex:I got two diffrent user and group
+manuadd_minihelp_3:::shane admin super123<br>ddjohn teacher dd1234
+manuadd_minihelp_4:::read this:You have to had space between all Coloum ,each account a line,<br>and the last row MUST be blank!
+manuadd_uploadfile:::Upload your Account text file...
+manuadd_confirm:::Upload and Create Account!
+
+#==============================
+reset_passwd:::Reset Password
+#==============================
+reset_passwd_select_not_yet:::Nothing Selected!
+reset_passwd_setto:::Reset Password to :
+reset_passwd_confirm:::Confirm Reset Password!
+reset_passwd_completed:::Password Reset Completely!
+reset_passwd_list:::Account and Password table:
+reset_passwd_grp_question:::Confirm Reset This group?
+reset_passwd_search_question:::Confirm Reset those selected Account?
+reset_passwd_reset_these:::Will Reset Selected User ?
+
+#==============================
+change_passwd:::Change My Password
+#==============================
+change_passwd_check_diffrent:::New Password MUST be Diffrent From old one!
+change_passwd_check_length:::The Length MUST between 4-8 Letters(Numbers)
+change_passwd_check_kind:::Can not set this passowrd !Password Must Contain Lower or Upper Case Letter,Number,or symbol Char.)
+change_passwd_check_repeat:::Too many Same letter Are Not allow to set as password!
+change_passwd_check_arrange:::Please DO NOT use keyboard seq. 
+change_passwd_new:::New Password:
+change_passwd_again:::Again:
+change_passwd_confirm:::Confirm change My Password!
+change_passwd_minihelp:::＊Please setselect a more complecate 
+change_passwd_rule_1:::Please do not use words as a password.
+change_passwd_rule_2:::Password Lenght must between 4 ~ 8 char.
+change_passwd_rule_3:::Passowrd Must include Upper Case and Lower Cast, numbers ,or symbol any two of them. 
+change_passwd_rule_4:::not allow repeat char. 
+change_passwd_rule_5:::Do not use keyboard,or letter,or number seq.
+change_passwd_completed:::Password changed completed.
+
+#==============================
+check_account:::Account Check
+#==============================
+check_account_group:::Now checking groups ....
+check_account_username:::Now checking users ....
+
+#==============================
+view_struct:::Veiw Account structures
+#==============================
+
+#==============================
+trace_account:::Trace Account Bashrc
+#==============================
+trace_account_notfound:::Can not find this users record.
+
+#==============================
+view_counter:::View visitor counter
+#==============================
+view_counter_pagename:::Homepage name
+view_counter_total:::visitors
+view_counter_last_ip:::The last visitor's ip.
+view_counter_delete:::Delete
+view_counter_hint:::Caution:Delete one page counter will reset this page's counter to zero.
+view_counter_reset:::Reset counter to default.
+view_counter_jumpto_homepage:::Jump to my Homepage.
+view_counter_jumpto_rootpage:::Jump to this site's homepage.
+view_counter_page:::Pages
+view_counter_delete_completed:::your Page counter was deleted！
+view_counter_reset_all_become:::Reset all Page to counter default value.
+
+#==============================
+set_counter:::Set Page Counter
+#==============================
+set_counter_start:::Counter Default
+set_counter_incream:::Increasement
+set_counter_digits:::How many Digits?
+set_counter_check_ip:::Check ip?
+set_counter_style:::Select the counter Style:
+set_counter_confirm:::Confirm Changes.
+set_counter_completed:::Counter Configuration Saved.
+
+#==============================
+set_gbook:::Setup Guest Book.
+#==============================
+gbook:::Guest Book
+set_gbook_title:::Title
+set_gbook_per_page:::Per Page
+set_gbook_msg_no:::messages.
+set_gbook_page_yes:::Use page?
+set_gbook_page_no:::Do not use page
+set_gbook_sort_mode:::Order by
+set_gbook_sort_by_name:::Guest name
+set_gbook_sort_by_date:::Date  
+set_gbook_mailto_owner:::Email to me
+set_gbook_mailto_owner_yes:::Please Mail
+set_gbook_subscribe_mode:::Allow User Subscribed?
+set_gbook_subscribe_mode_yes:::allow
+set_gbook_confirm:::Comfirm
+set_gbook_completed:::Guest Book Configuration Saved!
+
+#==============================
+manage_gbook:::Guest Book Management
+#==============================
+gbook_manage:::Manage Mode
+gbook_no_msg:::You had 0 message!
+gbook_del_all_msg:::Delete All Message!
+gbook_del_checked_msg:::Delete Checked Message!
+gbook_del_confirm:::Confirm Delete!
+gbook_msg_date:::Date:
+gbook_msg_reply_date:::Reply Date
+gbook_msg_reply:::Re:
+gbook_msg_edit:::Edit
+gbook_msg_del:::Delete
+gbook_msg_subject:::Subject
+gbook_msg_content:::Content
+gbook_msg_reply_subject:::Re:Subject
+gbook_msg_reply_content:::Re:Content
+gbook_perv_page:::【▲Page UP】
+gbook_next_page:::【▼Page Down】
+gbook_title_edit:::【Edit Message】
+gbook_input_name:::Name:
+gbook_input_email:::Email:
+gbook_input_mode:::Mode:
+gbook_mode_public:::Public Mode
+gbook_mode_private:::Secret Mode
+gbook_write:::Add Message!
+gbook_subscribe_or_not:::Subscribe/unSubscribe
+gbook_mailto_owner:::Write Personal message
+gbook_edit_confirm:::Save My message!
+gbook_title_reply:::Re:
+gbook_msg_owner_reply:::Manager Re:
+gbook_msg_reply_subject:::Re:
+gbook_reply_confirm:::Post my Reply
+gbook_user:::Manager Subscriber
+gbook_del_user:::unSubscribe
+gbook_user_email:::Email
+gbook_add_user_confirm:::Add this:
+gbook_del_user_confirm:::Unsubscribe Checked user!
+gbook_miss_from:::No email
+gbook_post_on:::Had Message on
+gbook_above:::
+gbook_click_here:::Click this link below:
+gbook_owned:::'Guest Book
+gbook_private_hint:::This is personal Message....^_^
+gbook_view_private:::Get Personal Message.
+gbook_email_hint:::i.e:<font color=blue>yourname@mail.xxps.tp.edu.tw</font>
+gbook_write_confirm:::Ok!
+gbook_thanks_for_subscribe:::Thanks for subscribe!
+gbook_subscribe_form:::Please fill this form...
+gbook_howto_subscribe:::Please Check your mail box to verify Subscribe.
+gbook_your_email:::Email
+gbook_what_you_want:::Wana
+gbook_subscribe:::Subscribe
+gbook_unsubscribe:::unSubscribe
+gbook_subscribe_confirm:::OK!
+gbook_subscribe_info:::Subscribe infomation:
+gbook_title_mailto_owner:::Write message
+gbook_title_subscribe:::Subscribe
+gbook_title_thanks:::Subscribe completed.
+gbook_enter_view:::Click to enter Guest Book!
+gbook_subscribe_request_for:::You had Subscirbe my guest book..
+gbook_make_sure:::To confirm you can recived message,
+gbook_please_click:::please click 
+gbook_to_complete_request:::to verify your subscribe
+gbook_unsubscribe_info:::Message unSubscribe information.
+gbook_goodbye:::Unsubscribe compeleted
+gbook_keyword_search:::Keyword Search:
+gbook_search_confirm:::Start Searching！
+
+#==============================
+set_notice:::Setup Notice.
+#==============================
+set_notice_title:::Title
+set_notice_per_page:::Per Page
+set_notice_msg_no:::messages.
+set_notice_page_yes:::Use page?
+set_notice_page_no:::Do not user page  
+set_notice_subscribe_mode:::Allow User Subscribed?
+set_notice_subscribe_mode_yes:::allow
+set_notice_confirm:::Comfirm
+set_notice_completed:::Notice Configuration Saved!
+
+#==============================
+manage_notice:::Notice Management
+#==============================
+notice_manage:::Manage Mode
+notice_no_msg:::You had 0 message!
+notice_del_all_msg:::Delete All Message!
+notice_del_checked_msg:::Delete Checked Message!
+notice_del_confirm:::Comfirm Delete!
+notice_msg_date:::Date：
+notice_msg_edit:::Modify
+notice_msg_del:::Delete
+notice_write:::Post Message!
+notice_subscribe_or_not:::Subscribe／unSubscribe
+notice_mailto_owner:::Write Personal message
+notice_edit_confirm:::Post My Notice!
+notice_user:::Manage Subscribe
+notice_del_user:::Unsubscribe
+notice_user_email:::Email
+notice_add_user_confirm:::Add this!
+notice_del_user_confirm:::Unsubscribe Checked User!
+notice_post_on:::Had message on
+notice_above:::
+notice_click_here:::Click this link below:
+notice_owned:::'s Notice
+notice_email_hint:::i.e:<font color=blue>yourname@mail.xxps.tp.edu.tw</font>
+notice_write_confirm:::OK!
+notice_thanks_for_subscribe:::Thanks for subscribe!
+notice_subscribe_form:::Please fill this form...
+notice_howto_subscribe:::Please Check your mail box to verify Subscribe.
+notice_your_email:::Email
+notice_what_you_want:::Wana
+notice_subscribe:::Subscribe
+notice_unsubscribe:::unSubscribe
+notice_subscribe_confirm:::OK!
+notice_subscribe_info:::Subscribe infomation:
+notice_title_mailto_owner:::Post News
+notice_title_subscribe:::Subscribe
+notice_title_thanks:::Subscribe completed.
+notice_enter_view:::Click to enter Notice News!
+notice_subscribe_request_for:::You had Subscirbe my notice news..
+notice_make_sure:::To confirm you can recived message,
+notice_please_click:::please click 
+notice_to_complete_request:::to verify your subscribe.
+notice_unsubscribe_info:::Message unSubscribe information.
+notice_goodbye:::Unsubscribe compeleted! Thanks for your suported!
+notice_keyword_search:::Keyword Search:
+notice_search_confirm:::Start searching!
+
+#==============================
+set_album:::設定電子相簿
+#==============================
+album_upload:::圖片上傳
+set_album_title:::電子相簿抬頭
+set_album_message:::使用說明與版權資訊
+set_album_showdate:::顯示日期
+set_album_showsize:::顯示檔案大小
+set_album_newtip:::新檔案強調顯示
+set_album_bgcolor:::背景顏色
+set_album_bgpic:::背景圖片網址
+set_album_number:::每列顯示圖片個數
+set_album_width:::圖片寬度
+set_album_height:::圖片高度
+set_album_confirm:::確　定
+set_album_completed:::電子相簿組態設定完成！
+
+#==============================
+manage_album:::管理公告訊息
+#==============================
+album_owned:::的電子相簿
+
+#==============================
+counter_img:::Counter GIF management
+#==============================
+counter_new:::New Image
+counter_delete:::Delete
+counter_choose:::Check
+counter_img_lib:::Images:
+counter_name:::Name
+counter_select_not_yet:::Please Check image first!
+counter_minihelp:::Must upload Gif images,the program will chage the name of image files automatically.
+counter_lib_name:::Images name：
+counter_digit:::Number
+counter_confirm:::Upload!
+
+#==============================
+online_upgrade:::On Line Upgrade
+#==============================
+online_upgrade_minihelp:::Caution:<BR>The On Line Upgrade function provide to way to upgrade your WAM server,whick is .zip and .tar.gz. This upgrading Function will not upgrade your Apache and other Moduals For Perl.When you select upgrade from your server,or from your PCs ,WAM will overwrite your Current version without check.If you wana upgrade from file from path,<br>please use Full Path i.e: /root/wam/patch/wam-1.600711-upgrade.zip.
+online_upgrade_choose:::Upgrade Mode:
+online_upgrade_choose_1:::Upgrade from full page: 
+online_upgrade_choose_2:::Upgrade from my PC: 
+online_upgrade_choose_3:::Automatic Online Upgrade from Yi-Shane Primary School,Taipei ,Taiwan. 
+online_upgrade_confirm:::Upgrade Main Program!
+online_upgrade_completed:::Upgrade completed ! Current Version is:
+
+#==============================
+mail_manager:::Webmail
+#==============================
+mail_title:::WAM Web-mail services
+mail_to_owner:::mail to manager
+mail_hope_reply:::Please confirm your Email-address
+mail_cannot_reply:::all right! 
+mail_input_name:::Name
+mail_input_mailbox:::Email
+mail_input_subject:::subject
+mail_input_body:::Message
+mail_optional:::(optional)
+mail_confirm:::Send
+mail_to_whom:::Send to:
+mail_someone_hint:::Please confirm your Email-address
+mail_completed:::Message Send ok!
+mail_from:::From:
+mail_homepage:::homepage
+mail_to_you:::Write to you
+
+#==============================
+logout:::Logout
+#==============================
+
+#==============================
+kid_change_passwd:::Change password
+kid_my_mail:::Get mail
+kid_my_folder:::Home Directory
+kid_my_work:::Share Folder
+kid_my_gbook:::My Guest Book
+kid_manage_gbook:::Edit Guest Book
+kid_my_counter:::Page Counter
+kid_view_counter:::Visitors
+kid_my_notice:::My Notice
+kid_manage_notice:::Edit Notice
+kid_my_album:::My Album
+kid_my_calendar:::My Calendar
+kid_manage_calendar:::Edit Calendar
+kid_build_homepage:::Build My Web-site
+kid_logout:::Logout
+#==============================
+msg_please_select:::Please select message first!
+msg_file_select_not_yet:::Please select one file or Directory!
+msg_blank_folder:::Please input Folder name!
+msg_blank_perm:::Please assign new privilege!
+msg_blank_owner:::Please assign new owner!
+msg_blank_filename:::Please inpug new name!
+msg_blank_movetarget:::Where to move?
+msg_blank_copytarget:::where to copy to?
+msg_please_check:::Please Check:
+msg_miss_host_or_port:::The Server are not on line.
+msg_request_time_out:::The connection was to slow!
+msg_file_too_large:::File was to big to download.
+msg_please_check_perm:::Confirm your privileges!
+msg_contact_administrator:::Please contect your Administrator.
+msg_passwd_must_same:::Password must be the same.
+msg_delete_user_first:::Please delete user first!
+msg_add_user_first:::Please Create users first!
+msg_check_upload_username:::Please Check the Users accounts first!
+msg_delete_group_first:::Please delete the Users accounts first!
+msg_add_group_first:::Please Create the  groups first!
+msg_check_upload_group:::Please Check the upload files' Groups!
+msg_keyword:::Keywords
+msg_replace_username:::Replace Username to
+msg_replace_hostname:::Replace hostname to
+msg_replace_port:::Replace the port no. to
+msg_welcome_to:::This is 
+msg_homepage:::Homepage
+msg_you_are:::You are the
+msg_visited:::Th visitors!
+msg_my_gbook:::My Guest Book
+msg_my_album:::My Photo Album
+msg_hi:::Under constructure!
+msg_my_email:::Email to me:
+msg_admin:::Login Wam Server
+msg_if_misstype:::Wrong! Please Try Again
+msg_reinput:::Try again!
+msg_if_disk_busy:::If the Server still Busy 
+msg_try_later:::Try later!
+msg_just_for_user:::If your Dont have Account please Do not Try to Login!!
+msg_check_disk:::Please Check the disk fragment! 
+msg_if_config_incorrect:::please check the configuration!
+msg_setup_config:::Setup Configuration!
+msg_acl_warn:::<font color=red><b>Attention:</b></font>You can Not use this links! 
+msg_lost_username:::Link ERROR! You must point to a user by replace the string ?user=USERNAME after FILENAME.cgi
+msg_no_such_user:::Can not find such user or username misstype
+#==============================
+err_blank_input:::Blank area was not allow!
+err_file_select_not_yet:::Unchecked!
+err_file&dir_notfound:::Can not find the files!
+err_cannot_open:::Can not open the file!
+err_cannot_open_temp:::Can not open temp files!
+err_cannot_open_shadow:::Can not open the shadow file!
+err_cannot_open_passwd:::Can not open the Password file!
+err_cannot_open_group:::Can not open the Group file!
+err_cannot_open_shell:::Can not open the shell file!
+err_cannot_open_config:::Can not open the account configuration file!
+err_cannot_open_gconfig:::Can not open the account group configuration file!
+err_cannot_open_share:::Can not open the share configuration file!
+err_cannot_open_history:::Can not open the history file!
+err_cannot_open_homepage_sample:::Can not open the Sample homepage file!
+err_cannot_open_counter_config:::Can not open the counter configuration file!
+err_cannot_open_counter_data:::Can not open the counter data file!
+err_cannot_open_gbook_config:::Can not open the Guestbook configuration file!
+err_cannot_open_gbook_subscribe:::Can not open the Guestbook subscribe-user file!
+err_cannot_open_gbook_message:::Can not open the Guestbook Message file!
+err_cannot_open_notice_config:::Can not open the Notice configuration file!
+err_cannot_open_notice_subscribe:::Can not open the Notice subscribe-user file!
+err_cannot_open_notice_message:::Can not open the Notice Message file!
+err_cannot_open_aliases:::Can not open the mail aliase file!
+err_cannot_open_upgrade:::Can not open the version file! 
+err_cannot_save_upgrade:::Can not save the version file!
+err_cannot_download_file:::Download fail!
+err_cannot_open_download_file:::Can not open the download file!
+err_cannot_save_upload_file:::Can not save the upload files!
+err_cannot_open_edit_file:::Can not edit the file!
+err_connect_failue:::Connection failue!
+err_connect_break:::Connection Break!
+err_cannot_open_socket:::Can not open the socket!
+err_cannot_find_gbook:::Can not find the guest book!
+err_cannot_find_online_mail:::Can not find the online mailer!
+err_disk_failue:::Disk Failue!
+err_cannot_open_counter_dir:::Disk Failue!Can not read the Gif images!
+err_cannot_open_dir:::Disk Failue!Can not open the directory!
+err_cannot_open_lang:::Disk Failue!Can not read the Language file!
+err_cannot_copy_from_others:::Can not copy file from others Directory!
+err_cannot_copy_to_others:::Can not copy file to others Directory!
+err_cannot_move_from_others:::Can not move file to others Directory!
+err_cannot_move_to_others:::Can not move Directory or files to others Directory!
+err_cannot_write:::Can not write!
+err_cannot_change:::Can not edit file !
+err_cannot_read:::Can not read file !
+err_name_priv:::privileges name:
+err_file_priv:::File privileges
+err_folder_priv:::Dir privileges
+err_so_cannot_modify:::you have no privileges to modify
+err_so_cannot_download:::you have no privileges to Download
+err_so_cannot_view:::you have no privileges to edit this file!
+err_so_cannot_delete:::you have no privileges to delete this file!
+err_so_cannot_mkdir:::you have no privileges to creat this Directory!
+err_so_cannot_chdir:::you have no privileges to Change Directory!
+err_perm_set:::you have no privileges to do this!
+err_bad_passwd:::Password wrong!
+err_cannot_continue_change_passwd:::Can not change because your Password was wrong!
+err_username_exist:::user already exist!
+err_username_not_exist:::user are not exist!
+err_cannot_continue_becouse:::can not continue because 
+err_group_exist:::user group exist!
+err_group_not_exist:::user group are not exist!
+err_check_account:::Username or Password was Wrong!
+
+#====================
+#album:::WAM電子相簿
+#====================
+
+err_cannot_find_album:::Can't read user's data!please add <br> ?user=your_account after the url above ,then press Enter !
+err_folder_failue:::User had not creat the album folder yet!!
