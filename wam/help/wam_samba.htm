@@ -1,0 +1,568 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=big5">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>WAM + Samba 說明</title>
+</head>
+
+<body>
+
+<table align="center" border="0" style="FONT-SIZE: 11pt" width="95%">
+  <tbody>
+    <tr>
+      <td align="middle" bgColor="#6582cd" width="753">
+        <p align="center"><font size="5"><span style="BACKGROUND-COLOR: #6582cd"><font color="#ffffff" face="標楷體">因應電腦大量進入校園</font></span><!------------------------------------Linux------------------>
+        </font></p>
+      </td>
+    </tr>
+    <tr>
+      <td align="middle" bgColor="#ddeeff" width="753">
+        <p align="center"><b><font size="5"><font color="#6582cd" face="標楷體">以</font><font face="Arial" size="6">Linux  
+        <font color="#ff0000">RedHat</font></font></font><font color="#000080" face="標楷體" size="5">作為校園網路主機</font></b></p> 
+      </td> 
+    </tr> 
+    <tr> 
+      <td align="middle" bgColor="#ddeeff" width="753"> 
+        <p align="center"><b><font size="6" color="#000080">安裝<i> </i></font><i><font color="#0000ff" face="Arial" size="6">Samba</font></i><font size="5"><font color="#6582cd" size="6">＋</font><font color="#008000" face="Arial Black">WAM</font></font></b></p> 
+      </td> 
+    </tr> 
+    <tr> 
+      <td align="middle" bgColor="#6582cd" width="753"> 
+        <p align="center"><b><font color="#ffffff" face="標楷體" size="5"><span style="BACKGROUND-COLOR: #6582cd">提供</span></font><font face="標楷體" size="5"><span style="BACKGROUND-COLOR: #6582cd"><font color="#ffffff">帳號及個人網頁/資料遠端管理服務</font></span></font></b></p> 
+      </td> 
+    </tr> 
+    <tr> 
+      <td align="middle" width="753"> 
+        <p align="right">作者：<a href="mailto:dd@webmail.ysps.tp.edu.tw">黃自強</a></p> 
+        <h1 align="left"><b><font face="新細明體" size="6"><a name="目　錄">目　錄</a></font></b></h1> 
+        <p align="left"><a href="#SAMBA＋WAM在校園網路內的應用">SAMBA＋WAM在校園網路內的應用</a>　<a href="#壹、設定SAMBA服務">設定SAMBA服務</a>　<a href="#用Linuxconf來設定Samba">用Linuxconf來設定Samba</a>　</p>
+        <p align="left"><a href="#把 Samba 當作網域主控站(PDC)">把  
+        Samba 當作網域主控站(PDC)</a></p> 
+        <p align="left"><a href="#用文書編輯器來修改smb.conf">用文書編輯器來修改smb.conf</a>　<a href="#Login Script 範例">Login  
+        Script 範例</a></p> 
+        <p align="left"><a href="#設定 Client 端Windows98 部份">設定  
+        Client 端Windows98 部份</a>　<a href="#使用個人化設定">使用個人化設定</a>　<a href="#在網路上的芳鄰中可以看到主機">在網路上的芳鄰中可以看到主機</a></p>
+        <p align="left"><a href="#系統原則編輯器&quot;〔Poledit.exe〕鎖死控制台－網路設定">用系統原則編輯器鎖死控制台－網路設定</a></p>
+        <p align="left"><a href="#Samba 的其他指令使用">Samba  
+        的其他命令列指令使用</a></p> 
+        <p align="left"><a href="#【WAM帳號管理員】的安裝和設定">【WAM帳號管理員】的安裝和設定</a>　<font color="#ff0000">WAM<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#features">程式功能簡介</a></font>　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#install">安裝說明</a>&nbsp;</p>
+        <p align="left"><a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#i1">系統需求</a> 
+        　 <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#i2">相依套件</a>  
+        　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#i3">安裝步驟</a>　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#i4">系統架構</a> 
+        <font color="#ff0000"><a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#faq">常見問題</a></font>　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#function">分項使用說明</a>&nbsp;&nbsp;</p>
+        <p align="left"><a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f1">參數設定</a>&nbsp;  
+        <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f2">新增群組</a>&nbsp;  
+        <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f3">新增單一帳號</a>&nbsp;  
+        <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f4">手動新增整批帳號</a>&nbsp;  
+        <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f5">自動新增整批帳號</a>&nbsp;</p> 
+        <p align="left"><a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f6">刪除帳號或群組</a>  
+        　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f7">重設密碼</a> 
+        　 <a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f8">帳號檢查</a>  
+        　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f9">檢視帳號結構</a> 
+        　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f10">追蹤使用紀錄</a>　</p>
+        <p align="left"><a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f11">郵件管理員</a>　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f12">檔案管理員</a> 
+        共享資料夾 　<a href="http://webmail.ysps.tp.edu.tw:12000/help.htm#f13">登出系統</a></p>
+        <ul>
+          <li>
+            <p align="left"><a href="http://webmail.ysps.tp.edu.tw/download/"><font color="#ff0000"><b>下載wam新版</b></font></a><font color="#ff0000"><b>　<a href="http://webmail.ysps.tp.edu.tw:12000/gbook.cgi">WAM留言版</a></b></font></p>
+          </li>
+        </ul>
+        <p>　</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="FONT-SIZE: 11pt" width="753">
+        <h2>　</h2>
+        <h2><span style="BACKGROUND-COLOR: #6582cd"><font color="#ffff00"><a name="SAMBA＋WAM在校園網路內的應用">SAMBA＋WAM在校園網路內的應用</a></font></span></h2>
+        <p>　對於校園師生已經習慣了 MS Windows 的USER來說﹐打開網路上的芳鄰存取網路主機的分享資源，已經是家常便飯，系管師們可以架設一台  
+        Linux 主機並安裝<b><font color="#ff0000">免費、高效率的SAMBA</font>＋<font color="#ff0000">智慧型傻瓜介面的帳號管理員WAM</font></b>兩樣服務做到：</p> 
+        <blockquote> 
+          <blockquote> 
+            <p><font color="#000080">1.高效率的檔案伺服器(file server)</font></p> 
+            <p><font color="#000080">2.分享(網路)印表機資源</font></p> 
+            <p><font color="#000080">3.取代WindowsNT，擔任起網路的 PDC〔網域主控站〕角色。</font></p> 
+            <p><font color="#000080">4.利用win98的[profile]，老師或學生自己的個人化設定檔，可以回存到Linux主機備分。</font></p> 
+            <p><font color="#000080">5.用server 上的Login Script ，替user在[我的電腦]中，連接幾台內定的網路磁碟機。</font></p> 
+            <p><font color="#000080">6.使用Login Script批次檔，可在使用者桌面上製作(自動拷貝)一個〔我的家目錄〕資料夾。那就是每個使用者在  
+            Linux主機上的家目錄，方便編輯檔案和個人網頁。</font></p> 
+            <p><font color="#000080">7.用</font><a href="http://webmail.ysps.tp.edu.tw/download/"><b><font color="#ff0000">WAM</font></b></a><font color="#000080">大量迅速建立學生帳號時，同時也幫他們把網頁的目錄(public_html)  
+            及〔施工中〕的網頁建好了，所以在製作個  
+            人網頁時，更簡化了。</font></p> 
+            <p><font color="#000080">8.師生使用者回家上網後，仍然可以透過網頁管理家目錄，管理個人檔案，編輯網頁，線上變更密碼，管理個人化計數器(counter)，管理個人化留言版....等。</font></p> 
+            <p><font color="#000080">9.上傳下載自己的檔案或作業，編輯好了，再回傳到主機上。真正做到「</font><font color="#ff0000" size="3">攜帶檔案免磁片</font><font color="#000080" size="3">」。</font></p> 
+            <p><font color="#000080">10.傻瓜化WEB介面的電子郵件收發程式。降低學習門檻，推動資訊利用網路教學與學習。</font></p> 
+            <p><font color="#000080">11.管理員可以把主機冰在主機房中，管理可利用簡單的WEB化介面，輕鬆線上大量新增、刪除、管理使用者帳號。</font></p> 
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p> 
+          </blockquote> 
+        </blockquote> 
+        <table border="0" cellSpacing="0" width="100%"> 
+          <tbody> 
+            <tr> 
+              <td bgColor="#6582cd" width="100%"> 
+                <h1><span style="BACKGROUND-COLOR: #6582cd"><font color="#ffff00"><a name="壹、設定SAMBA服務">壹、設定SAMBA服務</a></font></span></h1> 
+              </td> 
+            </tr> 
+          </tbody> 
+        </table> 
+        <p>　　Samba Server與Windows作業平台達成網路上的資源共享，是使用三個TCP(137、138、139)埠，和三個UDP(137、138、139)埠進行溝通：將主機的名稱及IP位址加封成UDP封包，再藉由廣播每12秒鐘用廣播發出主機名稱與IP對應的訊息，灑向區域網路內其他電腦，通告本機的NetBIOS節點位置，於是我們透過「網路上的芳鄰」就可看到其他電腦了。 
+        <p>　　Linux作業系統把磁碟、光碟、印表機等周邊設備，統統認為是檔案，所以我們可以把某樣設備如：光碟機，先Mount到Linux裡，再藉由Samba  
+        Server將資源分享出去。 
+        <p>安裝好samba後,首先讓我們先看看 您的Linux  
+        主機是不是提供以下服務? 
+        <ol> 
+          <li>我們先檢查在主機的 /etc/services 檔案裡面的幾個port註解掉了(內定是沒有被  
+            # 註解掉)﹕<br> 
+            <font color="#0000ff">#cat /etc/services</font> 
+            <table bgColor="#cccccc" border="1" cellSpacing="0" width="90%"> 
+              <tbody> 
+                <tr> 
+                  <td bgColor="#ddeeff"> 
+                    <blockquote> 
+                      <pre>netbios-ns      137/tcp             # NETBIOS Name Service
+netbios-ns      137/udp
+netbios-dgm     138/tcp             # NETBIOS Datagram Service
+netbios-dgm     138/udp
+netbios-ssn     139/tcp             # NETBIOS session service
+netbios-ssn     139/udp</pre> 
+                    </blockquote> 
+                  </td> 
+                </tr> 
+              </tbody> 
+            </table> 
+          <li>如果您沒有安裝校內專用DNS或WINS的話，至少要在/etc/hosts  
+            內建立主機名稱與ｉｐ的對應。當然要包括作為  
+            SAMBA 伺服器的 Linux 主機本身﹕<br> 
+            <font color="#0000ff">#vi /etc/hosts</font> 
+            <table bgColor="#cccccc" border="1" cellSpacing="0" width="90%"> 
+              <tbody> 
+                <tr> 
+                  <td bgColor="#ddeeff"> 
+                    <blockquote> 
+                      <pre>127.0.0.1 localhost localhost.localdomain
+192.168.xx.6   webmail.ysps.tp.edu.tw webmail
+192.168.xx.10  cc.ysps.tp.edu.tw cc
+192.168.xx.11  <a href="http://www.ysps.tp.edu.tw">www.ysps.tp.edu.tw</a> www
+192.168.xx.7   proxy.ysps.tp.edu.tw proxy
+192.168.xx.8   ysps1.ysps.tp.edu.w ysps1
+......</pre> 
+                    </blockquote> 
+                  </td> 
+                </tr> 
+              </tbody> 
+            </table> 
+          <li>使用samba的<font color="#000080"><b>web界面--swat</b></font>管理設定:<br> 
+            (一)samba的web界面組態設定,請檢視/etc/services檔,您會發現:<br> 
+            <b><font color="#ff0000">#swat 901/tcp</font></b><br> 
+            　　請將#去掉，修改完後存檔離開。<br>
+            <br>
+            (二)修改/etc/inted.conf,應該會發現一行:<br>
+            <font color="#ff0000"><b>#swat stream tcp nowait.400 root /usr/sbin/swat 
+            swat<br>
+            <br>
+            　</b></font>將#去掉,修改完後存檔離開。<br>
+            <br>
+            (三)以kill -1 (inetd的pid),重新啟動inetd<br> 
+            <br> 
+            (四)將瀏覽器網址列輸入 <a href="http://xxx.xxx.xxx.xxx:901/">http://xxx.xxx.xxx.xxx:901/</a>  
+            啟動WEB管理介面</li> 
+        </ol> 
+        <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p> 
+        <h2 align="left"><font color="#ff0000"><span style="BACKGROUND-COLOR: #ffff00">（一）<a name="用Linuxconf來設定Samba">用Linuxconf來設定Samba</a></span></font></h2> 
+        <ol> 
+          <li>我們可以用Linuxconf 來設定Samba Server，或用文書編輯器直接修改  
+            /etc/smb.conf 這個檔案。 
+            <p><font color="#000080">1.首先,登入主機,並 su 成 root<br> 
+            <br> 
+            2.再執行 linuxconf<br> 
+            <br> 
+            <img border="0" src="SAMBA_1.gif" width="623" height="267"><br> 
+            <br> 
+            3.選 Server Tasks → Samba file server → defaults<br> 
+            <br> 
+            <img border="0" src="SAMBA_2.gif" width="539" height="297"><br> 
+            <br> 
+            4.選 Base config,設定基本資料，注意</font><font color="#ff0000"><b>[&nbsp;  
+            ]Synchronise Linux from SMB passwords</b></font><font color="#000080">　的中文意思是：把Linux密碼變成和  
+            Samba同步化，因為我們後面要用WAM來提供Linux和Samba有同步變更密碼的服務，這裡可以不用勾選。您可以按〔Tab〕按鍵來跳換游標。<br> 
+            <br> 
+            <img border="0" src="SAMBA_3.gif" width="711" height="408"></font></p> 
+            <p><font color="#000080">續上頁(defaults的設定)</font></p> 
+            <p><font color="#ff0000">Samba  
+            若用純文字密碼，請執行現成的 <a href="http://www.ysps.tp.edu.tw/about/download/samba/samba.reg">samba.reg</a>，</font><font color="#000080">建議Windows95  
+            OSR2版，或Windows98以上，用編密的密碼驗證。</font><font color="#ff0000"><br> 
+            </font></p> 
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p> 
+            <h2><font color="#ff0000"><span style="BACKGROUND-COLOR: #e1f0ff"><a name="把 Samba 當作網域主控站(PDC)">把  
+            Samba 當作網域主控站(PDC)</a>，設定選項如下圖。</span></font></h2> 
+            <p><font color="#000080">說明：當</font>PDC 的 <font color="#000080">Samba  
+            也可以當作 Wins Server ，不過因為本校的Wins Server 和DHCP用  
+            Proxy 那台 NT Server 來做了，所以這裡不勾選。</font></p> 
+            <p><font color="#000080">　如果原網域已有NT Server  
+            了，您又不想把NT Server 汰換掉，Server ID千萬別大於３２。</font>可是不當PDC，使用者就要記憶一大堆主機密碼，校園裡實在行不通。要控制USER  
+            Login Script要在NT上做，也不太方便。</p> 
+            <p><font color="#000080"><img border="0" src="SAMBA_4.gif" width="499" height="261"><br> 
+            <br> 
+            5.如果您要用這台 Samba 網域主控站來做netlogon服務的話，要做→  
+            Netlogon setup,當然您的主機上/netlogon  
+            這個實體目錄要事先建好,並開放權限讓全部的使用者都可以讀取這個目錄</font></p> 
+            <p><font color="#ff0000">＃cd /</font></p> 
+            <p><font color="#ff0000">＃mkdir netlogon</font></p> 
+            <p><font color="#000080"><img border="0" src="SAMBA_6.gif" width="483" height="125"><br> 
+            <br> 
+            <img border="0" src="SAMBA_5.gif" width="501" height="265"><br> 
+            <br> 
+            U.bat 的設定請參考後面</font></p> 
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p> 
+            <p><font color="#000080">6.最後要去→control→control service  
+            activity中，把 samba跑起來,並設定為一開機就自動跑samba。<br> 
+            <br> 
+            <img border="0" src="SAMBA_7.gif" width="483" height="135"><br> 
+            <br> 
+            <img border="0" src="SAMBA_8.gif" width="279" height="219"><br> 
+            <br> 
+            7.[X]Automatic用空白鍵可以選取是否開機自動執行。start  
+            是啟動，stop 是停止，Restart 是重新啟動。<br> 
+            <br> 
+            <img border="0" src="SAMBA_9.gif" width="543" height="293"></font></p> 
+            <p><font color="#000080">8.測試：找一台windows98或NT，開個  
+            Dos 視窗,用指令</font></p> 
+            <p>&nbsp;<a href="file:///c:/%3ew"><font color="#000080">c:\&gt; </font></a><font color="#000080">nbtstat  
+            -A 192.168.xxx.6&nbsp; 來看看主機的SMB服務跑起來了沒有??(不知道<a href="http://www.ysps.tp.edu.tw/about/download/samba/nbtstat.txt">nbtstat指令是什麼??　點這裡</a>)</font></p> 
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p> 
+            <h2><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000">（二）<a name="用文書編輯器來修改smb.conf">用文書編輯器來修改smb.conf</a></font></span></h2> 
+            <table border="1" cellSpacing="0" width="90%"> 
+              <tbody> 
+                <tr> 
+                  <td bgColor="#e1f0ff" style="FONT-SIZE: 11pt" width="100%"> 
+                    <blockquote> 
+                      <font color="#0000ff" size="5" face="標楷體">#samba設定檔簡要說明</font><font color="#ff0000" face="標楷體" size="3">&lt;;跟#都是註解符號&gt;</font><font color="#0000ff" size="5"><br> 
+                      #</font> <font color="#ff0000">或是<a href="http://www.ysps.tp.edu.tw/about/download/samba/smb.conf">按這裡下載範例</a>  
+                      smb.conf</font><font color="#ff0000" size="3"><br> 
+                      </font>#======================= Global  
+                      Settings=========================<br> 
+                      [global]<br> 
+                      #global 部分的宣告 
+                      <p># 群組名稱<br> 
+                      <font color="#ff0000">workgroup = cc</font></p> 
+                      <p># 網路芳的芳鄰可以看到samba server 的名稱<font color="#ff0000"><br> 
+                      server string = Samba Server %v</font></p> 
+                      <p># 准許讓那些 ip 來存取。<br> 
+                      <font color="#ff0000">allow hosts=  
+                      192.168.xxx.0/255.255.255.0</font></p> 
+                      <p># 預設是 yes ，但沒使用印表機的話可設為no或者乾脆  
+                      # 起來。<br> 
+                      <font color="#ff0000">#load printers = no</font></p> 
+                      <p># 訪客帳號<br> 
+                      ;guest account = ccguest</p> 
+                      <p># Samba紀錄檔位置<br> 
+                      <font color="#ff0000">log file = /var/log/samba.%m</font></p> 
+                      <p>#安全認證等級(內定值)<br> 
+                      <font color="#ff0000">security = user</font><br> 
+                      <br> 
+                      #如果您想要繼續用NT主機帳號來做密碼認證的話(不建議，因為不能密碼同步)<br> 
+                      ; password server = ccserver</p> 
+                      <p>#把純文字密碼，用MD5編密認證<br> 
+                      <font color="#ff0000">encrypt passwords = yes</font></p> 
+                      <p>#網卡<br> 
+                      <font color="#ff0000">interfaces = 192.168.xx.6/24</font></p> 
+                      <p># 讓 Sabma當作網路主瀏覽器 (Local Master  
+                      Browser)，來蒐集網路上的芳鄰中的電腦資訊。<br> 
+                      <font color="#ff0000">local master = yes</font></p> 
+                      <p># OS Level NT 是32 ，高於32  
+                      的話就會把原來的NT PDC Server 給取代掉  
+                      ，也就是說此網域的主控站由這台 Linux Samba  
+                      來管理。同時會造成網域原來的NT Server  
+                      無法管理原有帳號，也沒有檔案目錄分享的功能。<br> 
+                      #<br> 
+                      <font color="#ff0000">os level = 35<br> 
+                      <br> 
+                      domain master = yes</font></p> 
+                      <p>#要不要把這台Samba優先成為<font color="#000080">Local  
+                      Master Browser</font> 或 D<font color="#000080">omain  
+                      Master Browser</font><font color="#ff0000"><br> 
+                      preferred master = yes</font></p> 
+                      <p># 當Logon Server，可以用來控制Client  
+                      端的巡視設定檔，及登入批次檔。<br> 
+                      <font color="#ff0000">domain logons = yes<br> 
+                      </font><br> 
+                      #以電腦〔機器〕為單位的登入批次檔<br> 
+                      ; logon script = %m.bat<br> 
+                      <br> 
+                      # 以使用者〔人〕為單位的登入批次檔<br> 
+                      ; logon script = %U.bat<br> 
+                      <br> 
+                      # 配合下面的 netlogon 設定， 把 U.bat 放入Netlogon目錄中，學生登入時，windows98就會自動執行  
+                      U.bat。 本校U.bat的內容，請<a href="#U.bat 的內容">參考這裡</a>。<br> 
+                      # 原來的設定是 %U.bat (%U.bat=UserName.bat)也就是每個人都可以有自己的開機程序，1500個師生，會設死掉，每個學生都一樣就好了。<br> 
+                      <font color="#ff0000">logon script = U.bat</font></p> 
+                      <p># 用samba當wins server (個人建議用神通案Mail  
+                      那台nt主機來做校內 DNS 和 Wins比較簡易)<br> 
+                      ; wins support = yes<font color="#ff0000"><br> 
+                      wins server = 192.168.xx.7</font></p> 
+                      <p>#如果分享的資源有使用中文長檔名，則要設code  
+                      page<br> 
+                      <font color="#ff0000">client code page=950<br> 
+                      coding system=cap<br> 
+                      </font><br> 
+                      #============================ Share Definitions  
+                      ==============================<br> 
+                      # user 的家目錄設定，路徑用name pipe  
+                      方式寫成： \\webamil\homes　<br>
+                      <font color="#ff0000">[homes]<br>
+                      comment = Users' Home Directories<br> 
+                      browseable = no<br> 
+                      writable = yes</font></p> 
+                      <p># 要做Domain Logon server  
+                      的話，當然您需要先把該目錄建好，並設為大家都可讀取<br> 
+                      <font color="#ff0000">[netlogon]<br> 
+                      comment = NetLogon Service<br> 
+                      path = /home/netlogon<br> 
+                      guest ok = yes<br> 
+                      writable = no<br> 
+                      share modes = yes</font></p> 
+                      <p># 要不要使用巡視設定檔<br> 
+                      <font color="#ff0000">[Profiles]<br> 
+                      path = /home/profiles<br> 
+                      browseable = no<br> 
+                      guest ok = yes</font></p> 
+                      <p><font color="#ff0000">;印表機設定[略]</font><br> 
+                      <br> 
+                      #暫存區<br> 
+                      # This one is useful for people to share files<br> 
+                      ;[tmp]<br> 
+                      ; comment = Temporary file space<br> 
+                      ; path = /tmp<br> 
+                      ; read only = no<br> 
+                      ; public = yes</p> 
+                      <p># 讓<font color="#ff0000">＠users 這個群組的人</font>都可以寫入　/home/works  
+                      這個目錄[繳交作業]，<br> 
+                      # 但是在 server 上的 /home/works  
+                      這個實體目錄，也要設成 chmod g+w /home/works  
+                      才可真正寫入。<br> 
+                      [public]<br> 
+                      comment = 繳交作業<br> 
+                      path = /home/works<br> 
+                      public = yes<br> 
+                      writable = yes<br> 
+                      printable = no<br> 
+                      write list = @users</p> 
+                      <font size="3"> 
+                      <p>　</font>
+                      <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+                    </blockquote>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h2><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000">（三）<a name="Login Script 範例">Login  
+            Script 範例</a></font></span></h2> 
+            <p><a name="U.bat 的內容">U.bat 是所有User</a>共用的Login  
+            Script ，您也可以指定為%U.bat 來指定每一個User各用不同的<a name="U.bat 的內容">bat  
+            檔。</a></p> 
+            <p>一般學校校園網路環境可以共用一個就可以了。<br> 
+            </p> 
+            <table border="1" cellSpacing="0" width="90%"> 
+              <tbody> 
+                <tr> 
+                  <td bgColor="#d8fee1" style="FONT-SIZE: 11pt" width="100%">@echo  
+                    off&nbsp;<br> 
+                    @rem 不在登入的ｄｏｓ視窗顯示回應<br> 
+                    @net time \\vod&nbsp; /set&nbsp;  
+                    /yes<br> 
+                    @rem 先校正個人電腦的時間與Vod Server  
+                    一樣，以利撥放vod影片<br> 
+                    @需要的話，也可以連線網路磁碟機<br> 
+                    @use&nbsp; net&nbsp; h:&nbsp; \\webmail\homes&nbsp;<br>
+                    @rem webmail 是 Linux samba主機的名字<br> 
+                    @use&nbsp; net&nbsp; s:&nbsp; \\webmail\share<br>
+                    @use&nbsp; net&nbsp; w:&nbsp; \\webmail\works<br>
+                    @if exist c:\jstemp\ok.txt  
+                    goto end<br> 
+                    ............略................<br> 
+                    <br> 
+                    :end&nbsp;<br> 
+                    @rem 直接刪除桌面的內容<br> 
+                    @deletree c:\windows\desktop\*.*  
+                    /y 
+                    <p>@自動拷貝您想要放到使用者電腦桌面上的捷徑或檔案<br> 
+                    @xcopy \\webmail\netlogon\desktop\*.*&nbsp;&nbsp;&nbsp; c:\windows\desktop\*.*&nbsp;  
+                    /e&nbsp; /y<br> 
+                    @rem  
+                    設定每個人的家目錄，並且在桌面拷貝一個〔我的家目錄〕的捷徑icon，像這樣<img align="absMiddle" border="0" src="SAMBA_14.gif" width="89" height="81"><br> 
+                    @rem  
+                    然後按滑鼠右鍵，編輯它的內容指定路徑給這個捷徑，如: 
+                    \\webmail\homes&nbsp;&nbsp;</p>
+                    <p><img border="0" src="SAMBA_15.gif" width="371" height="395"><br>
+                    <br>
+                    @rem 自動設定瀏覽器的Proxy以及首頁設定，<font color="#ff0000">Samba  
+                    若用純文字密碼，也可以把該系統登錄加入</font>。<br> 
+                    @regedit&nbsp; <font color="#FF0000">\\webmail\netlogon\ie5.reg</font><br>
+                    <br>
+                    ............略................</p>
+                    <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          <li>Samba要加入單一ｕｓｅｒ(系統內已經擁有的使用者才行)可以用以下指令<br>
+            <br>
+            $ su<br>
+            $passwd:<br>
+            #smbpasswd -a user1<br>
+            #new SMB passwd:<br>
+            #Retype new SMB passwd:<br>
+            #Password changed for user user1.<br>
+          <li>
+            <h3 align="left"><a name="使用個人化設定">使用個人化設定</a>:samba必須和windows 
+            98的多使用者功能配合才可發揮完整的個人環境效果，這時資料會回存到Server 
+            上的個人家目錄中。(超浪費網路頻寬和主機空間，學校電腦教室環境<font color="#ff0000"><b>不建議使用</b></font>)</h3>
+            <p align="left">1.在smb.conf中的[global]中,加入profile檔案要放的路徑。<br>
+            <br>
+            2.在控制台→使用者啟用多使用者設定→輸入使用者名稱→個人化項目設定值[用節省的方式]<br>
+            →完成,重新啟動電腦<br>
+            <br>
+            3.登入後, 進入windows 98前,系統會問您是否保留個人設定值, 
+            必須回答是, 才能保留每個人不同的環境參數。<br>
+            <br>
+            4.使用outlook express 5.0後, 
+            要先將資料存放的目錄變更到/windows/profiles/中您的帳號目錄底下的Application 
+            Data/Microsoft/Outlook Express底下。<br>
+            <br>
+            5.設定完成後, 登出時就會將您在/windows/profiles/您帳號目錄中的各項目錄, 
+            copy 到您server上的私人目錄下。<br>
+            <br>
+            6.每次登入便會將您的profiles目錄搬到windows/profiles/您帳號目錄中, 
+            每個人便有自己的環境與outlook express了, 
+            不會去影響到別人, 只不過您的server硬碟必須要大一點, 
+            因為新設定完成的profiles檔(不含mail信件)就將近4MB。</p>
+            <p align="left">開始→設定→控制台→使用者
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+            <p align="left"><img border="0" src="Samba_12.gif" width="456" height="297">
+            <p align="left"><font color="#000080">另外在→控制台→密碼中的→使用者設定檔也要設好您要的方式</font>
+            <p align="left"><img border="0" src="Samba_13.gif" width="344" height="349"><br>
+            </p>
+          </li>
+        </ol>
+        <h2><font color="#0000ff"><span style="BACKGROUND-COLOR: #ffff00">（四）</span></font><span style="BACKGROUND-COLOR: #ffff00"><font color="#0000ff"><a name="設定 Client 端Windows98 部份">設定 
+        Client 端Windows98 部份</a>：</font></span></h2>
+        <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+        <ol>
+          <li>將win98電腦的網路卡和 TCP/IP協定安裝好：開始 → 
+            設定 → 控制台，並且把NetBUEI，IPX等通訊協定移除，剩下TCP/IP即可。DNS 
+            、wins、或您有用DHCP.....等設定好，登入網域部分要填入您的網域，例如：cc 
+            ，並且記得前面<font color="#ff0000">登入WindowsNT網域</font>的方格要打ˇ。<br>
+            <br>
+            <img border="0" src="Linux%201.gif" width="484" height="530"><br>
+            <br>
+            <img border="0" src="http://www.ysps.tp.edu.tw/about/download/samba/Linux%202.gif"><br>
+          <li>指定師生使用不同群組(workgroup)﹕網路→識別資料→工作群組，指定成您要的群組。建議老師和學生用的電腦設為不同群組，如：電腦教室學生用cc，教室電腦用teacher。這樣在User打開網路上的芳鄰時，電腦數量才不會多到7~80台，看到眼花撩亂。<br>
+            <img border="0" src="Linux%203.gif" width="484" height="530">
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+            <p><br>
+            </p>
+          <li>網路→存取控制可設定為共用級，這樣老師學生都可以透過網路互相分享檔案。<br>
+            <img border="0" src="Linux%204.gif" width="484" height="530">
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+            <p><br>
+            </p>
+          <li>用Windows98光碟內附的&quot;<a name="系統原則編輯器&quot;〔Poledit.exe〕鎖死控制台－網路設定">系統原則編輯器&quot;〔Poledit.exe〕鎖死控制台－網路設定</a>，不讓調皮搗蛋的使用者變更設定。(執行<a href="http://www.ysps.tp.edu.tw/about/download/samba/poledit.zip">poledit.exe</a>→開啟登錄→admin.pol→本機使用者→限制→控制台→網路→限制網路控制台[打ˇ]→存檔→登出Windows，並重新登入)<br>
+            <br>
+            <img border="0" src="Linux%205.gif" width="458" height="261"><br>
+            <img border="0" src="Linux%206.gif" width="514" height="511"><br>
+          <li>重新啟動Windows，並登入網域。<a name="在網路上的芳鄰中可以看到主機">在網路上的芳鄰中可以看到主機</a>,點兩下打開,看看可否看到<br>
+            user的家目錄和share目錄<br>
+            <img border="0" src="SAMBA_10.gif" width="434" height="285">
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+            <p><br>
+            <br>
+            <img border="0" src="SAMBA_11.gif" width="491" height="351"><br>
+            成功了,恭喜您!@!<br>
+            <font color="#ff0000">homes目錄就是使用者的家目錄</font><br>
+            接下來,在windowds 
+            中只要拖放就可以編輯網頁和檔案了.</p>
+            <p><br>
+            </p>
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+            <hr>
+          </li>
+        </ol>
+        <p>如果您還遇到 Samba的其他問題﹐可以到大本營 <a href="http://www.linpus.com.tw/nicedoc/samba/sambafaq.html">http://www.linpus.com.tw/nicedoc/samba/sambafaq.html</a> 
+        網頁參考看看</p>
+        <h2><span style="BACKGROUND-COLOR: #ffff00"><font color="#0000ff"><a name="Samba 的其他指令使用">Samba<font size="4"><b> 
+        的其他指令使用</b></font></a></font></span></h2>
+        <ol>
+          <li>用 testparm 來測試一下smb.conf的語法是否正確。
+            <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+          <li>用Linuxconf&nbsp; 或<b>命令模式</b>重新啟動 SAMBA ﹕<br>
+            <table bgColor="#ffffcc" border="1" cellSpacing="0" width="90%">
+              <tbody>
+                <tr>
+                  <td bgColor="#d8fee1"><font color="#ff0000">#/etc/rc.d/init.d/smb 
+                    restart</font></td>
+                </tr>
+              </tbody>
+            </table>
+          <li>執行 Linuxconf 選 Control&nbsp; services activity--&gt; 
+            勾選﹕<font color="#ff0000"><b>[ˇ] smb</b></font><b> </b>。讓 
+            samba 隨Linux系統一起啟動。</li>
+        </ol>
+        <blockquote>
+          <p>經過上面一番折騰之後﹐當您登入 Windows 
+          之後﹐應該可以在‘網路芳鄰’ 那裡看到 Linux 
+          的機器了。</p>
+          <p>使用者要變更密碼，不必Telnet到主機上，只要把WAM裝好就可以了</p>
+          <p>從Linux主機上設定 連結Windows或NT主機上面的分享資源的話，可使用 
+          smbmount :
+          <table bgColor="#ffffcc" border="1" cellSpacing="0" width="90%">
+            <tbody>
+              <tr>
+                <td bgColor="#d8fee1"><b>smbmount &quot;\\\\ccserver\share&quot; 
+                  /mnt</b></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>如果上面的語法不成功﹐可以試試這個﹕
+          <table bgColor="#ffffcc" border="1" cellSpacing="0" width="90%">
+            <tbody>
+              <tr>
+                <td bgColor="#d8fee1"><b>smbmount &quot;\\\\ccserver\share&quot; 
+                  -c 'mount /mnt'</b></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>果您要檢查一下連接﹐看看 Windows 
+          機器有什麼分享資源﹐可以使用﹕
+          <table bgColor="#ffffcc" border="1" cellSpacing="0" width="90%">
+            <tbody>
+              <tr>
+                <td bgColor="#d8fee1"><b>smbclient -L ccserver</b></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>或
+          <table bgColor="#ffffcc" border="1" cellSpacing="0" width="90%">
+            <tbody>
+              <tr>
+                <td bgColor="#d8fee1"><b>smbclient \\\\ccserver</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </blockquote>
+        <p>來連接對方﹐但這樣的情況有點像使用文字模式的 
+        FTP ﹐當然沒有使用 smbmount 那麼方便。</p>
+        <h3>參考文件<br>
+        <a href="http://www.cses.tcc.edu.tw/~chihwu/samba.html">http://www.cses.tcc.edu.tw/~chihwu/samba.html</a><a href="http://www.study-area.net/resume.htm"><br>
+        http://www.study-area.net/resume.htm</a><br>
+        <a href="http://www.cses.tcc.edu.tw/~chihwu/DAY7-8.htm">http://www.cses.tcc.edu.tw/~chihwu/DAY7-8.htm<br>
+        http://netlab.kh.edu.tw/FAQ/samba相關問題集.htm</a></h3>
+        <p align="right"><a href="#目　錄"><span style="BACKGROUND-COLOR: #ffff00"><font color="#ff0000" size="4"><b>回目錄</b></font></span></a></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=big5">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>WAM帳號管理員一般User使用說明</title>
+</head>
+
+<BODY bgColor=#ddeeff style="font-size: 11pt; line-height: 150%" background="circue_bg.jpg" bgproperties="fixed">
+<hr>
+<H1 align="center"><FONT color=#000080><a href="javascript:onclick=alert('請先輸入帳號密碼來登入!!')" border="0"><img src="wam.gif" align="absMiddle" border="0" width="435" height="289"></a></FONT></H1> 
+<H1 align="center"><FONT color=#000080>【</FONT><font color="#FF0000" face="Arial Black">WAM</font><FONT color=#000080><font face="標楷體">帳號管理員】使用說明&nbsp;</font></FONT><font size="3"><br>
+</font></H1> 
+<HR color =red size=1> 
+ 
+<H1 align=left><A name=catalog><FONT color=#800080 face=標楷體>目錄</FONT></A></H1> 
+<UL> 
+  <LI> 
+  <H3 align=left><A  
+  href="#intro">什麼是<font color="#FF0000" face="Arial Black">WAM</font>？</A></H3> 
+  <LI> 
+  <H3 align=left><A  
+  href="#copyright"><B>版權聲明</B></A></H3> 
+  <LI> 
+  <H3 align=left><FONT color=#ff0000><B><A  
+  href="#features">程式功能簡介</A></B></FONT></H3> 
+  <LI>                          
+  <P align=left><A                           
+  href="#function"><B><FONT                           
+  size=4>分項使用說明</FONT></B></A><B> [&nbsp; </B><A                             
+  href="#f12">檔案管理員</A><B> |                              
+  </B><a href="#f14">共享資料夾</a><B> | </B><a href="#f16">設定計數器</a><B> | </B><a href="#f17">查看參觀人數</a><B>                 
+  | </B><a href="#f18">設定留言版</a><B> | </B><a href="#f19">管理留言內容</a><B>                 
+  | </B><A                              
+  href="#f13">登出系統</A><B>                           
+]</B></P></LI>                             
+</UL>                         
+<HR color =red size=1>                         
+                         
+<H1 align=left><A name=intro><FONT color=#ff0000                          
+face=標楷體>什麼是</FONT><FONT color=#ff0000                          
+face='Arial Black'>WAM</FONT><FONT color=#ff0000                          
+face=標楷體>？</FONT></A><FONT color=#ff0000 face=標楷體>　</FONT><FONT                          
+face=標楷體><A href="#catalog"><FONT                          
+size=3>回目錄</FONT></A></FONT></H1>                         
+<P align=left><font color="#FF0000" face="Arial Black">WAM</font>是<FONT color=#000080><B>Web-base Account                         
+Manager</B></FONT>的縮寫，中文就稱為<B><font color="#FF0000">帳號管理員</font></B><FONT color=#000080>，</FONT>是由台北市石牌國小<A href="http://www.tmtc.edu.tw/~shane"><B><font color="#0000FF">李忠憲老師</font></B></A>用perl開發的作品。目前支援   
+Redhat 8.x 以上 及 Mandrake 8.x 以上的Linux 系統.</P>                            
+<P align=left>WAM的設計理念主要是為了方便國中小電腦老師和資訊組長管理   
+Linux 主機帳號以及降低一般使用者或學生使用Linux                              
+Web+Mail主機的門檻而創作的，因此設計的方向與一般以管理員角度來考量的系統（例如：webmin、eServer......等等）有別.</P>                          
+<P align=left>WAM可以讓一般使用者（而不僅只是管理員），直接透過網頁管理自己的檔案進行主機資源的取用與操作，也兼融了ＷＥＢ介面的   
+NeoMail ，提供小朋友簡易的Webmail 收發郵件功能。</P>                            
+<P align=left>另外，WAM也提供了網頁設計所需的圖形式訪客記數器和留言版公用cgi程式，其中留言版程式更可以利用作為電子報派報功能，提供親師互動的良好橋樑．電子相簿公用程式功能更可以自動製作縮圖，供師生管理電子相簿使用．</P>                          
+<P                           
+align=left style="line-height: 150%">在管理校園區域網路的角度來看，WAM主要應用於單一主機提供大量Mail帳號及網頁空間服務，更理想的是在您的主機上安裝          
+<a href="http://www.samba.org">Samba</a>  
+服務，也就是說該主機有整合NT網路芳鄰的需求，這樣的話ＷＡＭ就又能提供系統密碼與Samba同步的服務，管理員想要透過ｗｅｂ介面設定磁碟配額，或是想提供使用者線上網頁製作，郵件收發.....等應用環境，更能展現ＷＡＭ程式強大易用的功能。</P>                           
+<P                           
+align=left style="line-height: 150%">新版的ＷＡＭ如1.63版，更提供了線上升級的服務，輕輕一點就可以自動連到逸仙國小升級，另外還有中英文多語系支援等新功能陸續開發中．</P>                         
+<P align=left>目前WAM總站設於台北市逸仙國小，由黃自強老師負責程式介面美工設計及程式ＢＵＧ測試，並於逸仙國小提供網路ｆａｑ及下載服務．</P>                          
+<HR color =red size=1>                         
+                         
+<H1 align=left><FONT face=標楷體><B><FONT color=#ff0000><A                          
+name=copyright>版權聲明</A>　</FONT></B><A                          
+href="#catalog"><FONT                          
+size=3>回目錄</FONT></A></FONT></H1>                         
+<P align=left><FONT color=#000080>本程式基於開放程式碼(Open                              
+Source)的無私精神，除免費授權給教育單位使用外，任何人都可以在合乎著作權法及GPL的規範下，取得原始程式碼，可依據自己的需要來做修改。唯需保留原著作聲明，且不得在未作任何修改的情形下，使用於商業或當成附加價值產品（例如放入書中所附的光碟中），若需作此類用途，應先取得作者之書面授權。</FONT></P>                          
+<HR color =red size=1>                          
+                          
+<H1 align=left><FONT face=標楷體><FONT color=#ff0000><A                           
+name=features>程式簡介</A>　</FONT><A                           
+href="#catalog"><FONT                           
+size=3>回目錄</FONT></A></FONT></H1>                          
+<P                           
+align=left>本程式主要提供管理員（root）管理大量帳號使用，以基本功能來說，包括：自動新增、手動新增、移除、重設密碼......等，另外，針對帳號可進行各種細項屬性的規劃，例如：巢狀目錄、預設首頁範本、Samba密碼同步、使用期限、強迫密碼更新、磁碟配額......等等。一般使用者則可以透過網頁，直接修改個人密碼。</P>                          
+<P                           
+align=left>檔案管理員可提供管理員（root）以及一般使用者，管理主機上的個人目錄和檔案，例如：上傳、下載、備份、搬移、更名、設定權限......等等，而不需要再透過複雜的                              
+Telnet、FTP                              
+軟體來處理。因此應用在學生的網頁設計課程中，有相當好的效能和便利性。管理員（root）還可以透過網頁，建立各種不同用途的共享資料夾（公用磁碟空間），滿足學生繳交作業、提供檔案下載、文件資料交換....等種種不同的需求。</P>                          
+<P                           
+align=left>郵件管理員則提供以網頁來收發電子郵件，如果使用如OutlookExpress等一般收信軟體來處理，先前的設定工作，足以讓初學者嚐盡苦頭。一般使用者和管理員（root）都可以透過內建的          
+Neomail 網路郵局收發郵件，設定通訊錄，郵件過濾規則......等等，等於是擁有了一個網頁上的OutlookExpress，但是又不必作複雜的帳號設定。</P>                            
+<P align=left>使用Linux Web+Mail Server，配合WAM解決方案，可以提供使用者享有以下服務<B><FONT                              
+color=#0000ff>：</FONT></B></P>                          
+<TABLE border=1 cellSpacing=0 height=85 width="93%">                          
+  <TBODY>                          
+  <TR>                          
+    <TD align=middle bgColor=#007bb7 height=16 width="41%"><B><FONT                           
+      color=#ffffff>功　　能</FONT></B></TD>                          
+    <TD align=middle bgColor=#007bb7 height=16 width="59%"><FONT                           
+      color=#ffffff>&nbsp;<B>說　　明</B></FONT></TD></TR>
+  <TR>
+    <TD height=16 width="41%"><B><FONT 
+      color=#cd0000>個人網頁空間(可設定quota)</FONT></B></TD>
+    <TD height=16 width="59%"><FONT color=#ff0000>&nbsp;</FONT><FONT 
+      color=#000080><B>http://主機名稱/~你的帳號</B></FONT></TD></TR>
+  <TR>
+    <TD height=16 width="41%"><B><FONT color=#cd0000>Email                              
+      信箱(可線上收發電子郵件)</FONT></B></TD>                          
+    <TD height=16 width="59%"><FONT                           
+color=#000080><B>你的帳號@主機名稱</B></FONT></TD></TR>                          
+  <TR>                          
+    <TD height=16 width="41%"><B><FONT                           
+    color=#cd0000>共享資料夾(公用磁碟空間)</FONT></B></TD>                          
+    <TD height=16 width="59%"><FONT                           
+  color=#000080><B>繳交作業或檔案分享用</B></FONT></TD></TR>                          
+  <TR>                          
+    <TD height=16 width="41%"><B><FONT                           
+    color=#cd0000>網頁計數器，留言版和電子相簿</FONT></B></TD>                          
+    <TD height=16 width="59%"><FONT                           
+  color=#000080><B>製作網頁用</B></FONT></TD></TR></TBODY></TABLE>                          
+<HR color =red size=1>                       
+                       
+<H1><FONT color=#ff0000><A name=function><FONT                        
+face=標楷體>分項使用說明</FONT></A></FONT><FONT face=標楷體><FONT color=#ff0000>　</FONT><A                        
+href="#catalog"><FONT                        
+size=3>回目錄</FONT></A></FONT></H1>                       
+<TABLE border=1 cellPadding=0 cellSpacing=0 height="100%" width=100%>                       
+  <TBODY>                       
+  <TR>                       
+    <TD align=left bgColor=#007bb7 height=60 vAlign=center width=631>                       
+      <P align=center><FONT color=#ffffff face=標楷體                        
+    size=6>主選單說明簡介</FONT></P></TD>                       
+    <TD align=center bgColor=#007bb7 height=60 vAlign=center width=174>                       
+      <P align=center><FONT color=#ffffff face=標楷體 size=6>畫面及功能</FONT></P></TD></TR>                       
+  <TR>
+    <TD align=left bgColor=#ffffff vAlign=top width=631 style="font-size: 11pt" height="32"><FONT 
+      color=#cd0000><B><A name=f11>郵件管理員</A></B></FONT> 
+      <P><FONT color=#0000ff>　本程式內含 Neomail WEB              
+      郵件服務，詳細說明請自行到 Neomail 站台查閱 。</FONT></P><P><font color="#800080">按這裡看</font><font color="#0000FF"><a href="/neomail/neomailpro.html">使用說明</a></font></P><P>　</P></TD>                        
+    <TD align=center width=174 height="32">                     
+        <a href="wpe1E.jpg"><img border="2" src="help_r14.jpg" alt="wpe1E.jpg (48876 個位元組)" width="100" height="58"></a>          
+    </TD>          
+  <TR>          
+    <TD align=left bgColor=#ffffff height=230 vAlign=top width=631 style="font-size: 11pt"><B><FONT           
+      color=#cd0000><A name=f12>檔案管理員</A></FONT></B>           
+      <P><FONT                
+      color=#0000ff>　比起WebSpace之類的程式，這個檔案總管功能齊全多了。</FONT></P>
+      <P><FONT      
+      color=#0000ff>　</FONT>目錄和檔案用不同的顏色來區別，介面盡量做到直覺化使用。特別適合中高年級小朋友使用。</P>
+      <P><FONT      
+      color=#0000ff>　只要把做好的網頁用本程式，上傳到使用者的網頁家目錄，作品就可以直接上網。</FONT></P>
+      <P><FONT      
+      color=#0000ff>　</FONT>學生也可以回家下載自己的作品，經過修改後上傳回主機。這樣，有興趣的學生就不會抱怨電腦課的時間太短暫了。</P></TD>
+    <TD align=center height=230 width=174>
+      <a href="wpe20.jpg"><img border="2" src="help_r15.jpg" alt="wpe20.jpg (142276 個位元組)" width="100" height="86"></a></TD></TR>
+  <tr>
+    <TD align=left bgColor=#ffffff height=187 vAlign=top width=631 style="font-size: 11pt"><b><font color="#CD0000"><a name="f14">共享資料夾</a></font></b>
+      <p><FONT      
+      color=#0000ff>　</FONT>提供使用者share資料夾及可寫入的空間。<BR><FONT      
+      color=#0000ff>　</FONT><font color="#0000FF">步驟：用ROOT登入，在檔案管理員中先建立一個資料夾，勾選資料夾，安下〔設定為共享〕後，指派資料夾的讀寫權限。</font><BR><FONT      
+      color=#0000ff>　</FONT>若要變更權限，可以切換到共享資料夾，按〔變更設定〕即可。<BR><FONT      
+      color=#0000ff>　</FONT><font color="#0000FF">範例：本校以Linux主機上的FTP資料夾/home/ftp/pub　作為共享目錄，並以ｆｔｐ的upload資料夾設定為可以寫入的暫存區。並有交作業用資料夾。</font></p>
+    </TD>
+    <TD align=center height=187 width=174>               
+      <a href="wpe23.jpg"><img border="2" src="help_r16.jpg" alt="wpe23.jpg (72235 個位元組)" width="100" height="60"></a>
+      </TD>
+    </tr>
+    <tr>
+    <TD align=left bgColor=#ffffff height=195 vAlign=top width=631 style="font-size: 11pt"><b><font color="#CD0000"><a name="f16">設定計數器</a></font></b><br>
+      <FONT      
+      color=#0000ff>　</FONT>學生只要在網頁中加入一個連結，每一頁網頁上都可以擁有計數器了。<font color="#FF0000"><b>&lt;img                       
+      src=http://hostname:12000/count.cgi&gt;</b></font>                   
+      <p><font color="#0000FF">＊計數器新功能:<br>                  
+      　可以動態指定要使用哪一頁的count、風格、顯示位數以及要不要檢查ip&nbsp;，</font>例如:<font color="#0000FF"><br>     
+      </font><font color="#FF0000">&lt;img src=http://hostname:12000/count.cgi?page=index.htm&amp;style=7&amp;check_ip=no&amp;digits=5&gt;</font><br>      
+      </TD>      
+    <TD align=center height=195 width=174>       
+      <a href="wpe27.jpg"><img border="2" src="help_r18.jpg" alt="wpe27.jpg (66921 個位元組)" width="100" height="63"></a>       
+    </TD>       
+    </tr>       
+    <tr>       
+    <TD align=left bgColor=#ffffff height=78 vAlign=top width=631 style="font-size: 11pt"><font color="#CD0000"><b><a name="f17">查看參觀人數</a></b></font>      
+      <p><FONT       
+      color=#0000ff>　</FONT>當用到計數器的網頁越來越多，使用者會想管理眾多網頁的計數器。這裡提供計數刪除服務。</TD>      
+    <TD align=center height=78 width=174>       
+      <a href="wpe29.jpg"><img border="2" src="help_r19.jpg" alt="wpe29.jpg (76441 個位元組)" width="100" height="63"></a>    
+      </TD>    
+    </tr>    
+    <tr>    
+    <TD align=left bgColor=#ffffff height=151 vAlign=top width=631 style="font-size: 11pt"><font color="#CD0000"><b><a name="f18">設定留言版</a></b></font>    
+      <p>＊留言版使用方法&nbsp;<br>    
+      　直接在學生網頁增加一個link ,連到<br>           
+      &nbsp;<font color="#0000FF">http://hostname:12000/gbook.cgi</font>&nbsp;<br>       
+      　或是動態指定user,例如：<br>    
+      &nbsp;<font color="#0000FF">http://hostname:12000/gbook.cgi?user=root</font></TD>    
+    <TD align=center height=151 width=174><a href="wpe2B.jpg"><img border="2" src="help_r20.jpg" alt="wpe2B.jpg (57163 個位元組)" width="100" height="59"></a></TD>      
+    </tr>      
+    <tr>      
+    <TD align=left bgColor=#ffffff height=88 vAlign=top width=631 style="font-size: 11pt"><font color="#CD0000"><b><a name="f19">管理留言內容</a></b></font>     
+      <p><FONT      
+      color=#0000ff>　</FONT>提供查看秘密留言與刪除留言功能。</TD>     
+    <TD align=center height=88 width=174>      
+            
+    <a href="wpe2D.jpg"><img border="2" src="help_r21.jpg" alt="wpe2D.jpg (68925 個位元組)" width="100" height="65"></a>      
+            
+    </TD>       
+    </tr>       
+  <TR>       
+    <TD align=left bgColor=#ffffff height=105 vAlign=top width=631 style="font-size: 11pt"><B><FONT        
+      color=#cd0000><A name=f13>登出系統</A></FONT></B>        
+      <P><FONT        
+      color=#0000ff>　</FONT>本程式使用完畢一定要登出系統，要不然cookies還會留在您的電腦中，有心人就很容易取得root的MD5密碼了（不必太擔心，編密過的啦！）。</P></TD>     
+    <TD align=center height=105 width=174></TD></TR></TBODY></TABLE>     
+  <hr>
+<P align=center><FONT face=標楷體><A     
+href="#catalog"><FONT     
+size=3>回目錄</FONT></A></FONT></P></SCRIPT>   
+   
+</body>   
+   
+</html>   
