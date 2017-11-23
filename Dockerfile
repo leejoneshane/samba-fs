@@ -7,7 +7,7 @@ ADD slapd.conf /etc/openldap/slapd.conf
 ADD initldap.ldif /etc/openldap/initldap.ldif
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo acl attr samba-server openldap perl \
+    && apk --no-cache --no-progress add bash sudo acl attr samba openldap perl \
     && adduser -G admin,users -h /mnt admin \
     && echo "admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/admin; \
     && chmod 0440 /etc/sudoers.d/admin \
