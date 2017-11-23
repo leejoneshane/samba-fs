@@ -2,8 +2,8 @@
 set -e
 
 if [[ ! -f /etc/openldap/is.done ]]; then
-    secert = slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n
-    sed -r "s/SAMBA_ADMIN_SECRET/$secret/g" /etc/openldap/schema/samba.ldif
+    SECRET=`slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n`
+    sed -r "s/SAMBA_ADMIN_SECRET/$SECRET/g" /etc/openldap/schema/samba.ldif
     slapadd -v -l /etc/openldap/schema/samba.ldif
     slapindex -f /etc/openldap/slapd.conf
     /etc/init.d/slapd restart
