@@ -12,7 +12,7 @@ RUN apk update \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
-    && chmos +x /usr/sbin/entrypoint.sh
+    && chmod +x /usr/sbin/entrypoint.sh
 
 EXPOSE 137/udp 138/udp 139 12000
 VOLUME ["/mnt"]
