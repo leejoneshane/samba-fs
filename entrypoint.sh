@@ -1,24 +1,15 @@
 #!/bin/sh
 set -e
 
-# Configure the AD DC with OpenLDAP backend
-if [[ ! -f /etc/samba/smb.conf ]]; then
-      echo "$SAMBA_DOMAIN - Begin Domain Provisioning..."
-      samba-tool domain provision \
-        --domain="CC" \
-        --realm="CC.samba.org" \
-        --adminpass="$SAMBA_ADMIN_PASSWORD" \
-        --server-role=dc \
-        --dns-backend=SAMBA_INTERNAL \
-        --ldap-backend-type=openldap \
-        --slapd-path=/usr/local/libexec/slapd \
-        --use-ntvfs
-      echo "$SAMBA_DOMAIN - Domain Provisioning Successfully."
+if [[ ! -f /etc/openldap/is.done ]]; then
+    secert = slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n
+    sed -r "s/SAMBA_ADMIN_SECRET/$secret/g" /etc/openldap/initldap.ldif
+    slapadd -v -l /etc/openldap/initldap.dif
+    slapindex -f /etc/openldap/slapd.conf
+    /etc/init.d/slapd restart
+    smbpasswd -w $SAMBA_ADMIN_PASSWORD
+    touch /etc/openldap/is.done
 fi
-
-if [[ ! -f /etc/krb5.conf ]]; then
-    ln -sf /var/lib/samba/private/krb5.conf /etc/krb5.conf
-fi      
 
 if [[ -f /etc/samba/smb.conf ]]; then
     exec /usr/sbin/samba -i
