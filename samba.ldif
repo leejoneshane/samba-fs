@@ -23,7 +23,7 @@ cn: admin
 objectclass: top
 objectclass: organizationalRole
 objectclass: simpleSecurityObject
-userPassword: {SSHA}SAMBA_ADMIN_SECERT
+userPassword: SAMBA_ADMIN_SECERT
 
 # Setting up container for groups
 dn: ou=Groups,dc=cc,dc=tp,dc=edu,dc=tw
@@ -37,7 +37,7 @@ cn: admin
 objectclass: top
 objectclass: organizationalRole
 objectclass: simpleSecurityObject
-userPassword: {SSHA}SAMBA_ADMIN_SECRET
+userPassword: {SAMBA_ADMIN_SECRET
 
 # Setting up container for computers
 dn: ou=Computers,dc=cc,dc=tp,dc=edu,dc=tw
@@ -51,4 +51,4 @@ cn: admin
 objectclass: top
 objectclass: organizationalRole
 objectclass: simpleSecurityObject
-userPassword: {SSHA}SAMBA_ADMIN_SECRET
+userPassword: SAMBA_ADMIN_SECRET
