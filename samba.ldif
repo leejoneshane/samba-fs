@@ -23,7 +23,7 @@ cn: admin
 objectclass: top
 objectclass: organizationalRole
 objectclass: simpleSecurityObject
-userPassword: SAMBA_ADMIN_SECERT
+userPassword: SAMBA_ADMIN_SECRET
 
 # Setting up container for groups
 dn: ou=Groups,dc=cc,dc=tp,dc=edu,dc=tw
