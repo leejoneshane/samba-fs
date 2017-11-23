@@ -1,7 +1,10 @@
 FROM alpine
 
-COPY entrypoint.sh /usr/sbin/
-COPY smb.conf /etc/samba/
+ADD entrypoint.sh /usr/sbin/
+ADD smb.conf /etc/samba/smb.conf
+ADD samba.schema /etc/openldap/schema/samba.schema
+ADD slapd.conf /etc/openldap/slapd.conf
+ADD initldap.ldif /etc/openldap/initldap.ldif
 
 RUN apk update \
     && apk --no-cache --no-progress add bash sudo acl attr samba-server openldap perl \
@@ -11,5 +14,5 @@ RUN apk update \
     && chmos +x /usr/sbin/entrypoint.sh    
 
 EXPOSE 137/udp 138/udp 139 12000
-VOLUME ["/etc/samba", "/mnt"]
+VOLUME ["/mnt"]
 ENTRYPOINT ["entrypoint.sh"]
