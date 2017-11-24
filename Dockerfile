@@ -1,5 +1,7 @@
 FROM alpine
 
+ENV SAMBA_ADMIN_PASSWORD S@mba
+
 ADD entrypoint.sh /usr/sbin/
 ADD smb.conf /etc/samba/smb.conf
 ADD samba.schema /etc/openldap/schema/samba.schema
