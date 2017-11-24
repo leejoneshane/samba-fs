@@ -130,7 +130,7 @@ cn: admin
 objectclass: top
 objectclass: organizationalRole
 objectclass: simpleSecurityObject
-userPassword: {SAMBA_ADMIN_SECRET
+userPassword: SAMBA_ADMIN_SECRET
 
 # Setting up container for computers
 dn: ou=Computers,dc=cc,dc=tp,dc=edu,dc=tw
