@@ -17,8 +17,8 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && wget --no-check-certificate -O /usr/bin/cpanm https://raw.githubusercontent.com/miyagawa/cpanminus/master/cpanm \
-    && chmod +x /usr/bin/cpanm \
+    && perl -MCPAN -e 'install Bundle::CPAN' \
+    && perl -MCPAN -e 'install App::cpanminus' \
     && cpanm local::lib \
     && cpanm Mojolicious
 
