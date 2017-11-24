@@ -21,6 +21,6 @@ RUN apk update \
     && cpanm local::lib \
     && cpanm Mojolicious
 
-EXPOSE 137/udp 138/udp 139 12000
+EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt"]
 ENTRYPOINT ["entrypoint.sh"]
