@@ -1,10 +1,10 @@
 
 # Organization for Samba Base
-dn: dc=cc,dc=tp,dc=edu,dc=tw
-objectclass: dcObject
-objectclass: organization
-dc: cc
-o: Computer Classroom Network
+#dn: dc=cc,dc=tp,dc=edu,dc=tw
+#objectclass: dcObject
+#objectclass: organization
+#dc: cc
+#o: Computer Classroom Network
 
 # Organizational Role for Directory Management
 dn: cn=Manager,dc=cc,dc=tp,dc=edu,dc=tw
