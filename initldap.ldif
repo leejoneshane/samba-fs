@@ -1,19 +1,4 @@
 
-# Organization for Samba Base
-#dn: dc=cc,dc=tp,dc=edu,dc=tw
-#objectclass: dcObject
-#objectclass: organization
-#dc: cc
-#o: Computer Classroom Network
-
-# Organizational Role for Directory Management
-dn: cn=Manager,dc=cc,dc=tp,dc=edu,dc=tw
-cn: Manager
-objectclass: organizationalRole
-objectclass: simpleSecurityObject
-description: Directory Manager
-userPassword: SAMBA_ADMIN_SECRET
-
 # Setting up container for Users OU
 dn: ou=People,dc=cc,dc=tp,dc=edu,dc=tw
 objectclass: top
