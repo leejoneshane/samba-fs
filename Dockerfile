@@ -16,11 +16,12 @@ RUN apk update \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
-    && chmod +x /usr/sbin/entrypoint.sh \
-    && perl -MCPAN -e 'install Bundle::CPAN' \
-    && perl -MCPAN -e 'install App::cpanminus' \
-    && cpanm local::lib \
-    && cpanm Mojolicious
+    && chmod +x /usr/sbin/entrypoint.sh
+    
+#RUN perl -MCPAN -e 'install Bundle::CPAN' \
+#    && perl -MCPAN -e 'install App::cpanminus' \
+#    && cpanm local::lib \
+#    && cpanm Mojolicious
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt"]
