@@ -12,12 +12,12 @@ ADD slapd.ldif /etc/openldap/slapd.ldif
 ADD initldap.ldif /etc/openldap/initldap.ldif
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo make gcc acl attr samba openldap perl \
+    && apk --no-cache --no-progress add bash sudo make gcc acl attr samba openldap perl openssl \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && wget -O /usr/bin/cpanm https://raw.githubusercontent.com/miyagawa/cpanminus/master/cpanm \
+    && wget --no-check-certificate -O /usr/bin/cpanm https://raw.githubusercontent.com/miyagawa/cpanminus/master/cpanm \
     && chmod +x /usr/bin/cpanm \
     && cpanm local::lib \
     && cpanm Mojolicious
