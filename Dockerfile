@@ -12,7 +12,7 @@ ADD slapd.ldif /etc/openldap/slapd.ldif
 ADD initldap.ldif /etc/openldap/initldap.ldif
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo make gcc acl attr samba openldap perl openssl \
+    && apk --no-cache --no-progress add bash sudo wget make gcc acl attr samba openldap perl openssl \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
