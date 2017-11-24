@@ -6,9 +6,8 @@ set -e
 #    sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/slapd.ldif
 #    slapadd -v -l /etc/openldap/slapd.ldif
 #    slapindex -f /etc/openldap/slapd.conf
-#    /etc/init.d/slapd restart
+#    slapd -f /etc/openldap/slapd.conf
 #    smbpasswd -w $SAMBA_ADMIN_PASSWORD
-#    smbldap-useradd -a admin
 #    echo -e "$SAMBA_ADMIN_PASSWORD\n$SAMBA_ADMIN_PASSWORD" | smbpasswd -s admin
 #    touch /etc/openldap/is.done
 #fi
