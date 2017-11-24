@@ -13,9 +13,10 @@ set -e
 #    touch /etc/openldap/is.done
 #fi
 
-#if [[ -f /etc/samba/smb.conf ]]; then
-#    exec /usr/sbin/samba -i
-#fi
+if [[ -f /etc/samba/smb.conf ]]; then
+    exec smbd -FS
+    exec nmbd -FS
+fi
 
 if [ "$#" -lt 1 ]; then
   exec bash
