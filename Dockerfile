@@ -17,9 +17,9 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && perl -MCPAN -e 'install Task::Catalyst' \
-    && perl -MCPAN -e 'install Catalyst::Devel' \
-    && perl -MCPAN -e 'install Catalyst::Model::DBIC::Schema'
+    && perl -MCPAN -e 'install App::cpanminus' \
+    && cpanm local::lib \
+    && cpanm Mojolicious
 
 EXPOSE 137/udp 138/udp 139 12000
 VOLUME ["/mnt"]
