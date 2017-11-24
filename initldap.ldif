@@ -1,3 +1,15 @@
+# Organization for Samba Base
+dn: dc=cc,dc=tp,dc=edu,dc=tw
+dc: cc
+objectclass: dcObject
+objectclass: organization
+o: Computer Classroom Network
+
+# Organizational Role for Directory Management
+dn: cn=Manager,dc=cc,dc=tp,dc=edu,dc=tw
+cn: Manager
+objectclass: organizationalRole
+description: Directory Manager
 
 # Setting up container for Users OU
 dn: ou=People,dc=cc,dc=tp,dc=edu,dc=tw
