@@ -17,10 +17,12 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh
-    
+
 RUN perl -MCPAN -e 'install App::cpanminus' \
     && cpanm local::lib \
-    && cpanm Mojolicious
+    && cpanm Mojolicious \
+    && cpanm File::Samba \
+    && cpanm Samba::LDAP
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt"]
