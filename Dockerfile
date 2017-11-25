@@ -22,7 +22,7 @@ RUN apk --no-cache --no-progress add wget openssl make gcc musl-dev perl perl-ut
         perl-module-build perl-module-build-tiny perl-list-moreutils perl-digest-sha1 perl-unicode-string \
         perl-config-tiny perl-universal-require perl-ldap perl-readonly perl-test-pod perl-file-find-rule \
         perl-pod-coverage perl-test-pod-coverage perl-test-leaktrace perl-exporter-tiny perl-convert-asn1 \
-        perl-text-soundex perl-data-dump \
+        perl-text-soundex perl-data-dump perl-yaml \
     && cpan install App::cpanminus \
     && cpanm local::lib \
     && cpanm File::Samba \
