@@ -18,11 +18,11 @@ RUN apk update \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh
 
-RUN apk --no-cache --no-progress add wget openssl make gcc perl perl-cpan perl-utils perl-mojolicious \
+RUN apk --no-cache --no-progress add wget openssl make gcc perl perl-utils perl-mojolicious perl-data-dump \
         perl-module-build perl-module-build-tiny perl-list-moreutils perl-digest-sha1 perl-unicode-string \
         perl-config-tiny perl-universal-require perl-net-ldap perl-readonly perl-test-pod perl-file-find-rule \
         perl-pod-coverage perl-test-pod-coverage perl-test-leaktrace perl-exporter-tiny perl-convert-asn1 \
-        perl-text-soundex perl-data-dump \
+        perl-text-soundex \
     && cpan install App::cpanminus \
     && cpanm local::lib \
     && cpanm File::Samba \
