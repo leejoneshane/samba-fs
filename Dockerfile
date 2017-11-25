@@ -26,6 +26,7 @@ RUN apk --no-cache --no-progress add wget openssl make gcc musl-dev perl perl-ut
     && cpan install App::cpanminus \
     && cpanm local::lib \
     && cpanm File::Samba \
+    && cpanm --force Jcode Unicode::Map Unicode::Map8 \
     && cpanm --force Samba::LDAP
 
 EXPOSE 137/udp 138/udp 139 3000
