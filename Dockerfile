@@ -10,6 +10,7 @@ ADD samba.ldif /etc/openldap/schema/samba.ldif
 ADD slapd.conf /etc/openldap/slapd.conf
 ADD slapd.ldif /etc/openldap/slapd.ldif
 ADD initldap.ldif /etc/openldap/initldap.ldif
+ADD web /web
 
 RUN apk update \
     && apk --no-cache --no-progress add bash sudo acl attr samba openldap perl perl-mojolicious \
