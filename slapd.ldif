@@ -29,7 +29,8 @@ olcPidFile: /var/lib/openldap/run/slapd.pid
 #objectClass: olcModuleList
 #cn: module
 #olcModulepath:	/usr/lib/openldap
-olcModuleload:	back_bdb.la
+olcModuleload:	back_mdb.la
+#olcModuleload:	back_bdb.la
 #olcModuleload:	back_hdb.la
 #olcModuleload:	back_ldap.la
 #olcModuleload:	back_passwd.la
@@ -83,7 +84,7 @@ olcRootDN: cn=Manager,dc=cc,dc=tp,dc=edu,dc=tw
 # Cleartext passwords, especially for the rootdn, should
 # be avoided.  See slappasswd(8) and slapd-config(5) for details.
 # Use of strong authentication encouraged.
-olcRootPW: secret
+olcRootPW: SAMBA_ADMIN_SECRET
 # The database directory MUST exist prior to running slapd AND 
 # should only be accessible by the slapd and slap tools.
 # Mode 700 recommended.
