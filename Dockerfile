@@ -13,7 +13,7 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo acl attr samba openldap perl perl-mojolicious \
+    && apk --no-cache --no-progress add bash sudo acl attr samba openldap openldap-back-mdb perl perl-mojolicious \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
