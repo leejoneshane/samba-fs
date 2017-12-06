@@ -29,8 +29,7 @@ olcPidFile: /var/lib/openldap/run/slapd.pid
 #objectClass: olcModuleList
 #cn: module
 #olcModulepath:	/usr/lib/openldap
-olcModuleload:	back_mdb.la
-#olcModuleload:	back_bdb.la
+olcModuleload:	back_bdb.la
 #olcModuleload:	back_hdb.la
 #olcModuleload:	back_ldap.la
 #olcModuleload:	back_passwd.la
