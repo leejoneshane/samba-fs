@@ -32,4 +32,4 @@ RUN apk update \
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt"]
-#ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]
