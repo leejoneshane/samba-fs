@@ -12,6 +12,8 @@ if [[ ! -f /etc/openldap/is.done ]]; then
     smbpasswd -w $SAMBA_ADMIN_PASSWORD
     echo -e "$SAMBA_ADMIN_PASSWORD\n$SAMBA_ADMIN_PASSWORD" | smbpasswd -as admin
     touch /etc/openldap/is.done
+else
+    slapd -f /etc/openldap/slapd.conf
 fi
 
 if [[ -f /etc/samba/smb.conf ]]; then
