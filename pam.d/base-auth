@@ -1,0 +1,4 @@
+auth      required    pam_env.so
+auth      sufficient  pam_unix.so nullok_secure
+auth      sufficient  pam_ldap.so minimum_uid=1000 use_first_pass
+auth		  required	  pam_nologin.so successok
