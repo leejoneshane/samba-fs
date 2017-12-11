@@ -33,5 +33,5 @@ RUN apk update \
 #    && cpanm --force Samba::LDAP
 
 EXPOSE 137/udp 138/udp 139 3000
-VOLUME ["/mnt", "/sam"]
+VOLUME ["/mnt", "/sam", "/web"]
 ENTRYPOINT ["entrypoint.sh"]
