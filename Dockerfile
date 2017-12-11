@@ -17,7 +17,16 @@ RUN apk update \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
-    && chmod +x /usr/sbin/entrypoint.sh
+    && chmod +x /usr/sbin/entrypoint.sh \
+    && cp /etc/passwd /root/passwd \
+    && cp /etc/shadow /root/shadow \
+    && cp /etc/group /root/group \
+    && cp /etc/passwd /sam/passwd \
+    && cp /etc/shadow /sam/shadow \
+    && cp /etc/group /sam/group \
+    && ln -s /sam/passwd /etc/passwd \
+    && ln -s /sam/shadow /etc/shadow \
+    && ln -s /sam/group /etc/group
 
 #RUN apk --no-cache --no-progress add wget openssl make gcc musl-dev perl perl-dev perl-utils perl-mojolicious \
 #        perl-module-build perl-module-build-tiny perl-list-moreutils perl-digest-sha1 perl-unicode-string \
@@ -31,5 +40,5 @@ RUN apk update \
 #    && cpanm --force Samba::LDAP
 
 EXPOSE 137/udp 138/udp 139 3000
-VOLUME ["/mnt"]
+VOLUME ["/mnt", "/sam"]
 ENTRYPOINT ["entrypoint.sh"]
