@@ -17,11 +17,10 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && mkdir /sam \
     && cp /etc/passwd /root/passwd \
     && cp /etc/shadow /root/shadow \
     && cp /etc/group /root/group \
-    && cp /etc/passwd /sam/passwd \
+    && cp -p /etc/passwd /sam/passwd \
     && cp /etc/shadow /sam/shadow \
     && cp /etc/group /sam/group \
     && ln -s /sam/passwd /etc/passwd \
