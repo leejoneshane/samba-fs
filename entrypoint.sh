@@ -1,18 +1,6 @@
 #!/bin/sh
 set -e
 
-if [[ ! -f /sam/passwd ]]; then
-  cp /root/passwd /sam/passwd
-fi
-
-if [[ ! -f /sam/shadow ]]; then
-  cp /root/shadow /sam/shadow
-fi
-
-if [[ ! -f /sam/group ]]; then
-  cp /root/group /sam/group
-fi
-
 if [[ ! -f /etc/openldap/is.done ]]; then
     sed -ri "s#SAMBA_ADMIN_PASSWORD#$SAMBA_ADMIN_PASSWORD#g" /etc/nslcd.conf
     SECRET=`slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n`
