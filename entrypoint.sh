@@ -1,10 +1,21 @@
 #!/bin/sh
 set -e
 
+if [[ ! -f /sam/passwd ]]; then
+  cp /root/passwd /sam/passwd
+fi
+
+if [[ ! -f /sam/shadow ]]; then
+  cp /root/shadow /sam/shadow
+fi
+
+if [[ ! -f /sam/group ]]; then
+  cp /root/group /sam/group
+fi
+
 if [[ ! -f /etc/openldap/is.done ]]; then
     SECRET=`slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n`
     sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/initldap.ldif
-    sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/slapd.ldif
     sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/slapd.conf
     slapadd -v -l /etc/openldap/initldap.ldif
     slapindex -f /etc/openldap/slapd.conf
