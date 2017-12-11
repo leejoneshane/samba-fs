@@ -12,7 +12,7 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo acl attr samba openldap-clients openldap openldap-back-mdb perl perl-digest-sha1 perl-mojolicious \
+    && apk --no-cache --no-progress add bash nss-pam-ldapd sudo acl attr samba openldap-clients openldap openldap-back-mdb perl perl-digest-sha1 perl-mojolicious \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
@@ -20,9 +20,10 @@ RUN apk update \
     && cp /etc/passwd /root/passwd \
     && cp /etc/shadow /root/shadow \
     && cp /etc/group /root/group \
+    && mkdir /sam \
     && cp -p /etc/passwd /sam/passwd \
-    && cp /etc/shadow /sam/shadow \
-    && cp /etc/group /sam/group \
+    && cp -p /etc/shadow /sam/shadow \
+    && cp -p /etc/group /sam/group \
     && ln -s /sam/passwd /etc/passwd \
     && ln -s /sam/shadow /etc/shadow \
     && ln -s /sam/group /etc/group
