@@ -12,6 +12,7 @@ ADD samba.ldif /etc/openldap/schema/samba.ldif
 ADD slapd.conf /etc/openldap/slapd.conf
 ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
+ADD pam.d /etc/pam.d
 
 RUN apk update \
     && apk --no-cache --no-progress add bash nss-pam-ldapd sudo acl attr samba openldap-clients openldap openldap-back-mdb perl perl-digest-sha1 perl-mojolicious \
