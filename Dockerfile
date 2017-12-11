@@ -4,6 +4,7 @@ ENV SAMBA_ADMIN_PASSWORD S@mba
 
 ADD entrypoint.sh /usr/sbin/
 ADD nslcd.conf /etc/nslcd.conf
+ADD nsswitch.conf /etc/nsswitch.conf
 ADD smb.conf /etc/samba/smb.conf
 ADD example.conf /etc/samba/example.conf
 ADD samba.schema /etc/openldap/schema/samba.schema
