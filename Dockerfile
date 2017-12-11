@@ -19,16 +19,7 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && cp /etc/passwd /root/passwd \
-    && cp /etc/shadow /root/shadow \
-    && cp /etc/group /root/group \
-    && mkdir /sam \
-    && cp -p /etc/passwd /sam/passwd \
-    && cp -p /etc/shadow /sam/shadow \
-    && cp -p /etc/group /sam/group \
-    && ln -s /sam/passwd /etc/passwd \
-    && ln -s /sam/shadow /etc/shadow \
-    && ln -s /sam/group /etc/group
+    && mkdir /sam
 
 #RUN apk --no-cache --no-progress add wget openssl make gcc musl-dev perl perl-dev perl-utils perl-mojolicious \
 #        perl-module-build perl-module-build-tiny perl-list-moreutils perl-digest-sha1 perl-unicode-string \
