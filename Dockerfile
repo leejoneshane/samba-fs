@@ -18,12 +18,12 @@ RUN apk update \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
     && mkdir /sam \
-    && cp -p /etc/passwd /root/passwd \
-    && cp -p /etc/shadow /root/shadow \
-    && cp -p /etc/group /root/group \
-    && cp -p /etc/passwd /sam/passwd \
-    && cp -p /etc/shadow /sam/shadow \
-    && cp -p /etc/group /sam/group \
+    && mv /etc/passwd /root/passwd \
+    && mv /etc/shadow /root/shadow \
+    && mv /etc/group /root/group \
+    && cp -p /root/passwd /sam/passwd \
+    && cp -p /root/shadow /sam/shadow \
+    && cp -p /root/group /sam/group \
     && ln -s /sam/passwd /etc/passwd \
     && ln -s /sam/shadow /etc/shadow \
     && ln -s /sam/group /etc/group
