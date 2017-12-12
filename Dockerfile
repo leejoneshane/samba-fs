@@ -17,7 +17,16 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && mkdir /sam
+    && mkdir /sam \
+    && cp -p /etc/passwd /root/passwd \
+    && cp -p /etc/shadow /root/shadow \
+    && cp -p /etc/group /root/group \
+    && cp -p /etc/passwd /sam/passwd \
+    && cp -p /etc/shadow /sam/shadow \
+    && cp -p /etc/group /sam/group \
+    && ln -s /sam/passwd /etc/passwd \
+    && ln -s /sam/shadow /etc/shadow \
+    && ln -s /sam/group /etc/group
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt", "/sam", "/web"]
