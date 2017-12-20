@@ -32,6 +32,8 @@ if [[ -f /etc/samba/smb.conf ]]; then
     exec nmbd -FS
 fi
 
+exec /web/wam.pl daemon -m production
+
 if [ "$#" -lt 1 ]; then
   exec bash
 else
