@@ -4,7 +4,6 @@ ENV SAMBA_ADMIN_PASSWORD S@mba
 
 ADD entrypoint.sh /usr/sbin/
 ADD smb.conf /etc/samba/smb.conf
-ADD example.conf /etc/samba/example.conf
 ADD samba.schema /etc/openldap/schema/samba.schema
 ADD samba.ldif /etc/openldap/schema/samba.ldif
 ADD slapd.conf /etc/openldap/slapd.conf
@@ -12,7 +11,7 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo zip acl attr samba openldap-clients openldap openldap-back-mdb perl perl-mojolicious perl-locale-maketext-lexicon \
+    && apk --no-cache --no-progress add bash sudo zip acl attr samba openldap-clients openldap openldap-back-mdb perl perl-ldap perl-mojolicious perl-locale-maketext-lexicon \
     && adduser -G wheel -D -h /mnt admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
