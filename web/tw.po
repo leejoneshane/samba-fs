@@ -25,6 +25,12 @@ msgstr "您必須先登入!"
 msgid "Please type your Account & Password below first!!"
 msgstr "請先輸入帳號密碼來登入!!"
 
+msgid "WARNING"
+msgstr "警告："
+
+msgid "Bad CSRF token!"
+msgstr "請從原始表單填寫資料！"
+
 msgid "Account"
 msgstr "帳號"
 
@@ -130,396 +136,770 @@ msgstr "系統設定"
 msgid "Account Management"
 msgstr "帳號管理"
 
-msgid "Config your System"
+msgid "Config Your System"
 msgstr "參數設定"
 
-config_language:::請選擇語言
-config_aclcontrol:::安全存取控制
-config_allow_ip:::授與以下IP存取
-config_deny_ip:::拒絕以下IP存取
-config_acl_rule:::規則
-config_upgrade_proxy:::線上升級時透過PROXY
-config_proxy_hostname:::主機
-config_proxy_port:::埠號
-config_shell_dir:::系統殼層檔
-config_group_file:::系統群組檔
-config_group_shadow:::系統群組隱藏檔
-config_passwd_file:::系統密碼檔
-config_shadow_file:::系統密碼隱藏檔
-config_mail_prog:::Sendmail主程式
-config_mail_aliase:::郵件別名定義檔
-config_samba_prog:::Samba密碼程式
-config_samba_passwd_file:::Samba密碼檔
-config_samba_passwd_sync:::同步處理Samba密碼
-config_samba_use_codepage:::Samba是否使用CodePage
-config_account_nest:::使用巢狀家目錄
-config_account_auto_homepage:::同時建立網頁目錄
-config_account_nest_level:::自動帳號階層數
-config_account_auto_passwd_style:::自動帳號的密碼格式
-config_account_auto_passwd_style_username:::與帳號相同
-config_account_auto_passwd_style_random:::亂數選取
-config_account_auto_passwd_style_single:::全部設為passwd
-config_account_auto_passwd_range:::設定亂數密碼範圍
-config_account_passwd_style_no:::數字
-config_account_passwd_style_LCase:::小寫字母
-config_account_passwd_style_UCase:::大寫字母
-config_account_passwd_style_U&LCase:::大小寫字母
-config_account_passwd_style_no&LCase:::數字 小寫字母
-config_account_passwd_style_no&UCase:::數字 大寫字母
-config_account_passwd_style_any_Case:::任意字符
-config_account_passwd_change_rule:::設定變更密碼規則
-config_account_passwd_limit_428:::密碼長度4~8 個字元
-config_account_passwd_limit_no&letter:::使用文數字混合密碼
-config_account_passwd_limit_diffrent:::同一字元不得重複多次
-config_account_passwd_limit_keyboard:::禁止與鍵盤排列順序相同
-config_user_home_dir:::使用者家目錄的位置
-config_user_skel:::使用者登入檔範本的位置
-config_user_shell:::使用者登入殼層
-config_user_homepage_dir:::使用者網頁目錄名稱
-config_edit_user_homepage_sample:::編修首頁範本檔
-config_days_to_change:::幾天後可以變更密碼
-config_days_to_force_change:::幾天後強迫變更密碼
-config_days_to_hint:::幾天後提示密碼變更訊息
-config_days_to_inact:::帳號幾天未使用即凍結
-config_days_to_expire:::帳號幾天後到期
-config_account_flag_status:::帳號狀態
-config_account_quota_sample:::磁碟配額比照哪一個使用者
-config_save_config:::儲存以上參數
-config_completed:::帳號組態檔設定完成！
+msgid "Choose Language"
+msgstr "請選擇語言"
+
+msgid "ACL Control"
+msgstr "安全存取控制"
+
+msgid "Allow IP"
+msgstr "授與以下IP存取"
+
+msgid "Deny IP"
+msgstr "拒絕以下IP存取"
+
+msgid "Rules"
+msgstr "規則"
+
+msgid "Account Hierarchy"
+msgstr "自動帳號階層數"
+
+msgid "Password Specified As"
+msgstr "自動帳號的密碼格式"
+
+msgid "Same as Account"
+msgstr "與帳號相同"
+
+msgid "Random"
+msgstr "亂數選取"
+
+msgid "All set to 'passwd'"
+msgstr "全部設為passwd"
+
+msgid "Set Random Range"
+msgstr "設定亂數密碼範圍"
+
+msgid "Number"
+msgstr "數字"
+
+msgid "Lower Case"
+msgstr "小寫字母"
+
+msgid "Upper Case"
+msgstr "大寫字母"
+
+msgid "Upper & Lower Case"
+msgstr "混合大小寫字母"
+
+msgid "Number & Lower Case"
+msgstr "數字和小寫字母"
+
+msgid "Number & Upper Case"
+msgstr "數字和大寫字母"
+
+msgid "Any Number & Any Case"
+msgstr "任意字符"
+
+msgid "Password Changing Rule"
+msgstr "設定變更密碼規則"
+
+msgid "Lenght Limit 4-8"
+msgstr "密碼長度4~8個字元"
+
+msgid "Only Number & Letter"
+msgstr "使用文數字混合密碼"
+
+msgid "Limit Diffrent Letter"
+msgstr "同一字元不得重複多次"
+
+msgid "Not Allow Keyboard Sequence"
+msgstr "禁止與鍵盤排列順序相同"
+
+msgid "Days Can Change Password"
+msgstr "幾天後可以變更密碼"
+
+msgid "Days to Force Change Password"
+msgstr "幾天後強迫變更密碼"
+
+msgid "Days to Change Password Hint"
+msgstr "幾天後提示密碼變更訊息"
+
+msgid "Days to Inactive Password"
+msgstr "帳號幾天未使用即凍結"
+
+msgid "Days to Expire Password"
+msgstr "帳號幾天後到期"
+
+msgid "Account Status"
+msgstr "帳號狀態"
+
+msgid "Save All Configuration"
+msgstr "儲存以上參數"
+
+msgid "Configuration Saved!"
+msgstr "帳號組態檔設定完成！"
 
 msgid "Setup WAM Manager"
 msgstr "設定管理員"
 
-wam_manager_add:::請選擇新的WAM管理員
-wam_manager_now:::目前的管理員有
-wam_manager_addnew:::新增管理權限
-wam_manager_delete:::移除管理權限
-wam_manager_add_completed:::管理員新增完成：
-wam_manager_del_action:::正在移除以下管理員：
-wam_manager_del_completed:::移除完成！
+msgid "Choose New WAM Manager"
+msgstr "請選擇新的WAM管理員"
+
+msgid "Wam Manager"
+msgstr "目前的管理員有"
+
+msgid "Add New WAM Manager"
+msgstr "新增管理權限"
+
+msgid "Remove WAM Manager"
+msgstr "移除管理權限"
+
+msgid "WAM Managers Added Successfully:"
+msgstr "管理員新增完成："
+
+msgid "Remove Below Wam Managers:"
+msgstr "正在移除以下管理員："
+
+msgid "Remove Completed!"
+msgstr "移除完成！"
 
 msgid "File Manager"
 msgstr "檔案管理員"
 
-filemgr_current_dir:::目前所在資料夾是：
-filemgr_goto_sharemgr:::去共享資料夾
-filemgr_total_quota:::您的總容量有：
-filemgr_total_quota_used:::已用掉：
-filemgr_total_quota_left:::還剩：
-filemgr_total_quota_use:::使用率：
-filemgr_file_name:::名　稱
-filemgr_file_type:::類型
-filemgr_file_priv:::權限
-filemgr_file_owner:::擁有人
-filemgr_file_owner_group:::群組
-filemgr_file_size:::大小
-filemgr_file_date:::修改日期
-filemgr_pannel:::操作面板
-filemgr_gohome:::《家目錄》
-filemgr_pannel_minihelp:::以下功能中<font color=yellow>更名、移動<br>、拷貝</font>必須選取單一目<br>錄或檔案<font color=yellow>改權限、改<br>擁有人、刪除、下載</font>可<br>以複選
-filemgr_pannel_hint_1:::請在右邊文字框輸入目錄的名稱〔限英文或數字〕！
-filemgr_pannel_hint_2:::請在右邊文字框輸入新目錄的名稱〔限英文或數字〕！
-filemgr_pannel_hint_3:::請在最左邊方格先勾選要改的檔案，再到右邊文字框輸入要改的權限，如７５５
-filemgr_pannel_hint_4:::請在最左邊方格先勾選檔案，再到右邊文字框輸入新擁有人的名稱！
-filemgr_pannel_hint_5:::請在最左邊方格先勾選一個檔案，再到右邊文字框輸入新的檔案名稱！
-filemgr_pannel_hint_6:::請在最左邊方格先勾選檔案，再到右邊文字框輸入要移動的檔案！
-filemgr_pannel_hint_7:::請在最左邊方格先勾選檔案，再到右邊文字框輸入要拷貝成為什麼檔名！
-filemgr_pannel_hint_8:::請在最左邊方格先勾選要刪除的檔案，再按刪除按鈕！
-filemgr_pannel_hint_9:::請在最左邊方格先勾選要下載的檔案，再按下載按鈕！
-filemgr_pannel_hint_10:::請在最左邊方格先勾選要設定共享的檔案，再按下載按鈕！
-filemgr_pannel_chdir:::切換目錄
-filemgr_pannel_mkdir:::建目錄
-filemgr_pannel_chmod:::改權限
-filemgr_pannel_chown:::改擁有人
-filemgr_pannel_rename:::更名
-filemgr_pannel_move:::移動
-filemgr_pannel_copy:::拷貝
-filemgr_pannel_delete:::刪除
-filemgr_pannel_download:::下載
-filemgr_pannel_share:::設為共享
-filemgr_upload_where:::您將要上傳檔案到
-filemgr_upload_unzip:::請解開Winzip壓縮檔（不支援中文檔名）
-filemgr_upload_confirm:::開始上傳以上檔案
-filemgr_upload_cannot_open_editfile:::無法開啟編修檔案
-filemgr_upload_completed:::檔案儲存完畢！
-filemgr_cannot_chown:::個檔案或目錄並非您所擁有，所以無法更換擁有人！
-filemgr_cannot_priv:::個檔案或目錄並非您所擁有，所以無法改變權限！
-filemgr_cannot_del:::個檔案或目錄並非您所擁有，所以無法刪除！
+msgid "Current Folder:"
+msgstr "目前所在資料夾是："
+
+msgid "Total Spaces:"
+msgstr "您的總容量有："
+
+msgid "Free:"
+msgstr "還剩："
+
+msgid "Usage:"
+msgstr "使用率："
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "Type"
+msgstr "類型"
+
+msgid "Mode"
+msgstr "權限"
+
+msgid "Owner"
+msgstr "擁有人"
+
+msgid "Group"
+msgstr "群組"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Update"
+msgstr "修改日期"
+
+msgid "Pannel"
+msgstr "操作面板"
+
+msgid "Root"
+msgstr "《根目錄》"
+
+msgid "The function below<font color=yellow>Rename,Move<br>,Copy</font>must choose single Dir or<br>File<font color=yellow>.But Change Mode,Change<br>Owner,Delete,Download</font>can<br>use multi-choice."
+msgstr "以下功能中<font color=yellow>更名、移動<br>、拷貝</font>必須選取單一目<br>錄或檔案<font color=yellow>改權限、改<br>擁有人、刪除、下載</font>可<br>以複選"
+
+msgid "Please input dir name"
+msgstr "請在右邊文字框輸入目錄的名稱〔限英文或數字〕！"
+
+msgid "Please input new dir name"
+msgstr "請在右邊文字框輸入新目錄的名稱〔限英文或數字〕！"
+
+msgid "Please check files then input priv, such as 755."
+msgstr "請在最左邊方格先勾選要改的檔案，再到右邊文字框輸入要改的權限，如755"
+
+msgid "Please check files then input owner name."
+msgstr "請在最左邊方格先勾選檔案，再到右邊文字框輸入新擁有人的名稱！"
+
+msgid "Please check single file then input new file name."
+msgstr "請在最左邊方格先勾選一個檔案，再到右邊文字框輸入新的檔案名稱！"
+
+msgid "Please check one file then input new filename or folder to move into."
+msgstr "請在最左邊方格先勾選檔案，再到右邊文字框輸入新的位置或名稱！"
+
+msgid "Please check one file then input the filename you want to copy to."
+msgstr "請在最左邊方格先勾選檔案，再到右邊文字框輸入要拷貝的新位置或新檔名！"
+
+msgid "Please check files these you want to delete then click delete."
+msgstr "請在最左邊方格先勾選要刪除的檔案，再按刪除按鈕！"
+
+msgid "please check files these you want to download then click download."
+msgstr "請在最左邊方格先勾選要下載的檔案，再按下載按鈕！"
+
+msgid "Change Dir"
+msgstr "切換目錄"
+
+msgid "Create Dir"
+msgstr "建目錄"
+
+msgid "Change Mode"
+msgstr "改權限"
+
+msgid "Change Owner"
+msgstr "改擁有人"
+
+msgid "Rename"
+msgstr "更名"
+
+msgid "Move"
+msgstr "移動"
+
+msgid "Copy"
+msgstr "拷貝"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "ownload"
+msgstr "下載"
+
+msgid "Upload files to"
+msgstr "您將要上傳檔案到"
+
+msgid "Please unpack Winzip file"
+msgstr "請解開Winzip壓縮檔（不支援中文檔名）"
+
+msgid "Upload!"
+msgstr "開始上傳以上檔案"
+
+msgid "Cannot open file for edit!"
+msgstr "無法開啟編修檔案"
+
+msgid "Files Saved!"
+msgstr "檔案儲存完畢！"
+
+msgid "iles or folder are not belongs to you, you cannot change owner for them!"
+msgstr "個檔案或目錄並非您所擁有，所以無法更換擁有人！"
+
+msgid "files or folder are not belongs to you, you cannot change mode for them!"
+msgstr "個檔案或目錄並非您所擁有，所以無法改變權限！"
+
+msgid "files or folder are not belongs to you, you cannot delete them!"
+msgstr "個檔案或目錄並非您所擁有，所以無法刪除！"
 
 msgid "Share Folder"
-msgstr 共享資料夾"
+msgstr "共享資料夾"
 
-share_current_dir:::目前所在資料夾是：
-share_title:::分享檔案
-share_readonly:::《這裡是唯讀資料夾!》
-share_backto_filemgr:::回檔案管理員
-share_grant:::開放哪些權限？
-share_make_group:::請先建立群組！
-share_to_what:::分享給哪些群組(組織或單位編號)？
-share_dir:::目錄：
-share_share_name:::共享名稱：
-share_config_these:::以下資料夾設為共享：
-share_name:::名　稱
-share_download:::下載
-share_upload:::上傳
-share_mkdir:::建目錄
-share_edit:::編修
-share_delete:::刪除
-share_realpath:::對應目錄
-share_rename:::更名
-share_uplevel:::回上層
-share_pannel_minihelp:::<b>說明：</b><br>以下功能中<font color=yellow>更名</font>必須選取<br>單一目錄或檔案<br><font color=yellow>刪除、下載</font>可以複選
-share_pannel_hint_1:::請在最左邊方格先勾選要取消共享的目錄，再按取消共享按鈕！
-share_pannel_hint_2:::請在最左邊方格先勾選要設定共享的檔案，再按變更設定按鈕！
-share_pannel_hint_3:::請在右邊文字框輸入新目錄的名稱〔限英文或數字〕！
-share_pannel_hint_4:::請在最左邊方格先勾選一個檔案，再到右邊文字框輸入新的檔案名稱！
-share_pannel_hint_5:::請在最左邊方格先勾選要刪除的檔案，再按刪除按鈕！
-share_pannel_hint_6:::請在最左邊方格先勾選要下載的檔案，再按下載按鈕！
-share_cancel_share:::取消共享
-share_config_share:::變更設定
-share_completed:::共享資料夾設定完成！
-share_cancel_completed:::資料夾已經取消共享！
+msgid "Configure share folders"
+msgstr "設定共享資料夾"
+
+msgid "Create a share folder"
+msgstr "建立共享資料夾"
+
+msgid "Delete a share folder"
+msgstr "刪除共享資料夾"
+
+msgid "Real Path"
+msgstr "對應路徑"
+
+msgid "Share Name"
+msgstr "共享名稱"
+
+msgid "Inherit Permissions"
+msgstr "繼承上層資料夾之權限"
+
+msgid "Browserable"
+msgstr "顯示共享名稱"
+
+msgid "Writeable"
+msgstr "可讀寫"
+
+msgid "Valid Users"
+msgstr "允許存取的使用者或群組"
+
+msgid "Groups To Sharing"
+msgstr "分享給哪些群組？"
+
+msgid "Admin Users"
+msgstr "管理員"
+
+msgid "Setup Admin Users"
+msgstr "設定管理員"
+
+msgid "Veto Files"
+msgstr "強制隱藏檔案"
+
+msgid "Add Veto Files"
+msgstr "新增強制隱藏檔案規則"
+
+msgid "Delete Veto Files"
+msgstr "強制刪除隱藏檔案"
+
+msgid "Only Owner Can Access"
+msgstr "僅允許檔案擁有者存取"
+
+msgid "Allow Valid Users to Read"
+msgstr "允許非擁有者讀取檔案"
+
+msgid "Allow Valid Users to Write"
+msgstr "允許非擁有者任意修改檔案"
+
+msgid "Only Owner Can Delete"
+msgstr "僅允許擁有者刪除"
+
+msgid "This Folder Is Readonly"
+msgstr "僅允許讀取"
+
+msgid "Allow Valid Users to Create and Delete"
+msgstr "允許建立檔案或目錄"
+
+msgid "Allow Recycle"
+msgstr "建立資源回收桶"
+
+msgid "Grant Permission"
+msgstr "開放哪些權限？"
+
+msgid "Cancle Sharing"
+msgstr "取消共享"
+
+msgid "Share Folder Configure Completed!"
+msgstr "共享資料夾設定完成！"
+
+msgid "Share Folder Cancled!"
+msgstr "資料夾已經取消共享！"
 
 msgid "Add Group"
 msgstr "新增群組"
 
-group_home_dir:::目錄位置
-group_add_this:::新增本群組
-group_now:::已經建立之群組
-group_empty_name:::不能建立空白群組
-group_add_completed:::群組新增完成！
+msgid "Creat this group"
+msgstr "新增本群組"
+
+msgid "Created Groups"
+msgstr "已經建立之群組"
+
+msgid "Cannot Creat Empty Group"
+msgstr "不能建立空白群組"
+
+msgid "New Group Created!"
+msgstr "群組新增完成！"
 
 msgid "Creat an Account"
 msgstr "新增使用者"
 
-account_add_group:::分配到群組
-account_add_to_manager:::加入為 WAM 管理員
-account_add_confirm:::確定建立此帳號
+msgid "Add This One To Group:"
+msgstr "分配到群組"
+
+msgid "Join WAM Manager Group"
+msgstr "加入為 WAM 管理員"
+
+msgid "Confirm Creat new User"
+msgstr "確定建立此帳號"
 
 msgid "Delete User or Group"
 msgstr "刪帳號群組"
 
-del_user_select_not_yet:::尚未選取刪除對象
-del_user_confirm:::確定
-del_user_cancel:::取消
-del_user_completed:::帳號刪除完畢！
-del_user_grp_question:::您確認要刪除此群組：
-del_user_search_question:::您確認要刪除含有此字串的帳號：
-del_user_del_these:::以下使用者將會一併刪除：
-del_user_now:::正在刪除使用者
+msgid "You Have Not Select Any Yet!"
+msgstr "尚未選取刪除對象"
+
+msgid "Confirm"
+msgstr "確定"
+
+msgid "Cancle"
+msgstr "取消"
+
+msgid "Delete Ok!"
+msgstr "帳號刪除完畢！"
+
+msgid "Confirm to delete this Group?"
+msgstr "您確認要刪除此群組："
+
+msgid "Confirm delete those user and group?"
+msgstr "您確認要刪除含有此字串的帳號："
+
+msgid "Will Delete all selected user and group?"
+msgstr "以下使用者將會一併刪除："
+
+msgid "Deleting Selected User now...."
+msgstr "正在刪除使用者"
 
 msgid "Auto Create User Account"
 msgstr "自動整批帳號"
 
-autoadd_blank_1:::群組及流水號不可留白
-autoadd_blank_2:::前置碼及流水號不可留白
-autoadd_blank_3:::前置碼及流水號不可留白
-autoadd_pre:::本群組帳號前置碼(如stu)→
-autoadd_level_2:::第二階層流水號（年級數）→
-autoadd_level_3:::第三階層流水號（班級數）→
-autoadd_level_4:::帳號流水號（學生座號）→
-autoadd_from:::從
-autoadd_to:::到
-autoadd_grade:::年級
-autoadd_class:::班
-autoadd_num:::號
-autoadd_addzero:::要補零→
-autoadd_hint_2:::注意：建立好的帳號將會是<br>”帳號前置碼＋帳號流水號。如stu23”
-autoadd_hint_3:::注意：建立好的帳號將會是<br>”帳號前置碼＋第二階層流水號＋帳號流水號。如stu523”
-autoadd_hint_4:::注意：建立好的帳號將會是<br> ”帳號前置碼＋第二階層流水號＋第三階層流水號＋帳號流水號。如：stu50308”
-autoadd_confirm:::確定建立以上帳號
-autoadd_add_these:::新增下列使用者帳號：
+msgid "Group and user name cann't be blank!"
+msgstr "群組及流水號不可留白"
+
+msgid "Group and user prefix and number cann't be blank!"
+msgstr "前置碼及流水號不可留白"
+
+msgid "prefix and number cann't be blank!"
+msgstr "前置碼及流水號不可留白"
+
+msgid "Accounts' Prefix(Ex:stu)"
+msgstr "本群組帳號前置碼(如stu)→"
+
+msgid "The secend level number.(Grade):"
+msgstr "第二階層流水號（年級數）→"
+
+msgid "The third level number(Class):"
+msgstr "第三階層流水號（班級數）→"
+
+msgid "Seriel numbers(Seat):"
+msgstr "帳號流水號（學生座號）→"
+
+msgid "From"
+msgstr "從"
+
+msgid "To"
+msgstr "到"
+
+msgid "Grade"
+msgstr "年級"
+
+msgid "Class"
+msgstr "班
+
+msgid "Number"
+msgstr "號"
+
+msgid "Add Zero"
+msgstr "要補零"
+
+msgid "Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23"
+msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋帳號流水號。如stu23"
+
+msgid "Attention:Creat new Account will be<br>Prefix+Second Lever Number+Number. Ex:stu523"
+msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋第二階層流水號＋帳號流水號。如stu523"
+
+msgid "Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308"
+msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋第二階層流水號＋第三階層流水號＋帳號流水號。如：stu50308"
+
+msgid "Create all users"
+msgstr "確定建立以上帳號"
+
+msgid "Now Adding ..."
+msgstr "新增下列使用者帳號："
 
 msgid "Creat User Account from File"
 msgstr "手動整批帳號"
 
-manuadd_minihelp:::您上傳的檔案必須是純文字檔，格式如下：
-manuadd_minihelp_1:::使用者名稱　群組名稱　密碼
-manuadd_minihelp_2:::例如,有兩個不同群組的使用者：
-manuadd_minihelp_3:::shane admin super123<br>ddjohn teacher dd1234
-manuadd_minihelp_4:::說明：每個欄位之間空一格，一個帳號寫一行，<br>最後一行必須是空白行。
-manuadd_uploadfile:::請選取您要上傳的檔案
-manuadd_confirm:::上傳到主機端大量建立帳號
+msgid "You MUST upload a UNIX Compatable text file to Create Accounts! Like this:"
+msgstr "您上傳的檔案必須是純文字檔，格式如下："
+
+msgid "Username Groupname Password"
+msgstr "使用者名稱　群組名稱　密碼"
+
+msgid "Ex:I got two diffrent user and group"
+msgstr "例如,有兩個不同群組的使用者："
+
+msgid "shane admin super123<br>ddjohn teacher dd1234"
+msgstr "shane admin super123<br>ddjohn teacher dd1234"
+
+msgid "read this:You have to had space between all Coloum ,each account a line,<br>and the last row MUST be blank!"
+msgstr "說明：每個欄位之間空一格，一個帳號寫一行，<br>最後一行必須是空白行。"
+
+msgid "Upload your Account text file..."
+msgstr "請選取您要上傳的檔案"
+
+msgid "Upload and Create Account!"
+msgstr "上傳到主機端大量建立帳號"
 
 msgid "Reset Password"
 msgstr "重設密碼"
 
-reset_passwd_select_not_yet:::尚未選取重設對象
-reset_passwd_setto:::密碼重設成
-reset_passwd_confirm:::確定重設密碼
-reset_passwd_completed:::密碼重設完成
-reset_passwd_list:::帳號密碼對照表
-reset_passwd_grp_question:::您確認要重設此群組帳號：
-reset_passwd_search_question:::您確認要重設含有此字串的帳號：
-reset_passwd_reset_these:::以下使用者將會重設密碼：
+msgid "Nothing Selected!"
+msgstr "尚未選取重設對象"
+
+msgid "Reset Password to:"
+msgstr "密碼重設成"
+
+msgid "Confirm Reset Password!"
+msgstr "確定重設密碼"
+
+msgid "Password Reset Completed!"
+msgstr "密碼重設完成"
+
+msgid "Account and Password table:"
+msgstr "帳號密碼對照表"
+
+msgid "Confirm Reset This group?"
+msgstr "您確認要重設此群組帳號："
+
+msgid "onfirm Reset those selected Account?"
+msgstr "您確認要重設含有此字串的帳號："
+
+msgid "Will Reset Selected Users:"
+msgstr "以下使用者將會重設密碼："
 
 msgid "Change My Password"
 msgstr "變更個人密碼"
 
-change_passwd_check_diffrent:::兩次密碼不相同
-change_passwd_check_length:::密碼長度要介於四到八個字元間
-change_passwd_check_kind:::密碼不合適！請包含至少兩種格式共用(英文字母大、小寫、數、符號)
-change_passwd_check_repeat:::密碼不合適！同一字元重覆太多次！
-change_passwd_check_arrange:::密碼不合適！請不要以鍵盤順序為密碼！
-change_passwd_new:::新　密　碼
-change_passwd_again:::再輸入一次
-change_passwd_confirm:::確定變更密碼
-change_passwd_minihelp:::＊設定密碼不要太過簡單，請注意以下規則：
-change_passwd_rule_1:::儘量不要以英文單字做密碼。
-change_passwd_rule_2:::密碼長度要介於四到八個字元間。
-change_passwd_rule_3:::必須包含英文字大、小寫，數字、符號共四類中的兩類以上。
-change_passwd_rule_4:::重覆字不得超過二次 (七碼以上，不得超過三次)。
-change_passwd_rule_5:::不要以鍵盤、數字或字母順序做密碼設定。
-change_passwd_completed:::密碼變更成功！
+msgid "Password Typemiss!"
+msgstr "兩次密碼不相同"
 
-#==============================
-check_account:::帳號檢查
-#==============================
-check_account_group:::現在檢查使用者群組
-check_account_username:::現在檢查使用者帳號
+msgid "The Length MUST between 4-8 Letters(Numbers)"
+msgstr "密碼長度要介於四到八個字元間"
 
-#==============================
-view_struct:::檢視帳號結構
-#==============================
+msgid "Can not set this passowrd !Password Must Contain Lower or Upper Case Letter,Number,or symbol Char.)"
+msgstr "密碼不合適！請包含至少兩種格式共用(英文字母大、小寫、數、符號)"
 
-#==============================
-trace_account:::追蹤使用紀錄
-#==============================
-trace_account_notfound:::找不到使用紀錄檔，無法顯示此使用者的使用紀錄：
+msgid "Too many Same letter Are Not allow to set as password!"
+msgstr "密碼不合適！同一字元重覆太多次！"
 
-#==============================
-set_album:::設定電子相簿
-#==============================
-album_upload:::圖片上傳
-set_album_title:::電子相簿抬頭
-set_album_message:::使用說明與版權資訊
-set_album_showdate:::顯示日期
-set_album_showsize:::顯示檔案大小
-set_album_newtip:::新檔案強調顯示
-set_album_bgcolor:::背景顏色
-set_album_bgpic:::背景圖片網址
-set_album_number:::每列顯示圖片個數
-set_album_width:::圖片寬度
-set_album_height:::圖片高度
-set_album_confirm:::確　定
-set_album_completed:::電子相簿組態設定完成！
+msgid "Please DO NOT use keyboard sequence."
+msgstr "密碼不合適！請不要以鍵盤順序為密碼！"
 
-#==============================
-manage_album:::管理電子相簿
-#==============================
-album_owned:::的電子相簿
+msgid "New Password:"
+msgstr "新密碼"
+
+msgid "Confirm Password:"
+msgstr "再輸入一次"
+
+msgid "Change My Password!"
+msgstr "確定變更密碼"
+
+msgid "Please set a more complicated"
+msgstr "＊設定密碼不要太過簡單，請注意以下規則："
+
+msgid "Please do not use words as a password."
+msgstr "儘量不要以英文單字做密碼。"
+
+msgid "Password Lenght must between 4 ~ 8 char."
+msgstr "密碼長度要介於四到八個字元間。"
+
+msgid "Passowrd Must include Upper Case and Lower Cast, numbers ,or symbol any two of them."
+msgstr "必須包含英文字大、小寫，數字、符號共四類中的兩類以上。"
+
+msgid "Not allow repeat char."
+msgstr "重覆字不得超過二次 (七碼以上，不得超過三次)。"
+
+msgid "Do not use keyboard,or letter,or number sequence."
+msgstr "不要以鍵盤、數字或字母順序做密碼設定。"
+
+msgid "Password changed successfully."
+msgstr "密碼變更成功！"
+
+msgid "Configure Album"
+msgstr "設定電子相簿"
+
+msgid "Album Title"
+msgstr "電子相簿抬頭"
+
+msgid "Notice Messages"
+msgstr "使用說明與版權資訊"
+
+msgid "Show Created Date"
+msgstr "顯示日期"
+
+msgid "Show File Size"
+msgstr "顯示檔案大小"
+
+msgid "Show New Tip"
+msgstr "新檔案強調顯示"
+
+msgid "Background Color"
+msgstr "背景顏色"
+
+msgid "Background Image"
+msgstr "背景圖片網址"
+
+msgid "How Many Thumbnails Per Row"
+msgstr "每列顯示圖片個數"
+
+msgid "Thumbnails Width"
+msgstr "圖片寬度"
+
+msgid "Thumbnails Height"
+msgstr "圖片高度"
+
+msgid "Configure For Me"
+msgstr "確定"
+
+msgid "Album Configuration completed!"
+msgstr "電子相簿組態設定完成！"
 
 msgid "Log Out"
 msgstr "登出系統"
 
-msg_please_select:::請先選取對象！
-msg_file_select_not_yet:::請先選取要處理的檔案或目錄！
-msg_blank_folder:::請輸入目錄名稱
-msg_blank_perm:::請輸入新權限
-msg_blank_owner:::請輸入新擁有人
-msg_blank_filename:::新名稱尚未輸入
-msg_blank_movetarget:::要移動到哪個目錄？
-msg_blank_copytarget:::要拷貝到哪個目錄？
-msg_please_check:::請檢查是否為下列情形造成：
-msg_miss_host_or_port:::存取的主機或通訊埠不存在！
-msg_request_time_out:::網路頻寬不足造成 Request Time Out！
-msg_file_too_large:::檔案太大無法下載！
-msg_please_check_perm:::請先確定您是否擁有使用權限！
-msg_contact_administrator:::如果權限設定有問題，請您聯絡系統管理師處理
-msg_passwd_must_same:::您輸入的兩個密碼，必須完全相同
-msg_delete_user_first:::請先刪除上面列出的使用者名稱
-msg_add_user_first:::請先建立上面列出的使用者名稱
-msg_check_upload_username:::請檢查上傳的帳號，其使用者名稱是否正確
-msg_delete_group_first:::請先刪除上面列出的使用者群組
-msg_add_group_first:::請先建立上面列出的使用者群組
-msg_check_upload_group:::請檢查上傳的帳號，其群組名稱是否正確
-msg_keyword:::關鍵字
-msg_replace_username:::自動代換為使用者名稱
-msg_replace_hostname:::自動代換為主機名稱
-msg_replace_port:::自動代換為WAM的PORT號碼
-msg_welcome_to:::這裡是
-msg_homepage:::的首頁
-msg_you_are:::您是第
-msg_visited:::位訪客
-msg_my_gbook:::我的留言版
-msg_my_album:::我的電子相簿
-msg_hi:::您好!我的首頁還在施工，請稍後再來！
-msg_my_email:::寫信給我
-msg_admin:::登入主機
-msg_if_misstype:::如果是您打字時不小心按錯鍵，請您
-msg_reinput:::重新輸入
-msg_if_disk_busy:::如果是磁碟忙碌，請您
-msg_try_later:::稍後再試
-msg_just_for_user:::如果您不是合法帳號持有人，請不要使用本程式
-msg_check_disk:::請登入系統控制台，進行磁碟檢測
-msg_if_config_incorrect:::如果是參數設定錯誤，請您
-msg_setup_config:::設定參數
-msg_acl_warn:::<font color=red><b>警告：</b></font>您無權從此位置執行程式
-msg_lost_username:::連結未指定使用者參數，請在 程式名稱.cgi 後面加上 ?user=使用者的帳號
-msg_no_such_user:::找不到提供此功能的使用者帳號，或是使用者帳號不正確
+msgid "Please select one file or Directory!"
+msgstr "請先選取要處理的檔案或目錄！"
 
-err_blank_input:::所有欄位不可留白或空白字元
-err_file_select_not_yet:::檔案尚未選取
-err_file&dir_notfound:::找不到目錄或檔案
-err_cannot_open:::無法開啟
-err_cannot_open_temp:::暫存檔無法開啟
-err_cannot_open_shadow:::密碼隱藏檔無法開啟
-err_cannot_open_passwd:::系統密碼檔無法開啟
-err_cannot_open_group:::系統群組檔無法開啟
-err_cannot_open_shell:::系統殼層檔無法開啟
-err_cannot_open_config:::無法開啟帳號組態檔
-err_cannot_open_gconfig:::無法開啟群組組態檔
-err_cannot_open_share:::無法開啟共享資料夾組態檔
-err_cannot_open_history:::無法開啟使用紀錄檔
-err_cannot_open_homepage_sample:::首頁範本檔無法開啟
-err_cannot_open_counter_config:::無法開啟計數器組態檔
-err_cannot_open_counter_data:::無法開啟計數器資料檔
-err_folder_failue:::無法開啟留言版組態檔
-err_cannot_open_gbook_subscribe:::無法開啟留言版訂戶資料檔
-err_cannot_open_gbook_message:::無法開啟留言版資料檔
-err_cannot_open_notice_config:::無法開啟公佈欄組態檔
-err_cannot_open_notice_subscribe:::無法開啟公佈欄訂戶資料檔
-err_cannot_open_notice_message:::無法開啟公佈欄訊息檔
-err_cannot_open_aliases:::無法開啟郵件別名定義檔
-err_cannot_open_upgrade:::您的最新版本資訊檔 /usr/libexec/wam/patch/upgrade.wam 無法開啟，<br>可能被刪除了請重新下載安裝！
-err_cannot_save_upgrade:::無法儲存更新版本資訊
-err_cannot_download_file:::檔案下載失敗
-err_cannot_open_download_file:::無法開啟下載檔案
-err_cannot_save_upload_file:::無法儲存上傳檔案
-err_cannot_open_edit_file:::無法開啟編修檔案
-err_cannot_find_album:::您的留言版連結設定錯誤，找不到留言版！
-err_cannot_find_online_mail:::您的線上郵寄程式連結設定錯誤，找不到線上郵寄網頁！
-err_connect_failue:::無法連線
-err_connect_break:::連結中斷
-err_cannot_open_socket:::開啟通訊協定失敗！
-err_disk_failue:::磁碟錯誤！
-err_cannot_open_counter_dir:::磁碟錯誤，圖庫目錄無法讀取。
-err_cannot_open_dir:::磁碟錯誤，目錄無法讀取。
-err_cannot_open_lang:::磁碟錯誤，語言套件目錄無法讀取。
-err_cannot_copy_from_others:::您不能拷貝別人的檔案或目錄
-err_cannot_copy_to_others:::您不能拷貝到別人的目錄裡
-err_cannot_move_from_others:::您不能移動別人的檔案或目錄
-err_cannot_move_to_others:::您不能移動到別人的目錄裡
-err_cannot_write:::您沒有寫入
-err_cannot_change:::您沒有修改
-err_cannot_read:::您沒有讀取
-err_name_priv:::名稱的權限
-err_file_priv:::檔案的權限
-err_folder_priv:::目錄的權限
-err_so_cannot_modify:::，不允許修改檔案或目錄名稱
-err_so_cannot_download:::，不允許下載檔案
-err_so_cannot_view:::，不允許查看檔案內容
-err_so_cannot_delete:::，不允許刪除目錄或檔案
-err_so_cannot_mkdir:::，不允許建子目錄
-err_so_cannot_chdir:::，無法切換目錄
-err_perm_set:::權限錯誤！
-err_bad_passwd:::密碼輸入錯誤！
-err_cannot_continue_change_passwd:::無法繼續變更密碼，因為密碼輸入錯誤
-err_username_exist:::使用者名稱已經存在！
-err_username_not_exist:::使用者名稱不存在！
-err_cannot_continue_becouse:::無法繼續建立或變更帳號設定，因為有
-err_group_exist:::使用者群組已經存在！
-err_group_not_exist:::使用者群組不存在！
-err_check_account:::身分查核失敗！
-err_cannot_find_album:::使用者沒有建立相簿資料夾! <br>提示:你可以在自己的網頁目錄中，建立一個名為 album 的資料夾，<br>再把相片放進此資料夾後，即可擁有個人專屬的網路電子相簿!
-err_folder_failue:::無法讀取相簿設定檔!請在網址列最後<br>加上 ?user=你的帳號，再按下Enter鍵!
+msgid "Please input Folder name!"
+msgstr "請輸入目錄名稱"
+
+msgid "Please assign new privilege!"
+msgstr "請輸入新權限"
+
+msgid "Please assign new owner!"
+msgstr "請輸入新擁有人"
+
+msgid "Please inpug new name!"
+msgstr "新名稱尚未輸入"
+
+msgid "Where to move?"
+msgstr "要移動到哪個目錄？"
+
+msgid "Where to copy to?"
+msgstr "要拷貝到哪個目錄？"
+
+msgid "Please Check:"
+msgstr "請檢查是否為下列情形造成："
+
+msgid "File was to big to download."
+msgstr "檔案太大無法下載！"
+
+msgid "Confirm your privileges!"
+msgstr "請先確定您是否擁有使用權限！"
+
+msgid "Please contect your Administrator."
+msgstr "如果權限設定有問題，請您聯絡系統管理師處理"
+
+msgid "Password must be the same."
+msgstr "您輸入的兩個密碼，必須完全相同"
+
+msgid "Please Delete user first!"
+msgstr "請先刪除上面列出的使用者名稱"
+
+msgid "lease Create users first!"
+msgstr "請先建立上面列出的使用者名稱"
+
+msgid "Please Check the Users accounts first!"
+msgstr "請檢查上傳的帳號，其使用者名稱是否正確"
+
+msgid "Please delete the Groups first!"
+msgstr "請先刪除上面列出的使用者群組"
+
+msgid "Please Create the Groups first!"
+msgstr "請先建立上面列出的使用者群組"
+
+msgid "Please Check the upload files' Groups!"
+msgstr "請檢查上傳的帳號，其群組名稱是否正確"
+
+msgid "Keywords"
+msgstr "關鍵字"
+
+msgid "Wrong! Please Try Again"
+msgstr "如果是您打字時不小心按錯鍵，請您"
+
+msgid "Try again!"
+msgstr "重新輸入"
+
+msgid "If the Server still Busy"
+msgstr "如果是磁碟忙碌，請您"
+
+msgid "Try later!"
+msgstr "稍後再試"
+
+msgid "If your Dont have Account please Do not Try to Login!!"
+msgstr "如果您不是合法帳號持有人，請不要使用本程式"
+
+msgid "Please Check the disk fragment!"
+msgstr "請登入系統控制台，進行磁碟檢測"
+
+msgid "Please check the configuration!"
+msgstr "如果是參數設定錯誤，請您"
+
+msgid "Setup Configuration!"
+msgstr "設定參數"
+
+msgid "You can Not use this links!"
+msgstr "您無權從此位置執行程式！"
+
+msgid "Blank Field was not allow!"
+msgstr "所有欄位不可留白或空白字元"
+
+msgid "Unchecked!"
+msgstr "檔案尚未選取"
+
+msgid "The files or folder are not exists!"
+msgstr "找不到目錄或檔案"
+
+msgid "Can not open it!"
+msgstr "無法開啟"
+
+msgid "Download fail!"
+msgstr "檔案下載失敗"
+
+msgid "Can not open the download file!"
+msgstr "無法開啟下載檔案"
+
+msgid "Can not save the upload files!"
+msgstr "無法儲存上傳檔案"
+
+msgid "Can not edit the file!"
+msgstr "無法開啟編修檔案"
+
+msgid "Disk Failue!"
+msgstr "磁碟錯誤！"
+
+msgid "Disk Failue! Can not open the directory!"
+msgstr "磁碟錯誤，目錄無法讀取。"
+
+msgid "Can not copy file from others Directory!"
+msgstr "您不能拷貝別人的檔案或目錄"
+
+msgid "Can not copy file to others Directory!"
+msgstr "您不能拷貝到別人的目錄裡"
+
+msgid "Can not move file to others Directory!"
+msgstr "您不能移動別人的檔案或目錄"
+
+msgid "Can not move Directory or files to others Directory!"
+msgstr "您不能移動到別人的目錄裡"
+
+msgid "Can not write!"
+msgstr "您沒有寫入"
+
+msgid "Can not edit file!"
+msgstr "您沒有修改"
+
+msgid "Can not read file!"
+msgstr "您沒有讀取"
+
+msgid "privileges name:"
+msgstr "權限名稱"
+
+msgid "File privileges"
+msgstr "檔案的權限"
+
+msgid "Dir privileges"
+msgstr "目錄的權限"
+
+msgid "you have no privileges to modify"
+msgstr "，不允許修改檔案或目錄名稱"
+
+msgid "you have no privileges to Download"
+msgstr "，不允許下載檔案"
+
+msgid "you have no privileges to edit this file!"
+msgstr "，不允許查看檔案內容"
+
+msgid "you have no privileges to delete this file!"
+msgstr "，不允許刪除目錄或檔案"
+
+msgid "you have no privileges to creat this Directory!"
+msgstr "，不允許建子目錄"
+
+msgid "you have no privileges to Change Directory!"
+msgstr "，無法切換目錄"
+
+msgid "you have no privileges to do this!"
+msgstr "權限錯誤！"
+
+msgid "Password Wrong!"
+msgstr "密碼輸入錯誤！"
+
+msgid "Username or Password Wrong!"
+msgstr "帳號或密碼輸入錯誤！"
+
+msgid "Can not change because your Password was wrong!"
+msgstr "無法繼續變更密碼，因為密碼輸入錯誤"
+
+msgid "user already exist!"
+msgstr "使用者名稱已經存在！"
+
+msgid "user are not exist!"
+msgstr "使用者名稱不存在！"
+
+msgid "can not continue because"
+msgstr "無法繼續建立或變更帳號設定，因為有"
+
+msgid "user group exist!"
+msgstr "使用者群組已經存在！"
+
+msgid "user group are not exist!"
+msgstr "使用者群組不存在！"
+
+msgid "Username or Password was Wrong!"
+msgstr "帳號或密碼錯誤！"
