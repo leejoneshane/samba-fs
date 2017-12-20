@@ -14,6 +14,7 @@ if [[ ! -f /sam/group ]]; then
 fi
 
 if [[ ! -f /etc/openldap/is.done ]]; then
+    rm -rf /sam/openldap/*
     SECRET=`slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n`
     sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/initldap.ldif
     sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/slapd.conf
