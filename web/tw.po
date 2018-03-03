@@ -28,8 +28,11 @@ msgstr "請先輸入帳號密碼來登入!!"
 msgid "WARNING"
 msgstr "警告："
 
+msgid "NOTICE"
+msgstr "訊息："
+
 msgid "Bad CSRF token!"
-msgstr "請從原始表單填寫資料！"
+msgstr "請更新表單後再填寫資料！"
 
 msgid "Account"
 msgstr "帳號"
@@ -88,9 +91,6 @@ msgstr "目錄"
 msgid "File"
 msgstr "檔案"
 
-msgid "Share Folder"
-msgstr "共享"
-
 msgid "Folder"
 msgstr "資料夾"
 
@@ -117,15 +117,6 @@ msgstr "下一頁"
 
 msgid "Page Jump"
 msgstr "快速跳頁"
-
-msgid "Upload"
-msgstr "上傳"
-
-msgid "Files"
-msgstr "個檔案"
-
-msgid "Upload Files"
-msgstr "上傳檔案"
 
 msgid "Go Back"
 msgstr "回上一頁"
@@ -208,23 +199,17 @@ msgstr "同一字元不得重複多次"
 msgid "Not Allow Keyboard Sequence"
 msgstr "禁止與鍵盤排列順序相同"
 
-msgid "Days Can Change Password"
-msgstr "幾天後可以變更密碼"
+msgid "Minimum Password Length"
+msgstr "密碼至少幾個字元"
 
-msgid "Days to Force Change Password"
-msgstr "幾天後強迫變更密碼"
+msgid "Maximum Password Age(seconds,unlimited by -1)"
+msgstr "密碼有效期限（請輸入秒數，-1 為永久有效）"
 
-msgid "Days to Change Password Hint"
-msgstr "幾天後提示密碼變更訊息"
+msgid "Lockout after bad logon attempts"
+msgstr "登入失敗幾次後鎖定帳號（預設為 0 不鎖定）"
 
-msgid "Days to Inactive Password"
-msgstr "帳號幾天未使用即凍結"
-
-msgid "Days to Expire Password"
-msgstr "帳號幾天後到期"
-
-msgid "Account Status"
-msgstr "帳號狀態"
+msgid "Reset lockout count after minutes(default:30)"
+msgstr "帳號鎖定幾分鐘後解除（預設30）"
 
 msgid "Save All Configuration"
 msgstr "儲存以上參數"
@@ -247,8 +232,8 @@ msgstr "新增管理權限"
 msgid "Remove WAM Manager"
 msgstr "移除管理權限"
 
-msgid "WAM Managers Added Successfully:"
-msgstr "管理員新增完成："
+msgid "WAM Manager Added Successfully!"
+msgstr "管理員新增完成！"
 
 msgid "Remove Below Wam Managers:"
 msgstr "正在移除以下管理員："
@@ -260,7 +245,7 @@ msgid "File Manager"
 msgstr "檔案管理員"
 
 msgid "Current Folder:"
-msgstr "目前所在資料夾是："
+msgstr "當前目錄："
 
 msgid "Total Spaces:"
 msgstr "您的總容量有："
@@ -268,8 +253,14 @@ msgstr "您的總容量有："
 msgid "Free:"
 msgstr "還剩："
 
+msgid "Used:"
+msgstr "已使用："
+
 msgid "Usage:"
 msgstr "使用率："
+
+msgid "Select"
+msgstr "選擇"
 
 msgid "Name"
 msgstr "名稱"
@@ -298,8 +289,8 @@ msgstr "操作面板"
 msgid "Root"
 msgstr "《根目錄》"
 
-msgid "The function below<font color=yellow>Rename,Move<br>,Copy</font>must choose single Dir or<br>File<font color=yellow>.But Change Mode,Change<br>Owner,Delete,Download</font>can<br>use multi-choice."
-msgstr "以下功能中<font color=yellow>更名、移動<br>、拷貝</font>必須選取單一目<br>錄或檔案<font color=yellow>改權限、改<br>擁有人、刪除、下載</font>可<br>以複選"
+msgid "Please click the icon to see the description"
+msgstr "請點選圖示查看說明"
 
 msgid "Please input dir name"
 msgstr "請在右邊文字框輸入目錄的名稱〔限英文或數字〕！"
@@ -352,8 +343,20 @@ msgstr "拷貝"
 msgid "Delete"
 msgstr "刪除"
 
-msgid "ownload"
+msgid "Download"
 msgstr "下載"
+
+msgid "Up to Parent"
+msgstr "回上一層目錄"
+
+msgid "Upload"
+msgstr "上傳"
+
+msgid "Files"
+msgstr "個檔案"
+
+msgid "Upload Files"
+msgstr "上傳檔案"
 
 msgid "Upload files to"
 msgstr "您將要上傳檔案到"
@@ -370,14 +373,119 @@ msgstr "無法開啟編修檔案"
 msgid "Files Saved!"
 msgstr "檔案儲存完畢！"
 
-msgid "iles or folder are not belongs to you, you cannot change owner for them!"
-msgstr "個檔案或目錄並非您所擁有，所以無法更換擁有人！"
+msgid "files or folder are not belongs to you, you cannot change owner for them!"
+msgstr "檔案或目錄並非您所擁有，所以無法更換擁有人！"
 
 msgid "files or folder are not belongs to you, you cannot change mode for them!"
-msgstr "個檔案或目錄並非您所擁有，所以無法改變權限！"
+msgstr "檔案或目錄並非您所擁有，所以無法改變權限！"
 
 msgid "files or folder are not belongs to you, you cannot delete them!"
-msgstr "個檔案或目錄並非您所擁有，所以無法刪除！"
+msgstr "檔案或目錄並非您所擁有，所以無法刪除！"
+
+msgid "Please select one file or Directory!"
+msgstr "請先選取要處理的檔案或目錄！"
+
+msgid "Please input Folder name!"
+msgstr "請輸入目錄名稱"
+
+msgid "Please assign new privilege!"
+msgstr "請輸入新權限"
+
+msgid "Please assign new owner!"
+msgstr "請輸入新擁有人"
+
+msgid "Please inpug new name!"
+msgstr "新名稱尚未輸入"
+
+msgid "Where to move?"
+msgstr "要移動到哪個目錄？"
+
+msgid "Where to copy to?"
+msgstr "要拷貝到哪個目錄？"
+
+msgid "Please Check:"
+msgstr "請檢查是否為下列情形造成："
+
+msgid "File was to big to download."
+msgstr "檔案太大無法下載！"
+
+msgid "Unchecked!"
+msgstr "檔案尚未選取"
+
+msgid "The files or folder are not exists!"
+msgstr "找不到目錄或檔案"
+
+msgid "Can not open it!"
+msgstr "無法開啟"
+
+msgid "Download fail!"
+msgstr "檔案下載失敗"
+
+msgid "Can not open the download file!"
+msgstr "無法開啟下載檔案"
+
+msgid "Can not save the upload files!"
+msgstr "無法儲存上傳檔案"
+
+msgid "Can not edit the file!"
+msgstr "無法開啟編修檔案"
+
+msgid "Can not read the file!"
+msgstr "無法讀取檔案"
+
+msgid "Disk Failue!"
+msgstr "磁碟錯誤！"
+
+msgid "Disk Failue! Can not open the directory!"
+msgstr "磁碟錯誤，目錄無法讀取。"
+
+msgid "Can not copy file from others Directory!"
+msgstr "您不能拷貝別人的檔案或目錄"
+
+msgid "Can not copy file to others Directory!"
+msgstr "您不能拷貝到別人的目錄裡"
+
+msgid "Can not move file from others Directory!"
+msgstr "您不能移動別人的檔案或目錄"
+
+msgid "Can not move Directory or files to others Directory!"
+msgstr "您不能移動到別人的目錄裡"
+
+msgid "Can not write!"
+msgstr "您沒有寫入"
+
+msgid "Can not edit file!"
+msgstr "您沒有修改"
+
+msgid "Can not read file!"
+msgstr "您沒有讀取"
+
+msgid "privileges name:"
+msgstr "權限名稱"
+
+msgid "File privileges"
+msgstr "檔案的權限"
+
+msgid "Dir privileges"
+msgstr "目錄的權限"
+
+msgid "you have no privileges to modify"
+msgstr "，不允許修改檔案或目錄名稱"
+
+msgid "you have no privileges to Download"
+msgstr "，不允許下載檔案"
+
+msgid "you have no privileges to edit this file!"
+msgstr "，不允許查看檔案內容"
+
+msgid "you have no privileges to delete this file!"
+msgstr "，不允許刪除目錄或檔案"
+
+msgid "you have no privileges to creat this Directory!"
+msgstr "，不允許建子目錄"
+
+msgid "you have no privileges to Change Directory!"
+msgstr "，無法切換目錄"
 
 msgid "Share Folder"
 msgstr "共享資料夾"
@@ -550,7 +658,7 @@ msgstr "年級"
 msgid "Class"
 msgstr "班
 
-msgid "Number"
+msgid "Seat"
 msgstr "號"
 
 msgid "Add Zero"
@@ -670,6 +778,24 @@ msgstr "不要以鍵盤、數字或字母順序做密碼設定。"
 msgid "Password changed successfully."
 msgstr "密碼變更成功！"
 
+msgid "Account Flags"
+msgstr "檢視帳號的狀態"
+
+msgid "Account disabled"
+msgstr "帳號已停用"
+
+msgid "Account enabled"
+msgstr "帳號已啟用"
+
+msgid "No password required"
+msgstr "允許不設置密碼"
+
+msgid "Password does not expire"
+msgstr "密碼永久有效"
+
+msgid "Account has been locked"
+msgstr "帳號已遭到鎖定"
+
 msgid "Configure Album"
 msgstr "設定電子相簿"
 
@@ -711,33 +837,6 @@ msgstr "電子相簿組態設定完成！"
 
 msgid "Log Out"
 msgstr "登出系統"
-
-msgid "Please select one file or Directory!"
-msgstr "請先選取要處理的檔案或目錄！"
-
-msgid "Please input Folder name!"
-msgstr "請輸入目錄名稱"
-
-msgid "Please assign new privilege!"
-msgstr "請輸入新權限"
-
-msgid "Please assign new owner!"
-msgstr "請輸入新擁有人"
-
-msgid "Please inpug new name!"
-msgstr "新名稱尚未輸入"
-
-msgid "Where to move?"
-msgstr "要移動到哪個目錄？"
-
-msgid "Where to copy to?"
-msgstr "要拷貝到哪個目錄？"
-
-msgid "Please Check:"
-msgstr "請檢查是否為下列情形造成："
-
-msgid "File was to big to download."
-msgstr "檔案太大無法下載！"
 
 msgid "Confirm your privileges!"
 msgstr "請先確定您是否擁有使用權限！"
@@ -798,81 +897,6 @@ msgstr "您無權從此位置執行程式！"
 
 msgid "Blank Field was not allow!"
 msgstr "所有欄位不可留白或空白字元"
-
-msgid "Unchecked!"
-msgstr "檔案尚未選取"
-
-msgid "The files or folder are not exists!"
-msgstr "找不到目錄或檔案"
-
-msgid "Can not open it!"
-msgstr "無法開啟"
-
-msgid "Download fail!"
-msgstr "檔案下載失敗"
-
-msgid "Can not open the download file!"
-msgstr "無法開啟下載檔案"
-
-msgid "Can not save the upload files!"
-msgstr "無法儲存上傳檔案"
-
-msgid "Can not edit the file!"
-msgstr "無法開啟編修檔案"
-
-msgid "Disk Failue!"
-msgstr "磁碟錯誤！"
-
-msgid "Disk Failue! Can not open the directory!"
-msgstr "磁碟錯誤，目錄無法讀取。"
-
-msgid "Can not copy file from others Directory!"
-msgstr "您不能拷貝別人的檔案或目錄"
-
-msgid "Can not copy file to others Directory!"
-msgstr "您不能拷貝到別人的目錄裡"
-
-msgid "Can not move file to others Directory!"
-msgstr "您不能移動別人的檔案或目錄"
-
-msgid "Can not move Directory or files to others Directory!"
-msgstr "您不能移動到別人的目錄裡"
-
-msgid "Can not write!"
-msgstr "您沒有寫入"
-
-msgid "Can not edit file!"
-msgstr "您沒有修改"
-
-msgid "Can not read file!"
-msgstr "您沒有讀取"
-
-msgid "privileges name:"
-msgstr "權限名稱"
-
-msgid "File privileges"
-msgstr "檔案的權限"
-
-msgid "Dir privileges"
-msgstr "目錄的權限"
-
-msgid "you have no privileges to modify"
-msgstr "，不允許修改檔案或目錄名稱"
-
-msgid "you have no privileges to Download"
-msgstr "，不允許下載檔案"
-
-msgid "you have no privileges to edit this file!"
-msgstr "，不允許查看檔案內容"
-
-msgid "you have no privileges to delete this file!"
-msgstr "，不允許刪除目錄或檔案"
-
-msgid "you have no privileges to creat this Directory!"
-msgstr "，不允許建子目錄"
-
-msgid "you have no privileges to Change Directory!"
-msgstr "，無法切換目錄"
 
 msgid "you have no privileges to do this!"
 msgstr "權限錯誤！"
