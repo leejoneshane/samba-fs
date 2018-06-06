@@ -37,8 +37,8 @@ use Net::LDAP;
 ####################### initialzing ###########################################
 #my $s = app->sessions(Mojolicious::Sessions->new);
 #$s->default_expiration(3600);
-my $c = plugin 'Config';
-&init_conf;
+my $c = plugin Config => {file => '/web/wam.conf'};
+&init_conf unless defined $c->{language};
 my $lh = WAM::I18N->get_handle($c->{language}) || die "What language?";
 my $ldap = Net::LDAP->new("ldap://127.0.0.1") || die "openLDAP Down?";
 my $base_dn = "dc=cc,dc=tp,dc=edu,dc=tw";
@@ -54,9 +54,9 @@ my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,
 &get_accounts;
 &read_smbconf;
 &write_smbconf;
-exit;
+
 ####################### My Library ############################################
-sub init_conf {
+sub init_conf {    
 	$c->{language} = 'tw' unless defined $c->{language};
 	$c->{admin} = 'admin' unless defined $c->{admin};
 	$c->{passwd_range} = 'all' unless defined $c->{passwd_range};
@@ -928,8 +928,9 @@ get '/filesmgr' => sub {
 
 get '/sharemgr' => sub {
 	my $ca = shift;
-	@MESSAGES = ();
 	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
 } => 'sharemgr';
 
 get '/edit_file' => sub {
@@ -1033,7 +1034,7 @@ if (window.top.location != window.location) {
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/config" style="text-decoration: none"><%=l('Config Your System')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/setadmin" style="text-decoration: none"><%=l('Setup WAM Manager')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/filesmgr" style="text-decoration: none"><%=l('File Manager')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/sharemgr" style="text-decoration: none"><%=l('Share Folder')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/sharemgr" style="text-decoration: none"><%=l('Share Folders')%></a></td></tr>
 <tr><td align=center bgColor=#FFCC00 width=100% height=40px><b><%=l('Account Management')%></b></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/addgrp" style="text-decoration: none"><%=l('Add Group')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/addone" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
@@ -1083,8 +1084,9 @@ if (window.top.location != window.location) {
 %= form_for do_config => (method => 'POST') => begin
 %= csrf_field
 <table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr style=background-color:#ffffff><th align=right><%= label_for language => l('Choose Language') %></th>
-<td><select name=language>
+<tr style=background-color:#E8EFFF><th align=right><%= label_for language => l('Choose Language') %></th>
+<td>
+<select name=language>
 % for my $lang ($langs) {
 <option value=<%=$lang%> <% if ($config->{language} eq $lang) { %>selected<% } %>><%=$lang%></option>
 % }
@@ -1106,13 +1108,13 @@ if (window.top.location != window.location) {
 <option value=<%=$i%> <% if ($config->{nest} eq $i) { %>selected<% } %>><%=$i%></option>
 % }
 </select></td>
-<tr style=background-color:#F2D7FF><th align=right><%= label_for passwd_form => l('Password Specified As') %></th>
+<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_form => l('Password Specified As') %></th>
 <td><select name=passwd_form>
 <option value=username <% if ($config->{passwd_form} eq "username") { %>selected<% } %>><%=l('Same as Account')%></option>
 <option value=random <% if ($config->{passwd_form} eq "random") { %>selected<% } %>><%=l('Random')%></option>
 <option value=single <% if ($config->{passwd_form} eq "single") { %>selected<% } %>><%=l("All set to 'passwd'")%></option>
 </select></td>
-<tr style=background-color:#F9ECFF><th align=right><%= label_for passwd_range => l('Set Random Range') %></th>
+<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_range => l('Set Random Range') %></th>
 <td><select name=passwd_range>
 <option value=num <% if ($config->{passwd_range} eq "num") { %>selected<% } %>><%=l('Number')%></option>
 <option value=lcase <% if ($config->{passwd_range} eq "lcase") { %>selected<% } %>><%=l('Lower Case')%></option>
@@ -1122,35 +1124,35 @@ if (window.top.location != window.location) {
 <option value=num-ucase <% if ($config->{passwd_range} eq "num-ucase") { %>selected<% } %>><%=l('Number & Upper Case')%></option>
 <option value=all <% if ($config->{passwd_range} eq "all") { %>selected<% } %>><%=l('Any Number & Any Case')%></option>
 </select></td>
-<tr style=background-color:#F9ECFF><th align=right><%= label_for passwd_rule => l('Password Changing Rule') %></th><td>
+<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_rule => l('Password Changing Rule') %></th><td>
 % if (int($config->{passwd_rule})%2) {
 %= check_box passwd_rule1 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule1 => 1
 % }
 <%=l('Lenght Limit 4-8')%></td>
-<tr style=background-color:#F9ECFF><th></th><td>
+<tr style=background-color:#E8EFFF><th></th><td>
 % if (int($config->{passwd_rule})%4 >= 2) {
 %= check_box passwd_rule2 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule2 => 1
 % }
 <%=l('Only Number & Letter')%></td>
-<tr style=background-color:#F9ECFF><th></th><td>
+<tr style=background-color:#E8EFFF><th></th><td>
 % if (int($config->{passwd_rule})%8 >= 4) {
 %= check_box passwd_rule3 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule3 => 1
 % }
 <%=l('Limit Diffrent Letter')%></td>
-<tr style=background-color:#F9ECFF><th></th><td>
+<tr style=background-color:#E8EFFF><th></th><td>
 % if (int($config->{passwd_rule}) >= 8) {
 %= check_box passwd_rule4 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule4 => 1
 % }
 <%= l('Not Allow Keyboard Sequence') %></td>
-<tr style=background-color:#E8deFF><th align=right><%= label_for passwd_length => l('Minimum Password Length') %></th>
+<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_length => l('Minimum Password Length') %></th>
 <td><%= text_field passwd_length => $config->{passwd_length} %></td>
 <tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_age => l('Maximum Password Age(seconds,unlimited by -1)') %></th>
 <td><%= text_field passwd_age => $config->{passwd_age} %></td>
@@ -1215,43 +1217,51 @@ if (window.top.location != window.location) {
 % my $used = $$free[3]*0.6;
 <tr><td colspan=9><center><font color=green><%=l('Total Spaces:')%><%=$$free[0]%>M</font> <font color=darkred><%=l('Used:')%><%=$$free[1]%>M</font> <font color=blue><%=l('Free:')%><%=$$free[2]%>M</font> <font color=red><%=l('Usage:')%><img align=absmiddle src=/img/used.jpg width=<%=$used%> height=10><img align=absmiddle src=/img/unused.jpg width=<%=int(60-$used)%> height=10><%=$$free[3]%>%</font></center></td></tr>
 <tr bgcolor=#ffffff><td align=center bgcolor=#6699cc><font color=white><b><%=l('Select')%></b></font></td>
+<td align=center bgcolor=#6699cc>
 % if ($sort_key eq 'name' || $sort_key eq '') {
-<td align=center bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "name_rev"])%>"><font color=white><b><%=l('Name')%></b></font></a>
+%= link_to l('Name') => url_with->query([folder => $folder, sort => "name_rev"]) => ( style => 'color:white' )
 % } else {
-<td align=center bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "name"])%>"><font color=white><b><%=l('Name')%></b></font></a>
+%= link_to l('Name') => url_with->query([folder => $folder, sort => "name"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'type') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "type_rev"])%>"><font color=white><b><%=l('Type')%></b></font></a>
+%= link_to l('Type') => url_with->query([folder => $folder, sort => "type_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "type"])%>"><font color=white><b><%=l('Type')%></b></font></a>
+%= link_to l('Type') => url_with->query([folder => $folder, sort => "type"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'perm') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "perm_rev"])%>"><font color=white><b><%=l('Mode')%></b></font></a>
+%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "perm"])%>"><font color=white><b><%=l('Mode')%></b></font></a>
+%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'owner') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "owner_rev"])%>"><font color=white><b><%=l('Owner')%></b></font></a>
+%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "owner"])%>"><font color=white><b><%=l('Owner')%></b></font></a>
+%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'gowner') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "gowner_rev"])%>"><font color=white><b><%=l('Group')%></b></font></a>
+%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "gowner"])%>"><font color=white><b><%=l('Group')%></b></font></a>
+%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'size') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "size_rev"])%>"><font color=white><b><%=l('Size')%></b></font></a>
+%= link_to l('Size') => url_with->query([folder => $folder, sort => "size_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "size"])%>"><font color=white><b><%=l('Size')%></b></font></a>
+%= link_to l('Size') => url_with->query([folder => $folder, sort => "size"]) => ( style => 'color:white' )
 % }
+</td><td bgcolor=#6699cc>
 % if ($sort_key eq 'time') {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "time_rev"])%>"><font color=white><b><%=l('Update')%></b></font></a>
+%= link_to l('Update') => url_with->query([folder => $folder, sort => "time_rev"]) => ( style => 'color:white' )
 % } else {
-<td bgcolor=#6699cc><a href="<%=url_with->query([folder => $folder, sort => "time"])%>"><font color=white><b><%=l('Update')%></b></font></a>
+%= link_to l('Update') => url_with->query([folder => $folder, sort => "time"]) => ( style => 'color:white' )
 % }
-<td align=center bgcolor=#6699cc><font color=white><%=l('Pannel')%></font></tr>
-<tr><td bgcolor=#ffffff><a href=javascript:sfile()><img align=absmiddle src=/img/allfile.gif border=0></a><td><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
+</td><td align=center style="background-color:#6699cc;color:white"><%=l('Pannel')%></td></tr>
+<tr><td bgcolor=#ffffff><a href=javascript:sfile()><img align=absmiddle src=/img/allfile.gif border=0></a>
+<td><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
 <td align=center colspan=6>
 %= form_for upload => (method => 'POST') => begin
 <%= csrf_field %><%= hidden_field title => l('Upload Files') %><%= hidden_field act => 'f' %><%= hidden_field folder => $folder %>
@@ -1276,7 +1286,7 @@ if (window.top.location != window.location) {
 <tr><td bgcolor=#ffeeee><a href=javascript:sall()><img align=absmiddle src=/img/all.gif border=0></a><td bgcolor=#ffffee><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => '..'])%>"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Up to Parent')%></a>
 <td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
 % for my $k (@$sorted_folds) {
-% next if ($k == '.' || $k == '..');
+% next if ($k eq '.' || $k eq '..');
 <tr><td bgcolor=#ddeeff><input type=checkbox name=sel value=<%=$k%>></td>
 <td bgcolor=#e8f3ff><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => $k])%>"><img align=absmiddle src="/img/<%=$$folds{$k}->{image}%>" border=0><%=$k%></a></td>
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$folds{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{modify}%></td></tr>
@@ -1343,6 +1353,58 @@ function snone() {
 }
 % end
 
+@@ sharemgr.html.ep
+% title l('Share Folders');
+% layout 'default';
+<div align=center>
+<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr  bgcolor="#6699cc"><td width="50%"><%=l('Share Folders List')%></td><td><%=l('Sharing Management')%></td></tr>
+% for my $sec (keys %$samba) {
+% next if ($sec eq 'global');
+<tr><td><%=$sec%></td><td><%=submit_button l('Configure Sharing')%><%=submit_button l('Cancle Sharing')%></td></tr>
+% }
+</table>
+<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
+%= form_for sharemgr => (id => 'sharemgr') => (method => 'POST') => begin
+<tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for section => l('Share Name') %></th><td>
+%= text_field 'section'
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>
+%= text_field 'real_path'
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for browse => l('Browserable') %></th><td>
+%= check_box 'browse' => 1
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for readonly => l('Read Only') %></th><td>
+%= check_box 'readonly' => 1
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Groups To Sharing') %></th><td>
+% for my $group (sort @$groups) {
+<%= check_box $group => 1 %><%= label_for $group => $group %>
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Setup Admin Users') %></th><td>
+% for my $admin (sort @$admins) {
+<%= check_box $admin => 1 %><%= label_for $admin => $admin %>
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for veto => l('Veto Files') %></th><td>
+%= text_area veto => '', rows => 3, cols => 30
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
+%= text_area delete_veto => '', rows => 3, cols => 30
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
+<select name=file_force>
+<option value=owner><%=l('Only Owner Can Access')%></option>
+<option value=read><%=l('Allow Valid Users to Read')%></option>
+<option value=write><%=l('Allow Valid Users to Write')%></option>
+</select>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
+<select name=folder_force>
+<option value=owner><%=l('Only Owner Can Delete')%></option>
+<option value=all><%=l('Allow Valid Users to Create and Delete')%></option>
+</select>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
+%= check_box 'recycle' => 1
+</td></tr><tr><td colspan=2 align=center><%= submit_button l('SAVE') %></td></tr>
+% end
+</table>
+</div>
+
 @@ layouts/default.html.ep
 <html>
 <head>
@@ -1353,7 +1415,7 @@ function snone() {
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <!--[if IE]>  
    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>  
- <![endif]-->
+<![endif]-->
 </head>
 <body style='font-size:11pt' bgcolor=#ffffff><center>
 <font size=+2 face="<%=l('Arial')%>" color=darkblue><%= title %></font></center>

@@ -487,17 +487,23 @@ msgstr "，不允許建子目錄"
 msgid "you have no privileges to Change Directory!"
 msgstr "，無法切換目錄"
 
-msgid "Share Folder"
+msgid "Share Folders"
 msgstr "共享資料夾"
 
-msgid "Configure share folders"
-msgstr "設定共享資料夾"
+msgid "Share Folders List"
+msgstr "目前有下列共享資料夾："
+
+msgid "Sharing Management"
+msgstr "管理"
 
 msgid "Create a share folder"
-msgstr "建立共享資料夾"
+msgstr "建立新的共享資料夾"
 
-msgid "Delete a share folder"
-msgstr "刪除共享資料夾"
+msgid "Configure Sharing"
+msgstr "編輯"
+
+msgid "Cancle Sharing"
+msgstr "移除"
 
 msgid "Real Path"
 msgstr "對應路徑"
@@ -511,32 +517,26 @@ msgstr "繼承上層資料夾之權限"
 msgid "Browserable"
 msgstr "顯示共享名稱"
 
-msgid "Writeable"
-msgstr "可讀寫"
-
-msgid "Valid Users"
-msgstr "允許存取的使用者或群組"
+msgid "Read Only"
+msgstr "唯讀"
 
 msgid "Groups To Sharing"
 msgstr "分享給哪些群組？"
-
-msgid "Admin Users"
-msgstr "管理員"
 
 msgid "Setup Admin Users"
 msgstr "設定管理員"
 
 msgid "Veto Files"
-msgstr "強制隱藏檔案"
-
-msgid "Add Veto Files"
-msgstr "新增強制隱藏檔案規則"
+msgstr "符合條件的檔案將強制隱藏，請輸入條件"
 
 msgid "Delete Veto Files"
-msgstr "強制刪除隱藏檔案"
+msgstr "符合條件的檔案將強制刪除，請輸入條件"
+
+msgid "Grant File Permission"
+msgstr "開放哪些檔案權限？"
 
 msgid "Only Owner Can Access"
-msgstr "僅允許檔案擁有者存取"
+msgstr "僅允許擁有者存取"
 
 msgid "Allow Valid Users to Read"
 msgstr "允許非擁有者讀取檔案"
@@ -544,23 +544,17 @@ msgstr "允許非擁有者讀取檔案"
 msgid "Allow Valid Users to Write"
 msgstr "允許非擁有者任意修改檔案"
 
+msgid "Grant Folder Permission"
+msgstr "開放哪些目錄權限？"
+
 msgid "Only Owner Can Delete"
 msgstr "僅允許擁有者刪除"
-
-msgid "This Folder Is Readonly"
-msgstr "僅允許讀取"
 
 msgid "Allow Valid Users to Create and Delete"
 msgstr "允許建立檔案或目錄"
 
 msgid "Allow Recycle"
 msgstr "建立資源回收桶"
-
-msgid "Grant Permission"
-msgstr "開放哪些權限？"
-
-msgid "Cancle Sharing"
-msgstr "取消共享"
 
 msgid "Share Folder Configure Completed!"
 msgstr "共享資料夾設定完成！"
