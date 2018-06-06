@@ -933,6 +933,64 @@ get '/sharemgr' => sub {
 	$ca->stash(admins => [keys %ADMINS]);
 } => 'sharemgr';
 
+post '/add_share' =>sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+	    @MESSAGES = ();
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $sec = $ca->req->param('section');
+	$SMB{$sec}->{path} = '/mnt/'.$ca->req->param('real_path');
+	if ($ca->req->param('browse') eq '1') {
+		$SMB{$sec}->{browseable} = 'yes';
+	} else {
+		$SMB{$sec}->{browseable} = 'no';
+	}
+	if ($ca->req->param('readonly') eq '1') {
+		$SMB{$sec}->{writeable} = 'no';
+	} else {
+		$SMB{$sec}->{writeable} = 'yes';
+	}
+	my @a = ();
+	push @a, @$ca->req->every_param('admin');
+	for $b (@$ca->req->every_param('valid')) {
+		push @a, '+'.$b;
+	}
+	$SMB{$sec}->{'valid users'} = join(',', @a);
+	$SMB{$sec}->{'admin users'} = join(',', @$ca->req->every_param('admin'));
+	$SMB{$sec}->{'veto files'} = $ca->req->param('veto');
+	if ($ca->req->param('delete_veto') eq '1') {
+		$SMB{$sec}->{'delete veto files'} = 'yes';
+	} else {
+		$SMB{$sec}->{'delete_veto_files'} = 'no';
+	}
+	$SMB{$sec}->{'force create mode'} = $ca->req->param('file_force');
+	if ($ca->req->param('owner_del') eq '1') {
+		my $s = '1';
+	} else {
+		my $s = '0';
+	}
+	if ($ca->req->param('can_write') eq '1') {
+		$SMB{$sec}->{'force directory mode'} = $s.'777';
+	} else {
+		$SMB{$sec}->{'force directory mode'} = $s.'755';
+	}
+	if ($ca->req->param('recycle') eq '1') {
+		$SMB{$sec}->{'vfs object'} = 'recycle';
+		$SMB{$sec}->{'recycle:keeptree'} = 'yes';
+		$SMB{$sec}->{'recycle:version'} = 'yes';
+		$SMB{$sec}->{'recycle:repository'} = '/mnt/recycle/%u';
+	}
+	&write_smbconf;
+    @MESSAGES = ();
+  	push @MESSAGES, app->l('WAM Manager Added Successfully!');
+  	$ca->stash(messages => [@MESSAGES]);
+  	$ca->render(template => 'notice', status => 200);
+};
+
 get '/edit_file' => sub {
 	my $ca = shift;
 	if (!app->is_admin) {
@@ -1366,38 +1424,37 @@ function snone() {
 </table>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
 <tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
-%= form_for sharemgr => (id => 'sharemgr') => (method => 'POST') => begin
+%= form_for add_share => (id => 'sharemgr') => (method => 'POST') => begin
+%= csrf_field
 <tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for section => l('Share Name') %></th><td>
 %= text_field 'section'
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
 %= text_field 'real_path'
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for browse => l('Browserable') %></th><td>
 %= check_box 'browse' => 1
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for readonly => l('Read Only') %></th><td>
 %= check_box 'readonly' => 1
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Groups To Sharing') %></th><td>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Sharing to which Groups') %></th><td>
 % for my $group (sort @$groups) {
-<%= check_box $group => 1 %><%= label_for $group => $group %>
+<%= check_box valid => $group %><%= label_for valid => $group %>
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Setup Admin Users') %></th><td>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Who want to Administration') %></th><td>
 % for my $admin (sort @$admins) {
-<%= check_box $admin => 1 %><%= label_for $admin => $admin %>
+<%= check_box admin => $admin %><%= label_for admin => $admin %>
 % }
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for veto => l('Veto Files') %></th><td>
-%= text_area veto => '', rows => 3, cols => 30
+%= text_area veto => '/*.exe/*.com/*.pif/*.lnk/*.eml/*.bat/*.vbs/*.inf/.DS_Store/_.DS_Store', rows => 3, cols => 30
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
-%= text_area delete_veto => '', rows => 3, cols => 30
+%= check_box delete_veto => 1
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
 <select name=file_force>
-<option value=owner><%=l('Only Owner Can Access')%></option>
-<option value=read><%=l('Allow Valid Users to Read')%></option>
-<option value=write><%=l('Allow Valid Users to Write')%></option>
+<option value="700"><%=l('Only Owner Can Access')%></option>
+<option value="755"><%=l('Allow Valid Users to Read')%></option>
+<option value="777"><%=l('Allow Valid Users to Write')%></option>
 </select>
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
-<select name=folder_force>
-<option value=owner><%=l('Only Owner Can Delete')%></option>
-<option value=all><%=l('Allow Valid Users to Create and Delete')%></option>
-</select>
+<%= check_box owner_del => 1 %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
+<%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
 %= check_box 'recycle' => 1
 </td></tr><tr><td colspan=2 align=center><%= submit_button l('SAVE') %></td></tr>

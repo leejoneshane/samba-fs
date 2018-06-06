@@ -520,17 +520,17 @@ msgstr "顯示共享名稱"
 msgid "Read Only"
 msgstr "唯讀"
 
-msgid "Groups To Sharing"
+msgid "Sharing to which Groups"
 msgstr "分享給哪些群組？"
 
-msgid "Setup Admin Users"
-msgstr "設定管理員"
+msgid "Who want to Administration"
+msgstr "誰是管理員？"
 
 msgid "Veto Files"
 msgstr "符合條件的檔案將強制隱藏，請輸入條件"
 
 msgid "Delete Veto Files"
-msgstr "符合條件的檔案將強制刪除，請輸入條件"
+msgstr "要將上述檔案刪除嗎？"
 
 msgid "Grant File Permission"
 msgstr "開放哪些檔案權限？"
