@@ -53,7 +53,6 @@ my $today = int(time / 86400);
 my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,%SMB);
 &get_accounts;
 &read_smbconf;
-&write_smbconf;
 
 ####################### My Library ############################################
 sub init_conf {    
