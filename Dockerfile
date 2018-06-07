@@ -11,7 +11,7 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo zip acl attr samba freeradius openldap-clients openldap \
+    && apk --no-cache --no-progress add openrc bash sudo zip acl attr samba freeradius openldap-clients openldap \
                                         openldap-back-mdb perl perl-ldap perl-mojolicious \
                                         perl-locale-maketext-lexicon \
     && adduser -G wheel -D -h /mnt admin \
