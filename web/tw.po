@@ -499,20 +499,20 @@ msgstr "管理"
 msgid "Create a share folder"
 msgstr "建立新的共享資料夾"
 
+msgid "View Configuration"
+msgstr "瀏覽共享組態"
+
 msgid "Configure Sharing"
-msgstr "編輯"
+msgstr "編輯共享組態"
 
 msgid "Cancle Sharing"
-msgstr "移除"
+msgstr "取消共享，但保留內容"
 
 msgid "Real Path"
 msgstr "對應路徑"
 
 msgid "Share Name"
 msgstr "共享名稱"
-
-msgid "Inherit Permissions"
-msgstr "繼承上層資料夾之權限"
 
 msgid "Browserable"
 msgstr "顯示共享名稱"

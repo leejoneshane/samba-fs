@@ -628,23 +628,20 @@ sub myoct {
 }
 
 sub check_perm {
-	my($oid) = shift;
-	my($owner) = $UNAME{$oid};
-	my($group) = $USERS{$owner}->{gid};
-	return 1 if (app->is_admin($owner));
+	return 1 if (app->is_admin);
 	my($target,$flag) = @_;
 	my $true = 0;
 	my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($target);
 	my($perm) = &myoct($mode & 07777);
-	if ($oid eq $uid) {
+	if ($> eq $uid) {
 		$perm = substr($perm,1,1);
-	} elsif ($group eq $gid) {
+	} elsif ($) eq $gid) {
 		$perm = substr($perm,2,1);
 	} else {
 		$perm = substr($perm,3,1);
 	}
 	if ($flag eq 0) {
-		return 1 if ($oid eq $uid);
+		return 1 if ($> eq $uid);
 		return 0;
 	} else {
 		return ($perm & $flag);
@@ -758,10 +755,10 @@ get '/config' => sub {
 
 post '/do_config' => sub {
 	my $ca = shift;
+	@MESSAGES = ();
 	# Check CSRF token
 	my $v = $ca->validation;
   	if ($v->csrf_protect->has_error('csrf_token')) {
-	    @MESSAGES = ();
   		push @MESSAGES, app->l('Bad CSRF token!');
   		$ca->stash(messages => [@MESSAGES]);  		
   		$ca->render(template => 'warning', status => 500); 
@@ -786,7 +783,6 @@ post '/do_config' => sub {
 										   }
 							  );
 	&write_conf;
-	@MESSAGES = ();
 	push @MESSAGES, app->l('Configuration Saved!');
 	$ca->stash(messages => [@MESSAGES]);
 	$ca->render(template => 'notice', status => 200); 
@@ -801,33 +797,31 @@ get '/setadmin' => sub {
 
 post '/add_admin' => sub {
 	my $ca = shift;
+	@MESSAGES = ();
 	# Check CSRF token
 	my $v = $ca->validation;
   	if ($v->csrf_protect->has_error('csrf_token')) {
-	    @MESSAGES = ();
   		push @MESSAGES, app->l('Bad CSRF token!');
   		$ca->stash(messages => [@MESSAGES]);
   		return $ca->render(template => 'warning', status => 500); 
 	}
 	&add_wam($ca->req->param('user'));
 	&write_conf;
-    @MESSAGES = ();
-  	push @MESSAGES, app->l('WAM Manager Added Successfully!');
+   	push @MESSAGES, app->l('WAM Manager Added Successfully!');
   	$ca->stash(messages => [@MESSAGES]);
   	$ca->render(template => 'notice', status => 200);
 };
 
 post '/del_admin' => sub {
 	my $ca = shift;
+	@MESSAGES = ();
 	# Check CSRF token
 	my $v = $ca->validation;
   	if ($v->csrf_protect->has_error('csrf_token')) {
-	    @MESSAGES = ();
   		push @MESSAGES, app->l('Bad CSRF token!');
   		$ca->stash(messages => [@MESSAGES]);
   		return $ca->render(template => 'warning', status => 500); 
 	}
-	@MESSAGES = ();
 	push @MESSAGES, app->l('Remove Below Wam Managers:');
 	for my $usr (@{$ca->req->every_param('user')}) {
 		push @MESSAGES, $usr if ($usr eq &del_wam($usr));
@@ -932,60 +926,96 @@ get '/sharemgr' => sub {
 	$ca->stash(admins => [keys %ADMINS]);
 } => 'sharemgr';
 
+get '/view_share' => sub {
+	my $ca = shift;
+	my $sec = $ca->req->param('section');
+ 	@MESSAGES = ();
+	my $pairs = $SMB{$sec};
+	for my $k (keys %$pairs) {
+		push @MESSAGES, $k.' = '.$SMB{$sec}->{$k};
+	}
+  	$ca->stash(messages => [@MESSAGES]);
+  	$ca->render(template => 'notice', status => 200);
+};
+
+get '/edit_share' => sub {
+	my $ca = shift;
+	my $sec = $ca->req->param('section');
+	$ca->stash(section => $sec);
+	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'share_form';
+
 post '/add_share' =>sub {
 	my $ca = shift;
 	my $v = $ca->validation;
+    @MESSAGES = ();
   	if ($v->csrf_protect->has_error('csrf_token')) {
-	    @MESSAGES = ();
   		push @MESSAGES, app->l('Bad CSRF token!');
   		$ca->stash(messages => [@MESSAGES]);
   		return $ca->render(template => 'warning', status => 500); 
 	}
 	my $sec = $ca->req->param('section');
+	&make_dir('/mnt', $ca->req->param('real_path')) unless (-d '/mnt/'.$ca->req->param('real_path'));
 	$SMB{$sec}->{path} = '/mnt/'.$ca->req->param('real_path');
-	if ($ca->req->param('browse') eq '1') {
+	if (defined($ca->req->param('browse')) && $ca->req->param('browse') eq '1') {
 		$SMB{$sec}->{browseable} = 'yes';
 	} else {
 		$SMB{$sec}->{browseable} = 'no';
 	}
-	if ($ca->req->param('readonly') eq '1') {
+	if (defined($ca->req->param('readonly')) && $ca->req->param('readonly') eq '1') {
 		$SMB{$sec}->{writeable} = 'no';
 	} else {
 		$SMB{$sec}->{writeable} = 'yes';
 	}
-	my @a = ();
-	push @a, @$ca->req->every_param('admin');
-	for $b (@$ca->req->every_param('valid')) {
-		push @a, '+'.$b;
-	}
-	$SMB{$sec}->{'valid users'} = join(',', @a);
-	$SMB{$sec}->{'admin users'} = join(',', @$ca->req->every_param('admin'));
+	my $admins = $ca->req->every_param('admin');
+	$SMB{$sec}->{'admin users'} = $admins if (ref($admins) eq 'SCALAR');
+	$SMB{$sec}->{'admin users'} = join(',', @$admins) if (ref($admins) eq 'ARRAY');
+	my $users = $ca->req->every_param('valid');
+	$SMB{$sec}->{'valid users'} = $users if (ref($users) eq 'SCALAR');
+	$SMB{$sec}->{'valid users'} = join(',', map { '+'.$_ } @$users) if (ref($users) eq 'ARRAY');
+	$SMB{$sec}->{'valid users'} = $SMB{$sec}->{'admin users'}.','.$SMB{$sec}->{'valid users'};
 	$SMB{$sec}->{'veto files'} = $ca->req->param('veto');
-	if ($ca->req->param('delete_veto') eq '1') {
+	if (defined($ca->req->param('delete_veto')) && $ca->req->param('delete_veto') eq '1') {
 		$SMB{$sec}->{'delete veto files'} = 'yes';
 	} else {
 		$SMB{$sec}->{'delete_veto_files'} = 'no';
 	}
 	$SMB{$sec}->{'force create mode'} = $ca->req->param('file_force');
-	if ($ca->req->param('owner_del') eq '1') {
-		my $s = '1';
-	} else {
-		my $s = '0';
-	}
-	if ($ca->req->param('can_write') eq '1') {
+	my $s = '0';
+	$s = '1' if (defined($ca->req->param('owner_del')) && $ca->req->param('owner_del') eq '1');
+	if (defined($ca->req->param('can_write')) && $ca->req->param('can_write') eq '1') {
 		$SMB{$sec}->{'force directory mode'} = $s.'777';
 	} else {
 		$SMB{$sec}->{'force directory mode'} = $s.'755';
 	}
-	if ($ca->req->param('recycle') eq '1') {
+	if (defined($ca->req->param('recycle')) && $ca->req->param('recycle') eq '1') {
 		$SMB{$sec}->{'vfs object'} = 'recycle';
 		$SMB{$sec}->{'recycle:keeptree'} = 'yes';
 		$SMB{$sec}->{'recycle:version'} = 'yes';
 		$SMB{$sec}->{'recycle:repository'} = '/mnt/recycle/%u';
 	}
 	&write_smbconf;
-    @MESSAGES = ();
-  	push @MESSAGES, app->l('WAM Manager Added Successfully!');
+	system('rc-service samba restart');
+  	push @MESSAGES, app->l('Share Folder Configure Completed!');
+  	$ca->stash(messages => [@MESSAGES]);
+  	$ca->render(template => 'notice', status => 200);
+};
+
+post '/del_share' =>sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $sec = $ca->req->param('section');
+	delete $SMB{$sec};
+	&write_smbconf;
+  	push @MESSAGES, app->l('Share Folder Cancled!');
   	$ca->stash(messages => [@MESSAGES]);
   	$ca->render(template => 'notice', status => 200);
 };
@@ -1415,10 +1445,26 @@ function snone() {
 % layout 'default';
 <div align=center>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr  bgcolor="#6699cc"><td width="50%"><%=l('Share Folders List')%></td><td><%=l('Sharing Management')%></td></tr>
+<tr  bgcolor="#6699cc"><td width="50%"><%=l('Share Folders List')%></td><td colspan=3><%=l('Sharing Management')%></td></tr>
 % for my $sec (keys %$samba) {
 % next if ($sec eq 'global');
-<tr><td><%=$sec%></td><td><%=submit_button l('Configure Sharing')%><%=submit_button l('Cancle Sharing')%></td></tr>
+<tr><td><%=$sec%></td><td>
+%= form_for '/view_share' => begin
+%= hidden_field section => $sec
+%= submit_button l('View Configuration')
+% end
+</td><td>
+%= form_for '/edit_share' => begin
+%= hidden_field section => $sec
+%= submit_button l('Configure Sharing')
+% end
+</td><td>
+%= form_for del_share => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field section => $sec
+%= submit_button l('Cancle Sharing')
+% end
+</td></tr>
 % }
 </table>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
@@ -1456,6 +1502,84 @@ function snone() {
 <%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
 %= check_box 'recycle' => 1
+</td></tr><tr><td colspan=2 align=center><%= submit_button l('SAVE') %></td></tr>
+% end
+</table>
+</div>
+
+@@ share_form.html.ep
+% title l('Configure Sharing');
+% layout 'default';
+<div align=center>
+<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
+%= form_for add_share => (id => 'sharemgr') => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field section => $section
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
+%= text_field 'real_path' => %$samba{$section}->{path} =~ m/\/mnt\/(.*)/
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for browse => l('Browserable') %></th><td>
+% if (defined(%$samba{$section}->{browseable}) && %$samba{$section}->{browseable} eq 'yes') {
+%= check_box 'browse' => 1, checked => undef
+% } else {
+%= check_box 'browse' => 1
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for readonly => l('Read Only') %></th><td>
+% if (defined(%$samba{$section}->{writeable}) && %$samba{$section}->{writeable} eq 'yes') {
+%= check_box 'readonly' => 1
+% } else {
+%= check_box 'readonly' => 1, checked => undef
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Sharing to which Groups') %></th><td>
+% my @users = grep { $_ =~ m/\+(.*)/ } split(',', %$samba{$section}->{'valid users'});
+% @users = grep { $_ =~ s/\+// } @users;
+% for my $group (sort @$groups) {
+% if (grep { $group eq $_ } @users) {
+<%= check_box valid => $group, checked => undef %><%= label_for valid => $group %>
+% } else {
+<%= check_box valid => $group %><%= label_for valid => $group %>
+% }
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Who want to Administration') %></th><td>
+% @users = split(',', %$samba{$section}->{'admin users'});
+% for my $admin (sort @$admins) {
+% if (grep { $admin eq $_ } @users) {
+<%= check_box admin => $admin, checked => undef %><%= label_for admin => $admin %>
+% } else {
+<%= check_box admin => $admin %><%= label_for admin => $admin %>
+% }
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for veto => l('Veto Files') %></th><td>
+%= text_area veto => defined(%$samba{$section}->{'veto files'}) ? %$samba{$section}->{'veto files'} : '', rows => 3, cols => 30
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
+% if (defined(%$samba{$section}->{'delete veto files'}) && %$samba{$section}->{'delete veto files'} eq 'yes') {
+%= check_box delete_veto => 1, checked => undef
+% } else {
+%= check_box delete_veto => 1
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
+<select name=file_force>
+<option value="700"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '700'); %>><%=l('Only Owner Can Access')%></option>
+<option value="755"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '755'); %>><%=l('Allow Valid Users to Read')%></option>
+<option value="777"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '777'); %>><%=l('Allow Valid Users to Write')%></option>
+</select>
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
+% if (defined(%$samba{$section}->{'force directory mode'}) && %$samba{$section}->{'force directory mode'} =~ /1[0-9]{3}/) {
+<%= check_box owner_del => 1, checked => undef %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
+% } else {
+<%= check_box owner_del => 1 %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
+% }
+% if (defined(%$samba{$section}->{'force directory mode'}) && %$samba{$section}->{'force directory mode'} =~ /[0-1]777/) {
+<%= check_box can_write => 1, checked => undef %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
+% } else {
+<%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
+% }
+</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
+% if (defined(%$samba{$section}->{'vfs object'}) && %$samba{$section}->{'vfs object'} eq 'recycle') {
+%= check_box 'recycle' => 1, checked => undef
+% } else {
+%= check_box 'recycle' => 1
+%}
 </td></tr><tr><td colspan=2 align=center><%= submit_button l('SAVE') %></td></tr>
 % end
 </table>
