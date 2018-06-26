@@ -1,6 +1,4 @@
 #!/bin/sh
-set -e
-
 if [[ ! -f /sam/passwd ]]; then
 	cp -p /root/passwd /sam/passwd
 fi
@@ -33,10 +31,8 @@ if [[ -f /etc/samba/smb.conf ]]; then
     exec nmbd -FS
 fi
 
-exec /web/wam.pl daemon -m production
-
 if [ "$#" -lt 1 ]; then
-  exec bash
+    exec /web/wam.pl daemon -m production
 else
-  exec "$@"
+    exec $@
 fi

@@ -490,7 +490,7 @@ sub del_dir {
 		if (&check_perm("$olddir/$f",0) eq 0) {
 			push @MESSAGES, "$olddir/$f".app->l('files or folder are not belongs to you, you cannot delete them!');
 		} else {
-			system("rm -rf $olddir/$f/* : rmdir $olddir/$f");
+			system("rm -Rf $olddir/$f");
 		}
 	}
 }
@@ -672,7 +672,7 @@ helper is_admin => sub {
 helper smb_auth => sub {
 	my $ca = shift;
 	my ($usr, $pwd) = @_;
-	my $ret = system("smbclient -U $usr%$pwd -L localhost");
+	my $ret = `smbclient -U $usr%$pwd -L localhost`;
 	return 0 if ($ret =~ /NT_STATUS_LOGON_FAILURE/);
 	return 1;
 };
@@ -855,7 +855,7 @@ get '/filesmgr' => sub {
 	if (defined($action)) {
 		$folder = &chg_dir($folder,$ca->req->param('chfolder')) if ($action eq 'chdir');
 		$folder = &make_dir($folder,$ca->req->param('newfolder')) if ($action eq 'mkdir');
-		$folder = &del_dir($folder,$sel) if ($action eq 'delete');
+		&del_dir($folder,$sel) if ($action eq 'delete');
 		&ren_dir($ca->req->param('newname'),$sel) if ($action eq 'rename');
 		&move_dir($ca->req->param('movefolder'),$folder,$sel) if ($action eq 'move');
 		&copy_dir($ca->req->param('copypath'),$folder,$sel) if ($action eq 'copy');
@@ -1443,9 +1443,9 @@ if (window.top.location != window.location) {
 <p><a href=javascript:onclick=alert('<%=l('please check files these you want to download then click download.')%>') border=0><img align=absmiddle src=/img/fd.gif border=0></a><input type=button value="<%=l('Download')%>" onclick=check8()></p>
 <tr><td><a href=javascript:snone()><img align=absmiddle src=/img/allnot.gif border=0></a>
 <td><img align=absmiddle src=/img/fm.gif><font color=red><b><%=l('Current Folder:')%></b></font><font color=blue><%=$folder%></font>
-<td bgcolor=#e8f3ff><%=$$folds{'.'}->{type}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{modify}%></td></tr>
+<td bgcolor=#e8f3ff><%=$$folds{'.'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{modify}%></td></tr>
 <tr><td bgcolor=#ffeeee><a href=javascript:sall()><img align=absmiddle src=/img/all.gif border=0></a><td bgcolor=#ffffee><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => '..'])%>"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Up to Parent')%></a>
-<td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
+<td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
 % for my $k (@$sorted_folds) {
 % next if ($k eq '.' || $k eq '..');
 <tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>

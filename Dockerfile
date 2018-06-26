@@ -17,8 +17,9 @@ RUN apk update \
     && wget --no-check-certificate http://bit.ly/cpanm -O /usr/local/bin/cpanm \
     && chmod +x /usr/local/bin/cpanm \
     && cpanm Mojolicious::Plugin::RenderFile \
+    && adduser -G wheel -D -h /mnt -s /bin/bash admin \
     && addgroup wam \
-    && adduser -G wheel -G wam -D -h /mnt -s /bin/bash admin \
+    && addgroup admin wam \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
