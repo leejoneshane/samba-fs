@@ -364,6 +364,9 @@ msgstr "您將要上傳檔案到"
 msgid "Please unpack Winzip file"
 msgstr "請解開Winzip壓縮檔（不支援中文檔名）"
 
+msgid "Select Files"
+msgstr "選取上傳檔案"
+
 msgid "Upload!"
 msgstr "開始上傳以上檔案"
 
@@ -565,6 +568,12 @@ msgstr "資料夾已經取消共享！"
 msgid "Add Group"
 msgstr "新增群組"
 
+msgid "Group Name"
+msgstr "群組名稱"
+
+msgid "Home Directory"
+msgstr "家目錄"
+
 msgid "Creat this group"
 msgstr "新增本群組"
 
@@ -588,6 +597,12 @@ msgstr "加入為 WAM 管理員"
 
 msgid "Confirm Creat new User"
 msgstr "確定建立此帳號"
+
+msgid "Account & Password Cannot blank"
+msgstr "帳號密碼不能留白"
+
+msgid "New User Created!"
+msgstr "帳號新增完成！"
 
 msgid "Delete User or Group"
 msgstr "刪帳號群組"

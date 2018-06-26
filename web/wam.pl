@@ -33,10 +33,12 @@ use Mojolicious::Sessions;
 use Mojo::Util;
 use Mojo::File;
 use Net::LDAP;
+use File::Basename;
 
 ####################### initialzing ###########################################
 #my $s = app->sessions(Mojolicious::Sessions->new);
 #$s->default_expiration(3600);
+plugin 'RenderFile';
 my $c = plugin Config => {file => '/web/wam.conf'};
 &init_conf unless defined $c->{language};
 my $lh = WAM::I18N->get_handle($c->{language}) || die "What language?";
@@ -45,7 +47,6 @@ my $base_dn = "dc=cc,dc=tp,dc=edu,dc=tw";
 my $ldap_result = $ldap->bind("cn=Manager,$base_dn", password => $ENV{'SAMBA_ADMIN_PASSWORD'}, version =>3);
 die $ldap_result->error_text unless ($ldap_result->code eq 0);
 my %ADMINS = map { $_ => 1 } split(/,/, $c->{admin});
-my $share_conf = "/etc/samba/example.conf";
 my $lang_base = "/web";
 my $account = "/tmp/account.lst";
 my $itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -112,12 +113,12 @@ sub get_accounts {
 }
 
 sub ldap_ssha {
-  my($pw)=@_;
-  `slappasswd -s "$pw" -n`;
+  my($pw) = @_;
+  system("slappasswd -s \"$pw\" -n");
 }
 
 sub rnd64 {
-  my $range = @_;
+  my($range) = @_;
   my($n,$i,$ret);
   $n=8;
   $range = $c->{passwd_range}  unless defined $range;
@@ -197,12 +198,13 @@ sub write_smbconf {
 sub addone {
 	my($usr,$grp,$pw) = @_;
 	if (!exists($USERS{$usr}) && !exists($RESERVED{$usr}) && !exists($RESERVED{$grp})) {
-	    &add_grp($grp);
-		system("adduser -DH -G $grp $usr");
+	    &add_grp($grp) if (!exists($GROUPS{$grp}));
+		system("adduser -D -H -s /sbin/onlogin -G $grp $usr");
 		system("echo -e \"$pw\\n$pw\" | smbpasswd -as $usr");
 		my ($name,$pw,$uid,$gid,$gcos,$dir,$shell) = getpwnam($usr);
 		$USERS{$usr} = { uid => $uid, gid => $gid };
 		$UNAME{$uid} = $usr;
+		$AVALU{$usr} ++;
 	}
 }
 
@@ -265,13 +267,13 @@ sub autoadd {
 }
 
 sub add_wam {
-	my $usr = @_;
+	my($usr) = @_;
 	$ADMINS{$usr} = 1 unless exists($ADMINS{$usr});
 	$c->{admin} = join( ",", keys %ADMINS);
 }
 
 sub del_wam {
-	my $usr = @_;
+	my($usr) = @_;
 	return if ($usr eq 'admin');
 	delete $ADMINS{$usr} if exists($ADMINS{$usr});
 	$c->{admin} = join( ",", keys %ADMINS);
@@ -279,31 +281,34 @@ sub del_wam {
 }
 
 sub add_grp {
-	my $grp = @_;
+	my($grp) = @_;
 	if (!exists($GROUPS{$grp})) {
 		system("addgroup $grp");
 		my $gid = getgrnam($grp);
 		$GROUPS{$grp} = { gid => $gid, users => '' };
 		$GNAME{$gid} = $grp;
+		$AVALG{$grp} ++;
 	}
 }
 
 sub del_grp {
-	my $grp = @_;
+	my($grp) = @_;
 	my $gid = $GROUPS{$grp}->{gid};
 	if (exists($GROUPS{$grp})) {
 		system("delgroup $grp");
 		delete $GNAME{$gid};
+		delete $AVALG{$grp};
 	}
 }
 
 sub delone {
-	my $usr = @_;
+	my($usr) = @_;
 	my $uid = $USERS{$usr}->{uid};
 	push @MESSAGES, "<center>".app->l('del_user_now')." $usr ，uid: $uid ....</center><br>";
 	system("smbpasswd -x $usr || deluser $usr");
 	delete $USERS{$usr};
 	delete $UNAME{$uid};
+	delete $AVALU{$usr};
 }
 
 sub reset_pw {
@@ -341,7 +346,7 @@ sub reset_pw {
 }
 
 sub chg_passwd {
-	my($usr, $p1, $p2) = $_;
+	my($usr, $p1, $p2) = @_;
 	if ($p1 eq $p2) {
 		exec("echo -e \"$p1\\n$p1\" | smbpasswd -as $usr");
 	} else {
@@ -360,7 +365,7 @@ sub chg_passwd {
 }
 
 sub account_flag {
-    my $ac = @_;
+    my($ac) = @_;
     my($result,$entry,$flags,@state);
 	$result = $ldap->search(base => "ou=People,$base_dn", filter => "uid=$ac");
 	$entry = $result->pop_entry();
@@ -379,7 +384,7 @@ sub account_flag {
 }
 
 sub get_dir {
-	my($mydir) = $_;
+	my($mydir) = @_;
 	my($line, @lines);
 	$mydir = '/mnt' unless defined($mydir);
 	opendir (DIR, "$mydir") || return 0;
@@ -557,14 +562,12 @@ sub chg_owner {
 
 sub create_zip {
 	my($target,$olddir,$items) = @_;
-	my($buf, $mydir, $tmpfolder, $dnfile, @files);
 	return unless defined($items);
-	$tmpfolder = time;
-	$mydir = "$olddir/";
-	@files = split(/,/,$items);
+	my @files = split(/,/,$items);
+	my $tmpfolder = time;
 	system("mkdir -p /tmp/$target/temp/$tmpfolder");
 	for my $f (@files) {
-		system("cp -Rf $mydir$f /tmp/$target/temp/$tmpfolder > /dev/null") if (&check_perm("$mydir$f",4));
+		system("cp -Rf $olddir/$f /tmp/$target/temp/$tmpfolder > /dev/null") if (&check_perm("$olddir/$f",4));
 	}
 	system("zip -rq /tmp/$target/$tmpfolder /tmp/$target/temp/$tmpfolder > /dev/null");
 	return "/tmp/$target/$tmpfolder\.zip";
@@ -572,7 +575,8 @@ sub create_zip {
 
 sub	clean_zip {
 	my($target) = @_;
-	system("rm -Rf /tmp/$target");
+	my @path = split('/', $target);
+	system("rm -Rf /tmp/$path[@path - 2]");
 }
 
 sub free_space {
@@ -630,7 +634,6 @@ sub myoct {
 sub check_perm {
 	return 1 if (app->is_admin);
 	my($target,$flag) = @_;
-	my $true = 0;
 	my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($target);
 	my($perm) = &myoct($mode & 07777);
 	if ($> eq $uid) {
@@ -669,7 +672,7 @@ helper is_admin => sub {
 helper smb_auth => sub {
 	my $ca = shift;
 	my ($usr, $pwd) = @_;
-	my $ret = `smbclient -U $usr%$pwd -L localhost`;
+	my $ret = system("smbclient -U $usr%$pwd -L localhost");
 	return 0 if ($ret =~ /NT_STATUS_LOGON_FAILURE/);
 	return 1;
 };
@@ -751,6 +754,7 @@ get '/config' => sub {
 	my $ca = shift;
 	my @langs = &get_lang;
 	$ca->stash(langs => @langs);	
+	$ca->stash(config => $c);
 } => 'config_form';
 
 post '/do_config' => sub {
@@ -791,12 +795,15 @@ post '/do_config' => sub {
 get '/setadmin' => sub {
 	my $ca = shift;
 	my(@not_admins) = grep { !exists($ADMINS{$_}) } keys %AVALU;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
 	$ca->stash(users => [@not_admins]);
 	$ca->stash(admins => [keys %ADMINS]);
 } => 'admin_form';
 
 post '/add_admin' => sub {
 	my $ca = shift;
+	my(@not_admins) = grep { !exists($ADMINS{$_}) } keys %AVALU;
 	@MESSAGES = ();
 	# Check CSRF token
 	my $v = $ca->validation;
@@ -808,12 +815,14 @@ post '/add_admin' => sub {
 	&add_wam($ca->req->param('user'));
 	&write_conf;
    	push @MESSAGES, app->l('WAM Manager Added Successfully!');
-  	$ca->stash(messages => [@MESSAGES]);
-  	$ca->render(template => 'notice', status => 200);
-};
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(users => [@not_admins]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'admin_form';
 
 post '/del_admin' => sub {
 	my $ca = shift;
+	my(@not_admins) = grep { !exists($ADMINS{$_}) } keys %AVALU;
 	@MESSAGES = ();
 	# Check CSRF token
 	my $v = $ca->validation;
@@ -828,9 +837,10 @@ post '/del_admin' => sub {
 	}
 	&write_conf;
   	push @MESSAGES, app->l('Remove Completed!');
-  	$ca->stash(messages => [@MESSAGES]);
-  	$ca->render(template => 'notice', status => 200);
-};
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(users => [@not_admins]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'admin_form';
 
 get '/filesmgr' => sub {
 	my $ca = shift;
@@ -841,23 +851,20 @@ get '/filesmgr' => sub {
 	@MESSAGES = ();
 	my $folder = $ca->req->param('folder');
 	my $action = $ca->req->param('action');
+	my $sel = join(',', @{$ca->req->every_param('sel')});
 	if (defined($action)) {
 		$folder = &chg_dir($folder,$ca->req->param('chfolder')) if ($action eq 'chdir');
 		$folder = &make_dir($folder,$ca->req->param('newfolder')) if ($action eq 'mkdir');
-		$folder = &del_dir($folder,$ca->req->every_param('sel')) if ($action eq 'delete');
-		&ren_dir($ca->req->param('newname'),$folder,$ca->req->every_param('sel')) if ($action eq 'rename');
-		&move_dir($ca->req->param('movefolder'),$folder,$ca->req->every_param('sel')) if ($action eq 'move');
-		&copy_dir($ca->req->param('copypath'),$folder,$ca->req->every_param('sel')) if ($action eq 'copy');
-		&chg_perm($ca->req->param('newperm'),$folder,$ca->req->every_param('sel')) if ($action eq 'chmod');
-		&chg_owner($ca->req->param('newowner'),$folder,$ca->req->every_param('sel')) if ($action eq 'chown');
+		$folder = &del_dir($folder,$sel) if ($action eq 'delete');
+		&ren_dir($ca->req->param('newname'),$sel) if ($action eq 'rename');
+		&move_dir($ca->req->param('movefolder'),$folder,$sel) if ($action eq 'move');
+		&copy_dir($ca->req->param('copypath'),$folder,$sel) if ($action eq 'copy');
+		&chg_perm($ca->req->param('newperm'),$folder,$sel) if ($action eq 'chmod');
+		&chg_owner($ca->req->param('newowner'),$folder,$sel) if ($action eq 'chown');
 		if ($action eq 'many_download') {
-			my $dnfile = &create_zip($folder,$ca->req->every_param('sel'));
-			$ca->render_file(
-        		'filepath' => $dnfile,
-        		'format'   => 'bin',                     # will change Content-Type "application/octet-stream"
-        		'content_disposition' => 'attachment',   # will change Content-Disposition from "attachment" to "inline"
-    		);
-			&clean_zip;
+			my $dnfile = &create_zip($>, $folder, $sel);
+			$ca->render_file(filepath => $dnfile);
+			&clean_zip($dnfile);
 		}
 	}
 	$folder = &get_dir($folder);
@@ -919,106 +926,9 @@ get '/filesmgr' => sub {
 	$> = 0;
 } => 'filesmgr';
 
-get '/sharemgr' => sub {
-	my $ca = shift;
-	$ca->stash(samba => {%SMB});
-	$ca->stash(groups => [keys %AVALG]);
-	$ca->stash(admins => [keys %ADMINS]);
-} => 'sharemgr';
+get '/upload' => sub {
 
-get '/view_share' => sub {
-	my $ca = shift;
-	my $sec = $ca->req->param('section');
- 	@MESSAGES = ();
-	my $pairs = $SMB{$sec};
-	for my $k (keys %$pairs) {
-		push @MESSAGES, $k.' = '.$SMB{$sec}->{$k};
-	}
-  	$ca->stash(messages => [@MESSAGES]);
-  	$ca->render(template => 'notice', status => 200);
-};
-
-get '/edit_share' => sub {
-	my $ca = shift;
-	my $sec = $ca->req->param('section');
-	$ca->stash(section => $sec);
-	$ca->stash(samba => {%SMB});
-	$ca->stash(groups => [keys %AVALG]);
-	$ca->stash(admins => [keys %ADMINS]);
-} => 'share_form';
-
-post '/add_share' =>sub {
-	my $ca = shift;
-	my $v = $ca->validation;
-    @MESSAGES = ();
-  	if ($v->csrf_protect->has_error('csrf_token')) {
-  		push @MESSAGES, app->l('Bad CSRF token!');
-  		$ca->stash(messages => [@MESSAGES]);
-  		return $ca->render(template => 'warning', status => 500); 
-	}
-	my $sec = $ca->req->param('section');
-	&make_dir('/mnt', $ca->req->param('real_path')) unless (-d '/mnt/'.$ca->req->param('real_path'));
-	$SMB{$sec}->{path} = '/mnt/'.$ca->req->param('real_path');
-	if (defined($ca->req->param('browse')) && $ca->req->param('browse') eq '1') {
-		$SMB{$sec}->{browseable} = 'yes';
-	} else {
-		$SMB{$sec}->{browseable} = 'no';
-	}
-	if (defined($ca->req->param('readonly')) && $ca->req->param('readonly') eq '1') {
-		$SMB{$sec}->{writeable} = 'no';
-	} else {
-		$SMB{$sec}->{writeable} = 'yes';
-	}
-	my $admins = $ca->req->every_param('admin');
-	$SMB{$sec}->{'admin users'} = $admins if (ref($admins) eq 'SCALAR');
-	$SMB{$sec}->{'admin users'} = join(',', @$admins) if (ref($admins) eq 'ARRAY');
-	my $users = $ca->req->every_param('valid');
-	$SMB{$sec}->{'valid users'} = $users if (ref($users) eq 'SCALAR');
-	$SMB{$sec}->{'valid users'} = join(',', map { '+'.$_ } @$users) if (ref($users) eq 'ARRAY');
-	$SMB{$sec}->{'valid users'} = $SMB{$sec}->{'admin users'}.','.$SMB{$sec}->{'valid users'};
-	$SMB{$sec}->{'veto files'} = $ca->req->param('veto');
-	if (defined($ca->req->param('delete_veto')) && $ca->req->param('delete_veto') eq '1') {
-		$SMB{$sec}->{'delete veto files'} = 'yes';
-	} else {
-		$SMB{$sec}->{'delete_veto_files'} = 'no';
-	}
-	$SMB{$sec}->{'force create mode'} = $ca->req->param('file_force');
-	my $s = '0';
-	$s = '1' if (defined($ca->req->param('owner_del')) && $ca->req->param('owner_del') eq '1');
-	if (defined($ca->req->param('can_write')) && $ca->req->param('can_write') eq '1') {
-		$SMB{$sec}->{'force directory mode'} = $s.'777';
-	} else {
-		$SMB{$sec}->{'force directory mode'} = $s.'755';
-	}
-	if (defined($ca->req->param('recycle')) && $ca->req->param('recycle') eq '1') {
-		$SMB{$sec}->{'vfs object'} = 'recycle';
-		$SMB{$sec}->{'recycle:keeptree'} = 'yes';
-		$SMB{$sec}->{'recycle:version'} = 'yes';
-		$SMB{$sec}->{'recycle:repository'} = '/mnt/recycle/%u';
-	}
-	&write_smbconf;
-	system('rc-service samba restart');
-  	push @MESSAGES, app->l('Share Folder Configure Completed!');
-  	$ca->stash(messages => [@MESSAGES]);
-  	$ca->render(template => 'notice', status => 200);
-};
-
-post '/del_share' =>sub {
-	my $ca = shift;
-	my $v = $ca->validation;
-	@MESSAGES = ();
-  	if ($v->csrf_protect->has_error('csrf_token')) {
-  		push @MESSAGES, app->l('Bad CSRF token!');
-  		$ca->stash(messages => [@MESSAGES]);
-  		return $ca->render(template => 'warning', status => 500); 
-	}
-	my $sec = $ca->req->param('section');
-	delete $SMB{$sec};
-	&write_smbconf;
-  	push @MESSAGES, app->l('Share Folder Cancled!');
-  	$ca->stash(messages => [@MESSAGES]);
-  	$ca->render(template => 'notice', status => 200);
-};
+} => 'upload';
 
 get '/edit_file' => sub {
 	my $ca = shift;
@@ -1066,6 +976,166 @@ get '/show_file' => sub {
 	$> = 0;
 } => 'show_file';
 
+get '/sharemgr' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'sharemgr';
+
+get '/view_share' => sub {
+	my $ca = shift;
+	my $sec = $ca->req->param('section');
+ 	@MESSAGES = ();
+	my $pairs = $SMB{$sec};
+	for my $k (keys %$pairs) {
+		push @MESSAGES, $k.' = '.$SMB{$sec}->{$k};
+	}
+  	$ca->stash(messages => [@MESSAGES]);
+  	$ca->render(template => 'notice', status => 200);
+};
+
+get '/edit_share' => sub {
+	my $ca = shift;
+	my $sec = $ca->req->param('section');
+	$ca->stash(section => $sec);
+	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'share_form';
+
+post '/add_share' =>sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+    @MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $sec = $ca->req->param('section');
+	&make_dir('/mnt', $ca->req->param('real_path')) unless (-d '/mnt/'.$ca->req->param('real_path'));
+	$SMB{$sec}->{path} = '/mnt/'.$ca->req->param('real_path');
+	if (defined($ca->req->param('browse')) && $ca->req->param('browse') eq '1') {
+		$SMB{$sec}->{browseable} = 'yes';
+	} else {
+		$SMB{$sec}->{browseable} = 'no';
+	}
+	if (defined($ca->req->param('readonly')) && $ca->req->param('readonly') eq '1') {
+		$SMB{$sec}->{writeable} = 'no';
+		&chg_perm('2755','/mnt',$ca->req->param('real_path'));
+	} else {
+		$SMB{$sec}->{writeable} = 'yes';
+		&chg_perm('2777','/mnt',$ca->req->param('real_path'));
+	}
+	my $admins = $ca->req->every_param('admin');
+	$SMB{$sec}->{'admin users'} = $admins if (ref($admins) eq 'SCALAR');
+	$SMB{$sec}->{'admin users'} = join(',', @$admins) if (ref($admins) eq 'ARRAY');
+	my $users = $ca->req->every_param('valid');
+	$SMB{$sec}->{'valid users'} = $users if (ref($users) eq 'SCALAR');
+	$SMB{$sec}->{'valid users'} = join(',', map { '+'.$_ } @$users) if (ref($users) eq 'ARRAY');
+	$SMB{$sec}->{'valid users'} = $SMB{$sec}->{'admin users'}.','.$SMB{$sec}->{'valid users'};
+	$SMB{$sec}->{'veto files'} = $ca->req->param('veto');
+	if (defined($ca->req->param('delete_veto')) && $ca->req->param('delete_veto') eq '1') {
+		$SMB{$sec}->{'delete veto files'} = 'yes';
+	} else {
+		$SMB{$sec}->{'delete_veto_files'} = 'no';
+	}
+	$SMB{$sec}->{'force create mode'} = $ca->req->param('file_force');
+	my $s = '0';
+	$s = '1' if (defined($ca->req->param('owner_del')) && $ca->req->param('owner_del') eq '1');
+	if (defined($ca->req->param('can_write')) && $ca->req->param('can_write') eq '1') {
+		$SMB{$sec}->{'force directory mode'} = $s.'777';
+	} else {
+		$SMB{$sec}->{'force directory mode'} = $s.'755';
+	}
+	if (defined($ca->req->param('recycle')) && $ca->req->param('recycle') eq '1') {
+		$SMB{$sec}->{'vfs object'} = 'recycle';
+		$SMB{$sec}->{'recycle:keeptree'} = 'yes';
+		$SMB{$sec}->{'recycle:version'} = 'yes';
+		$SMB{$sec}->{'recycle:repository'} = '/mnt/recycle/%u';
+	}
+	&write_smbconf;
+	system('rc-service samba restart');
+  	push @MESSAGES, app->l('Share Folder Configure Completed!');
+  	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'sharemgr';
+
+post '/del_share' =>sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $sec = $ca->req->param('section');
+	delete $SMB{$sec};
+	&write_smbconf;
+	system('rc-service samba restart');
+  	push @MESSAGES, app->l('Share Folder Cancled!');
+  	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(samba => {%SMB});
+	$ca->stash(groups => [keys %AVALG]);
+	$ca->stash(admins => [keys %ADMINS]);
+} => 'sharemgr';
+
+get '/add_group' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'add_group';
+
+post '/add_group' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $grp = $ca->req->param('grp');
+	&add_grp($grp);
+	push @MESSAGES, app->l('New Group Created!') if (exists($GROUPS{$grp}));
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'add_group';
+
+get '/add_one' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'add_one';
+
+post '/add_one' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $usr = $ca->req->param('user');
+	my $pwd = $ca->req->param('pass');
+	my $grp = $ca->req->param('grp');
+	my $aa = $ca->req->param('admin');
+	&addone($usr,$grp,$pwd);
+	&add_wam($usr) if ($aa eq 'ON');
+	push @MESSAGES, app->l('New User Created!') if (exists($USERS{$usr}));
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'add_one';
+
 get '/state' => sub {
 };
 
@@ -1093,7 +1163,7 @@ __DATA__
 </ul></td></tr></table></center>
 
 @@ frames.html.ep
-<head><meta http-equiv=Content-Type content="<%=l('text/html; charset=Windows-1252')%>">
+<head><meta http-equiv=Content-Type content="<%=l('text/html; charset=utf-8')%>">
 <META HTTP-EQUIV=Pargma CONTENT=no-cache>
 <title>WAM</title>
 <script type="text/javascript">
@@ -1108,9 +1178,7 @@ if (window.top.location != window.location) {
 </FRAMESET>
 
 @@ left.html.ep
-<head><meta http-equiv=Content-Type content="<%=l('text/html; charset=Windows-1252')%>">
-<META HTTP-EQUIV=Pargma CONTENT=no-cache>
-<title>WAM</title>
+<head><meta http-equiv=Content-Type content="<%=l('text/html; charset=utf-8')%>">
 <base target=wam_main></head>
 <body link=#FFFFFF vlink=#ffffff alink=#FFCC00  style="SCROLLBAR-FACE-COLOR: #ddeeff; SCROLLBAR-HIGHLIGHT-COLOR: #ffffff; SCROLLBAR-SHADOW-COLOR: #ABDBEC; SCROLLBAR-3DLIGHT-COLOR: #A4DFEF; SCROLLBAR-ARROW-COLOR: steelblue; SCROLLBAR-TRACK-COLOR: #DDF0F6; SCROLLBAR-DARKSHADOW-COLOR: #9BD6E6">
 <table style="font-size: 11 pt; border-collapse:collapse" height=100% width=100% border=1 cellspadding=2 bordercolorlight=#808080 bordercolordark=#C0C0C0 cellpadding=2 align=left bordercolor=#FFFFFF cellspacing=1>
@@ -1123,8 +1191,8 @@ if (window.top.location != window.location) {
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/filesmgr" style="text-decoration: none"><%=l('File Manager')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/sharemgr" style="text-decoration: none"><%=l('Share Folders')%></a></td></tr>
 <tr><td align=center bgColor=#FFCC00 width=100% height=40px><b><%=l('Account Management')%></b></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/addgrp" style="text-decoration: none"><%=l('Add Group')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/addone" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_group" style="text-decoration: none"><%=l('Add Group')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_one" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/delete" style="text-decoration: none"><%=l('Delete User or Group')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/autoadd" style="text-decoration: none"><%=l('Auto Create User Account')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/upload" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
@@ -1257,6 +1325,11 @@ if (window.top.location != window.location) {
 % title l('Setup WAM Manager');
 % layout 'default';
 <div align=center>
+<table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
 %= form_for add_admin => (method => 'POST') => begin
 %= csrf_field
 <table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
@@ -1295,12 +1368,12 @@ if (window.top.location != window.location) {
 % title l('File Manager');
 % layout 'default';
 <div align=center>
-<table border=6 style=font-size:11pt width=95%  border-collapse: collapse  cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr bgcolor="#FFAAAA"><td colspan=9><ul>
-% for my $msg (@$messages) {
+<table><tr><td><ul>
+<% for my $msg (@$messages) { %>
 <li><%= $msg %>
-% }
-</ul></td></tr>
+<% } %>
+</ul></td></tr></table>
+<table border=6 style=font-size:11pt width=95%  border-collapse: collapse  cellspacing=1 cellspadding=1 bordercolor=#6699cc>
 % my $used = $$free[3]*0.6;
 <tr><td colspan=9><center><font color=green><%=l('Total Spaces:')%><%=$$free[0]%>M</font> <font color=darkred><%=l('Used:')%><%=$$free[1]%>M</font> <font color=blue><%=l('Free:')%><%=$$free[2]%>M</font> <font color=red><%=l('Usage:')%><img align=absmiddle src=/img/used.jpg width=<%=$used%> height=10><img align=absmiddle src=/img/unused.jpg width=<%=int(60-$used)%> height=10><%=$$free[3]%>%</font></center></td></tr>
 <tr bgcolor=#ffffff><td align=center bgcolor=#6699cc><font color=white><b><%=l('Select')%></b></font></td>
@@ -1351,20 +1424,21 @@ if (window.top.location != window.location) {
 <td><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
 <td align=center colspan=6>
 %= form_for upload => (method => 'POST') => begin
-<%= csrf_field %><%= hidden_field title => l('Upload Files') %><%= hidden_field act => 'f' %><%= hidden_field folder => $folder %>
+<%= csrf_field %><%= hidden_field folder => $folder %>
 <img align=absmiddle src=/img/upload.gif><%=l('Upload')%><%= text_field filemany => 5, size => 4 %><%=l('Files')%>
-%= submit_button l('Upload!')
+%= submit_button l('Select Files')
 % end
 %= form_for filesmgr => (id => 'filesmgr') => (method => 'GET') => begin
-<%= hidden_field action => '' %><%= hidden_field folder => $folder %>
+%= hidden_field action => '', id => 'action'
+%= hidden_field folder => $folder
 <td bgcolor=#6699cc rowspan=20><p><font color=white><%=l('Please click the icon to see the description')%></font></p>
-<p><a href=javascript:onclick=alert('<%=l('Please input dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=chfolder size=12><input type=button value="<%=l('Change Dir')%>" onclick=check0()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please input new dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=newfolder size=12><input type=button value="<%=l('Create Dir')%>" onclick=check1()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check files then input priv, such as 755.')%>') border=0><img align=absmiddle src=/img/chmod.gif border=0></a><input type=text name=newperm size=4><input type=button value="<%=l('Change Mode')%>" onclick=check2()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check files then input owner name.')%>') border=0><img align=absmiddle src=/img/chown.gif border=0></a><input type=text name=newowner size=10><input type=button value="<%=l('Change Owner')%>" onclick=check3()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check single file then input new file name.')%>') border=0><img align=absmiddle src=/img/rename.gif border=0></a><input type=text name=newname size=16><input type=button value="<%=l('Rename')%>" onclick=check4()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check one file then input new filename or folder to move into.')%>') border=0><img align=absmiddle src=/img/mv.gif border=0></a><input type=text name=movefolder size=16><input type=button value="<%=l('Move')%>" onclick=check5()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check one file then input the filename you want to copy to.')%>') border=0><img align=absmiddle src=/img/copy.gif border=0></a><input type=text name=copypath size=16><input type=button value="<%=l('Copy')%>" onclick=check6()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please input dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=chfolder id=chfolder size=12><input type=button value="<%=l('Change Dir')%>" onclick=check0()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please input new dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=newfolder id=newfolder size=12><input type=button value="<%=l('Create Dir')%>" onclick=check1()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please check files then input priv, such as 755.')%>') border=0><img align=absmiddle src=/img/chmod.gif border=0></a><input type=text name=newperm id=newperm size=4><input type=button value="<%=l('Change Mode')%>" onclick=check2()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please check files then input owner name.')%>') border=0><img align=absmiddle src=/img/chown.gif border=0></a><input type=text name=newowner id=newowner size=10><input type=button value="<%=l('Change Owner')%>" onclick=check3()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please check single file then input new file name.')%>') border=0><img align=absmiddle src=/img/rename.gif border=0></a><input type=text name=newname id=newname size=16><input type=button value="<%=l('Rename')%>" onclick=check4()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please check one file then input new filename or folder to move into.')%>') border=0><img align=absmiddle src=/img/mv.gif border=0></a><input type=text name=movefolder id=movefolder size=16><input type=button value="<%=l('Move')%>" onclick=check5()></p>
+<p><a href=javascript:onclick=alert('<%=l('Please check one file then input the filename you want to copy to.')%>') border=0><img align=absmiddle src=/img/copy.gif border=0></a><input type=text name=copypath id=copypath size=16><input type=button value="<%=l('Copy')%>" onclick=check6()></p>
 <p><a href=javascript:onclick=alert('<%=l('Please check files these you want to delete then click delete.')%>') border=0><img align=absmiddle src=/img/del.gif border=0></a><input type=button value="<%=l('Delete')%>" onclick=check7()></p>
 <p><a href=javascript:onclick=alert('<%=l('please check files these you want to download then click download.')%>') border=0><img align=absmiddle src=/img/fd.gif border=0></a><input type=button value="<%=l('Download')%>" onclick=check8()></p>
 <tr><td><a href=javascript:snone()><img align=absmiddle src=/img/allnot.gif border=0></a>
@@ -1374,13 +1448,13 @@ if (window.top.location != window.location) {
 <td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
 % for my $k (@$sorted_folds) {
 % next if ($k eq '.' || $k eq '..');
-<tr><td bgcolor=#ddeeff><input type=checkbox name=sel value=<%=$k%>></td>
+<tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
 <td bgcolor=#e8f3ff><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => $k])%>"><img align=absmiddle src="/img/<%=$$folds{$k}->{image}%>" border=0><%=$k%></a></td>
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$folds{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{modify}%></td></tr>
 % }
 % for my $k (@$sorted_files) {
-<tr><td bgcolor=#ddeeff><input type=checkbox name=sel value=<%=$k%>></td>
-<td bgcolor=#e8f3ff><a href="<%=url_for('/showfile')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+<tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
+<td bgcolor=#e8f3ff><a href="<%=url_for('/show_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$files{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$files{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{modify}%></td></tr>
 % }
 % for (1..18 - int(keys %$folds) - int(keys %$files)) {
@@ -1392,51 +1466,43 @@ if (window.top.location != window.location) {
 %= javascript begin
 var rows = <%=int(keys %$folds) + int(keys %$files) %>;
 var dirs = <%=keys %$folds%>;
-var thisform = document.getElementById('filesmgr');
-function chk_empty(item) { if ((item.value=="") || (item.value.indexOf(" ")!=-1) ) { return true; } }
-function mysubmit(myaction) { thisform.action.value = myaction; thisform.submit(); }
+function mysubmit(myaction) { $('#action').val(myaction); $('#filesmgr').submit(); }
 function check() {
-	var flag = 0;
-	for (i=0;i<thisform.sel.length;i++) {
-		if (thisform.sel[i].checked) { flag = 1; } 
-	}
-	if (flag == 0) { alert('<%=l('Please select one file or Directory!')%>'); }
-	return flag;
+	var n = $('#sel:checked').length;
+	if (n == 0) { alert('<%=l('Please select one file or Directory!')%>'); }
+	return n;
 }
-function check0() { if (chk_empty(thisform.chfolder)) { alert('<%=l('Please input Folder name!')%>'); } else { mysubmit('chdir'); } }
-function check1() { if (chk_empty(thisform.newfolder)) { alert('<%=l('Please input Folder name!')%>'); } else { mysubmit('mkdir'); } }
-function check2() { var flag = check(); if (chk_empty(thisform.newperm)) { alert('<%=l('Please assign new privilege!')%>'); } else { if (flag) { mysubmit('chmod'); } } }
-function check3() { var flag = check(); if (chk_empty(thisform.newowner)) { alert('<%=l('Please assign new owner!')%>'); } else { if (flag) { mysubmit('chown'); } } }
-function check4() { var flag = check(); if (chk_empty(thisform.newname)) { alert('<%=l('Please inpug new name!')%>'); } else { if (flag) { mysubmit('rename'); } } }
-function check5() { var flag = check(); if (chk_empty(thisform.movefolder)) { alert('<%=l('Where to move?')%>'); } else { if (flag) { mysubmit('move'); } } }
-function check6() { var flag = check(); if (chk_empty(thisform.copypath)) { alert('<%=l('Where to copy to?')%>'); } else { if (flag) { mysubmit('copy'); } } }
+function check0() { if (!$('#chfolder').val()) { alert('<%=l('Please input Folder name!')%>'); } else { mysubmit('chdir'); } }
+function check1() { if (!$('#newfolder').val()) { alert('<%=l('Please input Folder name!')%>'); } else { mysubmit('mkdir'); } }
+function check2() { var flag = check(); if (!$('#newperm').val()) { alert('<%=l('Please assign new privilege!')%>'); } else { if (flag) { mysubmit('chmod'); } } }
+function check3() { var flag = check(); if (!$('#newowner').val()) { alert('<%=l('Please assign new owner!')%>'); } else { if (flag) { mysubmit('chown'); } } }
+function check4() { var flag = check(); if (!$('#newname').val()) { alert('<%=l('Please inpug new name!')%>'); } else { if (flag) { mysubmit('rename'); } } }
+function check5() { var flag = check(); if (!$('#movefolder').val()) { alert('<%=l('Where to move?')%>'); } else { if (flag) { mysubmit('move'); } } }
+function check6() { var flag = check(); if (!$('#copypath').val()) { alert('<%=l('Where to copy to?')%>'); } else { if (flag) { mysubmit('copy'); } } }
 function check7() { if (check()) { mysubmit('delete'); } }
 function check8() { if (check()) { mysubmit('many_download'); } }
 function check9() { if (check()) { mysubmit('share'); } }
 function sall() {
-	if (thisform.sel == null) return;
-	if (thisform.sel.length == 1) {
-		thisform.sel.checked = 1;
-	} else {
-		for (i=0;i<thisform.sel.length;i++) { thisform.sel[i].checked = 1; }
-	}
+	if (!$('#sel')) return;
+	$('#sel').each(function () {
+		$(this).prop('checked', true);
+	});
 }
-
 function sfile(){
-	if (thisform.sel == null) return;
-	if (thisform.sel.length > 1) {
-		for (i=0;i <thisform.sel.length;i++) { thisform.sel[i].checked = 0; }
-		for (i=dirs;i<rows;i++) { thisform.sel[i].checked = 1; }
-	}
-}
-	
+	if (!$('#sel')) return;
+	$('#sel').each(function (index) {
+		if (index < dirs) {
+			$(this).prop('checked', false);
+		} else {
+			$(this).prop('checked', true);
+		}
+	});
+}	
 function snone() {
-	if (thisform.sel == null) return;
-	if (thisform.sel.length == 1) {
-		thisform.sel.checked = 0;
-	} else {
-		for (i=0;i<thisform.sel.length;i++) { thisform.sel[i].checked = 0; }
-	}
+	if (!$('#sel')) return;
+	$('#sel').each(function () {
+		$(this).prop('checked', false);
+	});
 }
 % end
 
@@ -1444,6 +1510,11 @@ function snone() {
 % title l('Share Folders');
 % layout 'default';
 <div align=center>
+<table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
 <tr  bgcolor="#6699cc"><td width="50%"><%=l('Share Folders List')%></td><td colspan=3><%=l('Sharing Management')%></td></tr>
 % for my $sec (keys %$samba) {
@@ -1585,6 +1656,81 @@ function snone() {
 </table>
 </div>
 
+@@ add_group.html.ep
+% title l('Add Group');
+% layout 'default';
+%= javascript begin
+function check() {
+	if (!$('#grp').val()) {
+		alert('<%=l('Cannot Creat Empty Group')%>');
+	} else {
+		$('#myform').submit();
+	}
+}
+% end
+<center><table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
+%= form_for add_group => (id => 'myform') => (method => 'POST') => begin
+%= csrf_field
+<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<tr><td><img align=absmiddle src=/img/addgrp.gif> <font color=red><b><%=l('Group Name')%></b></font>
+%= text_field 'grp' => (id => 'grp')
+</td></tr>
+<tr><td align=center>
+%= input_tag create => l('Creat this group'), type => 'button', onclick => 'check()'
+</td></tr></table>
+% end
+<table border=6 style=font-size:11pt width=95% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr><td colspan=8 align=center bgcolor=#6699cc><font color=white><b><%=l('Created Groups')%></b></font></td>
+% my $i = 0;
+% for my $gname (@$groups) {
+% if ($i % 8 == 0) {
+</tr><tr>
+% }
+% $i ++;
+<td><%=$gname%></td>
+% }
+</table>
+
+@@ add_one.html.ep
+% title l('Creat an Account');
+% layout 'default';
+%= javascript begin
+function check() {
+	if (!$('#user').val() || !$('#pass').val()) {
+		alert('<%=l('Account & Password Cannot blank')%>');
+	} else {
+		$('#myform').submit();
+	}
+}
+% end
+<center><table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
+%= form_for add_one => (id => 'myform') => (method => 'POST') => begin
+%= csrf_field
+<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<tr><td><img align=absmiddle src=/img/addone.gif> <font color=red><b><%=l('User Name')%></b></font>
+%= text_field 'user' => (id => 'user')
+</td></tr>
+<tr><td><img align=absmiddle src=/img/password.gif> <font color=red><b><%=l('Password')%></b></font>
+%= text_field 'pass' => (id => 'pass')
+</td></tr>
+<tr><td><img align=absmiddle src=/img/addgrp.gif> <font color=red><b><%=l('Add This One To Group:')%></b></font>
+%= select_field 'grp' => $groups 
+</td></tr>
+<tr><td><img align=absmiddle src=/img/chgpw.gif> <font color=red><b><%=l('Join WAM Manager Group')%></b></font>
+%= check_box 'admin' => 'ON'
+<tr><td align=center>
+%= input_tag create => l('Confirm Creat new User'), type => 'button', onclick => 'check()'
+</td></tr></table>
+% end
+
 @@ layouts/default.html.ep
 <html>
 <head>
@@ -1636,6 +1782,9 @@ R0lGODlhFwAWAKIAAAcHB///B4d/h8e/x////wAAAAAAAAAAACwAAAAAFwAWAAADYki63E6AjEmrtSLe
 
 @@ img/chgpw.gif (base64)
 R0lGODlhHgAfALMAAAAAAABgL39/AAAAf3BwcKAAH+QAGwCQLwD/AJCQAM/PAP//AAAA/6SkpP7+/v///yH5BAEAAA8ALAAAAAAeAB8AAAS88MlJq7046817b4D3OaCoNU5amhZBgmTITih4HEA8PzUAHAiczoQiGQyNAECRW3mKgMJxuWA2nJwiyABgNKzDkQPZZTAGPWLD4PB2AWl1g/GChz0+37V27wjgV3p7MiJ/BA0LC395hB4CC3CJiQI7D4+QDQIKVYoCnp+gGZeLVJuSp5KNFI8KAilLCrGyswkKCQmqEpqxPrS3tbe2wLmWs8aMuADJuBmwwLeNMtIbyra2xCyM2JXc3d7f3BEAOw==
+
+@@ img/password.gif (base64)
+R0lGODlhIAAgAMQAAAAAAC8wAH94AHBwcJCQAM+QAM/IAP/IAM/4AP/4AM/IL4CAgJCQkJ+YoK+wr7+4v8/IkM/Iz9DQ0N/Y39/g3//4z+Do4P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAP///yH5BAEAAB8ALAAAAAAgACAAAAX/4CeOImCaZKquJLCMC8DO6WK79rcIvEyvr9LCsXt8DAcB6gf7WCymxUPwOSUSPabOSXENXFWX6YBI+mYvC6UrVdpiD0DCMFfSXmv2h3p6xA8ABoJnQB8UE4cmVFcLXwkAZUgEdx8TlpY7H1ebcoEIBgSENZUTEhIvi5yPZQegoqOmp3uaV51Igq4/LxERAx8RqXN0ZZ+hTC+yFot0t62txsdbFMAizHOfoHbReMBUIxW3BgDalA8vExENPOsCggXi5IUPROfpDQ0xexAG7wHQ8kSIfJAQwdSZdvzgvWoSEEyvCAch7Hs3bmEJIg0cSiG0TgHFeAyHvPCzcYUACB9FW71wgA/fh3lDFp5EqXBUSxMWGgLhAYGAAZBVbn5goHOGgHcgX+Bj4IKCUKMFspB4wWBBVQv3FmT8cUIF1ao4n2pRgcMEBQZLLY5dAsACA7BjtQAYkC+uXLUsQgAAOw==
 
 @@ img/del.gif (base64)
 R0lGODlhIAAgAOMAAP///8zMzJmZmWZmZt0AAO7u7t3d3aqqqnd3d1VVVURERCIiIgAAAMjIyAAAAMjIyCH5BAEAAA0ALAAAAAAgACAAAATjsLFJq714SsC7/2AIDJNonoBAMlzgvsQrz3SglsBM7HX/3qwcbMcLxHwyYMtFbBqRydWS2SRCf1LhsHp1KbVba/db446zuuoxQOmRu4zCIcGovXuIDAWBxSEZCAcFBQYHBwgJCwt1Xmg+ehV9QVCABggICpmKjI1+fwccBoWHdFGej6AHBgkHCwiLppOfAKqsrrCSUz0Mqautr5w2jqi0vrfBd7u9tsCxujW8xcy4nbLEAKKGiMjDu3yjCeHUwqc9B3oHzmBdPsnsblIC8vP09fb3KwP6+/z9/v/6GEiARDBDgwgAOw==
