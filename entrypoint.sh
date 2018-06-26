@@ -30,8 +30,7 @@ else
 fi
 
 if [[ -f /etc/samba/smb.conf ]]; then
-    exec smbd -FS
-    exec nmbd -FS
+    rc-service samba start
 fi
 
 if [ "$#" -lt 1 ]; then
