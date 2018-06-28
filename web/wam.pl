@@ -155,8 +155,6 @@ sub get_lang {
 }
 
 sub read_smbconf {
-	$) = 0;
-	$> = 0;
 	open(SMB, '<:encoding(UTF-8)', '/etc/samba/smb.conf');
 	my($sec,$k,$v);
 	while(<SMB>) {
@@ -1070,6 +1068,8 @@ get '/edit_share' => sub {
 } => 'share_form';
 
 post '/add_share' =>sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
     @MESSAGES = ();
@@ -1130,6 +1130,8 @@ post '/add_share' =>sub {
 } => 'sharemgr';
 
 post '/del_share' =>sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
 	@MESSAGES = ();
