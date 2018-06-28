@@ -1342,15 +1342,18 @@ if (window.top.location != window.location) {
 %= form_for do_config => (method => 'POST') => begin
 %= csrf_field
 <table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for language => l('Choose Language') %></th>
-<td>
-<select name=language>
+<tr style=background-color:#E8EFFF><th align=right>
+%= label_for language => l('Choose Language')
+</th><td>
+%= t 'select', (name => 'language') => begin
 % for my $lang ($langs) {
-<option value=<%=$lang%> <% if ($config->{language} eq $lang) { %>selected<% } %>><%=$lang%></option>
+%= t 'option', value => $lang, selected => ($config->{language} eq $lang) ? 'selected' : undef, $lang
 % }
-</select></td>
-<tr style=background-color:#6582CD><th align=right><font color=#ffffff><%= label_for acltype => l('ACL Control') %></font></th>
-<td><font color=#ffffff>
+% end
+</td>
+<tr style=background-color:#6582CD><th align=right><font color=#ffffff>
+%= label_for acltype => l('ACL Control')
+</font></th><td><font color=#ffffff>
 % if ($config->{acltype} eq 1) {
 <%= radio_button acltype => 1, checked => 'checked' %><%=l('Allow IP')%>
 <%= radio_button acltype => 0, checked => undef %><%=l('Deny IP')%>
@@ -1358,31 +1361,43 @@ if (window.top.location != window.location) {
 <%= radio_button acltype => 1, checked => undef %><%=l('Allow IP')%>
 <%= radio_button acltype => 0, checked => 'checked' %><%=l('Deny IP')%>
 % }
-</font></td><tr style=background-color:#ddeeff><th align=right><%= label_for acls => l('Rules') %></th>
-<td><%= text_area acls => $config->{acls}, rows => 3, cols => 30 %></td></tr>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for nest => l('Account Hierarchy') %></th>
-<td><select name=nest>
+</font></td><tr style=background-color:#ddeeff><th align=right>
+%= label_for acls => l('Rules')
+</th><td>
+%= text_area acls => $config->{acls}, rows => 3, cols => 30
+</td></tr>
+<tr style=background-color:#E8EFFF><th align=right>
+%= label_for nest => l('Account Hierarchy')
+</th><td>
+%= t 'select', name => 'nest'
 % for my $i (1..3) {
-<option value=<%=$i%> <% if ($config->{nest} eq $i) { %>selected<% } %>><%=$i%></option>
+%= t 'option', value => $i, selected => ($config->{nest} eq $i) ? 'selected' : undef, $i
 % }
-</select></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_form => l('Password Specified As') %></th>
-<td><select name=passwd_form>
-<option value=username <% if ($config->{passwd_form} eq "username") { %>selected<% } %>><%=l('Same as Account')%></option>
-<option value=random <% if ($config->{passwd_form} eq "random") { %>selected<% } %>><%=l('Random')%></option>
-<option value=single <% if ($config->{passwd_form} eq "single") { %>selected<% } %>><%=l("All set to 'passwd'")%></option>
-</select></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_range => l('Set Random Range') %></th>
-<td><select name=passwd_range>
-<option value=num <% if ($config->{passwd_range} eq "num") { %>selected<% } %>><%=l('Number')%></option>
-<option value=lcase <% if ($config->{passwd_range} eq "lcase") { %>selected<% } %>><%=l('Lower Case')%></option>
-<option value=ucase <% if ($config->{passwd_range} eq "ucase") { %>selected<% } %>><%=l('Upper Case')%></option>
-<option value=allcase <% if ($config->{passwd_range} eq "allcase") { %>selected<% } %>><%=l('Upper & Lower Case')%></option>
-<option value=num-lcase <% if ($config->{passwd_range} eq "num-lcase") { %>selected<% } %>><%=l('Number & Lower Case')%></option>
-<option value=num-ucase <% if ($config->{passwd_range} eq "num-ucase") { %>selected<% } %>><%=l('Number & Upper Case')%></option>
-<option value=all <% if ($config->{passwd_range} eq "all") { %>selected<% } %>><%=l('Any Number & Any Case')%></option>
-</select></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_rule => l('Password Changing Rule') %></th><td>
+% end
+</td>
+<tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_form => l('Password Specified As')
+</th><td>
+%= t 'select', (name => 'passwd_form') => begin
+%= t 'option', value => 'username', selected => ($config->{passwd_form} eq "username") ? 'selected' : undef, l('Same as Account')
+%= t 'option', value => 'random', selected => ($config->{passwd_form} eq "random") ? 'selected' : undef, l('Random')
+%= t 'option', value => 'single', selected => ($config->{passwd_form} eq "single") ? 'selected' : undef, l("All set to 'passwd'")
+% end
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_range => l('Set Random Range')
+</th><td>
+%= t 'select', (name => 'passwd_range') => begin
+%= t 'option', value => 'num', selected => ($config->{passwd_range} eq "num") ? 'selected' : undef, l('Number')
+%= t 'option', value => 'lcase', selected => ($config->{passwd_range} eq "lcase") ? 'selected' : undef, l('Lower Case')
+%= t 'option', value => 'ucase', selected => ($config->{passwd_range} eq "ucase") ? 'selected' : undef, l('Upper Case')
+%= t 'option', value => 'allcase', selected => ($config->{passwd_range} eq "allcase") ? 'selected' : undef, l('Upper & Lower Case')
+%= t 'option', value => 'num-lcase', selected => ($config->{passwd_range} eq "num-lcase") ? 'selected' : undef, l('Number & Lower Case')
+%= t 'option', value => 'num-ucase', selected => ($config->{passwd_range} eq "num-ucase") ? 'selected' : undef, l('Number & Upper Case')
+%= t 'option', value => 'all', selected => ($config->{passwd_range} eq "all") ? 'selected' : undef, l('Any Number & Any Case')
+% end
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_rule => l('Password Changing Rule')
+</th><td>
 % if (int($config->{passwd_rule})%2) {
 %= check_box passwd_rule1 => 1, checked => 'checked'
 % } else {
@@ -1409,16 +1424,24 @@ if (window.top.location != window.location) {
 % } else {
 %= check_box passwd_rule4 => 1
 % }
-<%= l('Not Allow Keyboard Sequence') %></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_length => l('Minimum Password Length') %></th>
-<td><%= text_field passwd_length => $config->{passwd_length} %></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_age => l('Maximum Password Age(seconds,unlimited by -1)') %></th>
-<td><%= text_field passwd_age => $config->{passwd_age} %></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_lock => l('Lockout after bad logon attempts') %></th>
-<td><%= text_field passwd_lock => $config->{passwd_lock} %></td>
-<tr style=background-color:#E8EFFF><th align=right><%= label_for passwd_release => l('Reset lockout count after minutes(default:30)') %></th>
-<td><%= text_field passwd_release => $config->{passwd_release} %></td>
-<tr><td colspan=2 align=center><img align=absmiddle src=/img/chgpw.gif>
+%= l('Not Allow Keyboard Sequence')
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_length => l('Minimum Password Length')
+</th><td>
+%= text_field passwd_length => $config->{passwd_length}
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_age => l('Maximum Password Age(seconds,unlimited by -1)')
+</th><td>
+%= text_field passwd_age => $config->{passwd_age}
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_lock => l('Lockout after bad logon attempts')
+</th><td>
+%= text_field passwd_lock => $config->{passwd_lock}
+</td><tr style=background-color:#E8EFFF><th align=right>
+%= label_for passwd_release => l('Reset lockout count after minutes(default:30)')
+</th><td>
+%= text_field passwd_release => $config->{passwd_release}
+</td><tr><td colspan=2 align=center><img align=absmiddle src=/img/chgpw.gif>
 %= submit_button l('Save All Configuration')
 </td></table>
 % end
@@ -1437,12 +1460,13 @@ if (window.top.location != window.location) {
 %= csrf_field
 <table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
 <tr><td align=center bgcolor=#6699cc><font color=white><b><img align=absmiddle src=/img/addone.gif><%=l('Choose New WAM Manager')%></b></font>
-<tr><td><select size=1 name=user>
-<option value=></option>
+<tr><td>
+%= t 'select', (size => 1, name => 'user') => begin
+%= t 'option', value => undef
 % for my $user (sort @$users) {
-<option value=<%=$user%>><%=$user%></option>
+%= t 'option', value => $user, $user
 % }
-</select>
+% end
 <tr><td align=left><img align=absmiddle src=/img/chgpw.gif>
 %= submit_button l('Add New WAM Manager')
 </table>
@@ -1459,7 +1483,8 @@ if (window.top.location != window.location) {
 % }
 % $i ++;
 <td>
-<%= check_box user => $user %><%=$user%>
+%= check_box user => $user
+%= label_for user => $user
 % }
 <tr><td align=center colspan=5><img align=absmiddle src=/img/del.gif>
 %= submit_button l('Remove WAM Manager')
@@ -1717,17 +1742,23 @@ function snone() {
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
 %= check_box delete_veto => 1
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
-<select name=file_force>
-<option value="700"><%=l('Only Owner Can Access')%></option>
-<option value="755"><%=l('Allow Valid Users to Read')%></option>
-<option value="777"><%=l('Allow Valid Users to Write')%></option>
-</select>
+%= t 'select', (name => 'file_force') => begin 
+%= t 'option', value => '700', l('Only Owner Can Access')
+%= t 'option', value => '755', l('Allow Valid Users to Read')
+%= t 'option', value => '777', l('Allow Valid Users to Write')
+% end
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
 <%= check_box owner_del => 1 %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
 <%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
+</td></tr>
+<tr style=background-color:#E8EFFF><th align=right width="50%">
+%= label_for recycle => l('Allow Recycle')
+</th><td>
 %= check_box 'recycle' => 1
-</td></tr><tr><td colspan=2 align=center><%= submit_button l('SAVE') %></td></tr>
+</td></tr>
+<tr><td colspan=2 align=center>
+%= submit_button l('SAVE')
+</td></tr>
 % end
 </table>
 </div>
@@ -1783,11 +1814,11 @@ function snone() {
 %= check_box delete_veto => 1
 % }
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
-<select name=file_force>
-<option value="700"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '700'); %>><%=l('Only Owner Can Access')%></option>
-<option value="755"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '755'); %>><%=l('Allow Valid Users to Read')%></option>
-<option value="777"<%= ' selected' if (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '777'); %>><%=l('Allow Valid Users to Write')%></option>
-</select>
+%= t 'select', (name => 'file_force') => begin 
+%= t 'option', value => '700', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '700') ? 'selected' : undef, l('Only Owner Can Access')
+%= t 'option', value => '755', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '755') ? 'selected' : undef, l('Allow Valid Users to Read')
+%= t 'option', value => '777', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '777') ? 'selected' : undef, l('Allow Valid Users to Write')
+% end
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
 % if (defined(%$samba{$section}->{'force directory mode'}) && %$samba{$section}->{'force directory mode'} =~ /1[0-9]{3}/) {
 <%= check_box owner_del => 1, checked => undef %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
@@ -1884,6 +1915,59 @@ function check() {
 %= input_tag create => l('Confirm Creat new User'), type => 'button', onclick => 'check()'
 </td></tr></table>
 % end
+
+@@ delete.html.ep
+% title l('Delete User or Group');
+% layout 'default';
+%= javascript begin
+function reset(id) {
+	if (id==0) { $('#grp').val(''); $('#words').val(''); }
+	if (id==1) { $('#user').val(''); $('#words').val(''); }
+	if (id==2) { $('#user').val(''); $('#grp').val(''); }
+}
+function check() {
+	if (!$('#user').val() && !$('#grp').val() && !$('words').val()) {
+		alert('<%=l('You Have Not Select Any Yet!')%>');
+	} else {
+		$('#myform').submit();
+	}
+}
+% end
+<center>
+%= form_for check_del => (id => 'myform') => (method => 'POST') => begin
+%= csrf_field
+<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<tr><th align=right>
+%= l('User Name')
+<td>
+%= t 'select', (size => 1, name => 'user', onchange => 'reset(0)') => begin
+%= t 'option', value => undef
+%= t 'option', value => '999', l('All Users')
+% for my $u (sort keys @$users) {
+%= t 'option', value => $u, $u
+% }
+% end
+<tr><th align=right>
+%= l('Group Name')
+<br>
+%= l('(Orgnization Unit)')
+<td>
+%= t 'select', (size => 1, name => 'grp', onchange => 'reset(1)') => begin
+%= t 'option', value => undef
+%= t 'option', value => '999', l('All Groups')
+% for my $g (sort keys @$groups) {
+%= t 'option', value => $g, $g
+% }
+% end
+<tr><th align=right><font color=red face="<%=l('Arial')%>"" size=4>
+%= l('Pattern Match')
+</font><td >
+%= text_field 'words' => (id => 'words', onchange => 'reset(2)')
+<tr><td align=right>
+%= submit_button l('Delete these users or groups') => (onclick => 'check()')
+</table>
+% end
+</center>
 
 @@ layouts/default.html.ep
 <html>

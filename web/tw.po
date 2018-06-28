@@ -40,36 +40,6 @@ msgstr "帳號"
 msgid "Password"
 msgstr "密碼"
 
-msgid "User Name"
-msgstr "使用者"
-
-msgid "Group Name"
-msgstr "群組名稱"
-
-msgid "(Orgnization Unit)"
-msgstr "(組織或單位編號)"
-
-msgid "All User"
-msgstr "所有帳號"
-
-msgid "All Group"
-msgstr "所有群組"
-
-msgid "Account Search"
-msgstr "帳號字串搜尋"
-
-msgid "Pattern Match"
-msgstr "字串比對選取"
-
-msgid "Group Member"
-msgstr "目前屬於此群組的使用者"
-
-msgid "User Search Result"
-msgstr "目前字串比對成功的使用者"
-
-msgid "Group Search Result"
-msgstr "目前字串比對成功的群組"
-
 msgid "OK"
 msgstr "確定"
 
@@ -604,6 +574,36 @@ msgstr "刪帳號群組"
 msgid "You Have Not Select Any Yet!"
 msgstr "尚未選取刪除對象"
 
+msgid "User Name"
+msgstr "使用者"
+
+msgid "Group Name"
+msgstr "群組名稱"
+
+msgid "(Orgnization Unit)"
+msgstr "(組織或單位編號)"
+
+msgid "All Users"
+msgstr "所有帳號"
+
+msgid "All Groups"
+msgstr "所有群組"
+
+msgid "Pattern Match"
+msgstr "字串比對選取"
+
+msgid "Delete these users or groups"
+msgstr "刪除以上群組及帳號"
+
+msgid "Group Member"
+msgstr "目前屬於此群組的使用者"
+
+msgid "User Search Result"
+msgstr "目前字串比對成功的使用者"
+
+msgid "Group Search Result"
+msgstr "目前字串比對成功的群組"
+
 msgid "Confirm"
 msgstr "確定"
 
@@ -927,6 +927,3 @@ msgstr "使用者群組已經存在！"
 
 msgid "user group are not exist!"
 msgstr "使用者群組不存在！"
-
-msgid "Username or Password was Wrong!"
-msgstr "帳號或密碼錯誤！"
