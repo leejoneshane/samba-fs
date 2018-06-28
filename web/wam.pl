@@ -992,7 +992,7 @@ post '/upload' => sub {
 		$> = $ca->session->{uid};
 	}
 	for my $f (@files) {
-		my $dest = $f->moveto($folder);
+		my $dest = $f->move_to($folder);
 	}
 	$) = 0;
 	$> = 0;
