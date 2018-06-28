@@ -53,7 +53,6 @@ my $itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 my $today = int(time / 86400);
 my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,%SMB);
 &get_accounts;
-&read_smbconf;
 
 ####################### My Library ############################################
 sub init_conf {    
@@ -156,6 +155,8 @@ sub get_lang {
 }
 
 sub read_smbconf {
+	$) = 0;
+	$> = 0;
 	open(SMB, '<:encoding(UTF-8)', '/etc/samba/smb.conf');
 	my($sec,$k,$v);
 	while(<SMB>) {
@@ -177,8 +178,10 @@ sub read_smbconf {
 }
 
 sub write_smbconf {
+	$) = 0;
+	$> = 0;
 	my($sec,$pairs,$k);
-	open(SMB, '>', '/etc/samba/smb.conf');
+	open(SMB, '>:encoding(UTF-8)', '/etc/samba/smb.conf');
 	print SMB "[global]\n";
 	$pairs = $SMB{global};
 	for $k (keys %$pairs) {
@@ -849,6 +852,35 @@ get '/filesmgr' => sub {
 		$> = $ca->session->{uid};
 	}
 	@MESSAGES = ();
+	my $folder = $ca->req->param('folder') || '/mnt';
+	$folder = &get_dir($folder);
+	my @sorted_dir = sort keys %FOLDS;
+	my @sorted_file = sort keys %FILES;
+	$ca->stash(folder => $folder);
+	$ca->stash(free => [&free_space($folder)]);
+	$ca->stash(sort_key => 'name');
+	$ca->stash(folds => {%FOLDS});
+	$ca->stash(files => {%FILES});
+	$ca->stash(sorted_folds => [@sorted_dir]);
+	$ca->stash(sorted_files => [@sorted_file]);
+	$ca->stash(messages => [@MESSAGES]);
+	$) = 0;
+	$> = 0;
+} => 'filesmgr';
+
+post '/filesmgr' => sub {
+	my $ca = shift;
+	if (!app->is_admin) {
+		$) = $ca->session->{gid};
+		$> = $ca->session->{uid};
+	}
+	@MESSAGES = ();
+	my $v = $ca->validation;
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
 	my $folder = $ca->req->param('folder');
 	my $action = $ca->req->param('action');
 	my $sel = join(',', @{$ca->req->every_param('sel')});
@@ -927,8 +959,47 @@ get '/filesmgr' => sub {
 } => 'filesmgr';
 
 get '/upload' => sub {
-
+	my $ca = shift;
+	my $v = $ca->validation;
+    @MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $filemany = $ca->req->param('filemany');
+	my $folder =  $ca->req->param('folder');
+	$ca->stash(filemany => $filemany);
+	$ca->stash(folder => $folder);
 } => 'upload';
+
+post '/upload' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+    @MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $folder =  $ca->req->param('folder');
+	if ($ca->req->is_limit_exceeded) {
+  		push @MESSAGES, app->l('File was too big to upload.');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500);
+	} 
+	my @files = $ca->req->every_param('upload_file');
+	if (!app->is_admin) {
+		$) = $ca->session->{gid};
+		$> = $ca->session->{uid};
+	}
+	for my $f (@files) {
+		my $dest = $f->moveto($folder);
+	}
+	$) = 0;
+	$> = 0;
+	$ca->redirect_to('/filesmgr?folder='.$folder);
+};
 
 get '/edit_file' => sub {
 	my $ca = shift;
@@ -964,21 +1035,13 @@ get '/show_file' => sub {
 	if (!open(REAL,"< $file")) {
 		push @MESSAGES, $file.app->l('Can not read the file!');
 	}
-	my($buf,$context);
-	while(read(REAL, $buf, 1024)) {
-		$buf =~ s/</&lt;/g;
-		$buf =~ s/>/&gt;/g;
-		$context .= $buf;
-	}
-	close(REAL);	
-	$ca->stash(context => $context);
-	$) = 0;
-	$> = 0;
-} => 'show_file';
+	$ca->render_file(filepath => $file, content_disposition => 'inline');
+};
 
 get '/sharemgr' => sub {
 	my $ca = shift;
 	@MESSAGES = ();
+	&read_smbconf;
 	$ca->stash(messages => [@MESSAGES]);
 	$ca->stash(samba => {%SMB});
 	$ca->stash(groups => [keys %AVALG]);
@@ -1058,7 +1121,7 @@ post '/add_share' =>sub {
 		$SMB{$sec}->{'recycle:repository'} = '/mnt/recycle/%u';
 	}
 	&write_smbconf;
-	system('rc-service samba restart');
+	system('kill -1 $(pidof smbd) && kill -1 $(pidof nmbd)');
   	push @MESSAGES, app->l('Share Folder Configure Completed!');
   	$ca->stash(messages => [@MESSAGES]);
 	$ca->stash(samba => {%SMB});
@@ -1078,7 +1141,7 @@ post '/del_share' =>sub {
 	my $sec = $ca->req->param('section');
 	delete $SMB{$sec};
 	&write_smbconf;
-	system('rc-service samba restart');
+	system('kill -1 $(pidof smbd) && kill -1 $(pidof nmbd)');
   	push @MESSAGES, app->l('Share Folder Cancled!');
   	$ca->stash(messages => [@MESSAGES]);
 	$ca->stash(samba => {%SMB});
@@ -1423,12 +1486,14 @@ if (window.top.location != window.location) {
 <tr><td bgcolor=#ffffff><a href=javascript:sfile()><img align=absmiddle src=/img/allfile.gif border=0></a>
 <td><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
 <td align=center colspan=6>
-%= form_for upload => (method => 'POST') => begin
-<%= csrf_field %><%= hidden_field folder => $folder %>
+%= form_for upload => (method => 'GET') => begin
+%= csrf_field
+%= hidden_field folder => $folder
 <img align=absmiddle src=/img/upload.gif><%=l('Upload')%><%= text_field filemany => 5, size => 4 %><%=l('Files')%>
 %= submit_button l('Select Files')
 % end
-%= form_for filesmgr => (id => 'filesmgr') => (method => 'GET') => begin
+%= form_for filesmgr => (id => 'filesmgr') => (method => 'POST') => begin
+%= csrf_field
 %= hidden_field action => '', id => 'action'
 %= hidden_field folder => $folder
 <td bgcolor=#6699cc rowspan=20><p><font color=white><%=l('Please click the icon to see the description')%></font></p>
@@ -1449,12 +1514,17 @@ if (window.top.location != window.location) {
 % for my $k (@$sorted_folds) {
 % next if ($k eq '.' || $k eq '..');
 <tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
-<td bgcolor=#e8f3ff><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => $k])%>"><img align=absmiddle src="/img/<%=$$folds{$k}->{image}%>" border=0><%=$k%></a></td>
+<td bgcolor=#e8f3ff><a href="<%=url_with->query([folder => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$folds{$k}->{image}%>" border=0><%=$k%></a></td>
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$folds{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{modify}%></td></tr>
 % }
 % for my $k (@$sorted_files) {
 <tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
-<td bgcolor=#e8f3ff><a href="<%=url_for('/show_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+% $k =~ /.*\.(.*)$/;
+% if (app->types->type($1) =~ /text\/.*/) {
+	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/edit_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+% } else {
+	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/show_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+%}
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$files{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$files{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{modify}%></td></tr>
 % }
 % for (1..18 - int(keys %$folds) - int(keys %$files)) {
@@ -1505,6 +1575,35 @@ function snone() {
 	});
 }
 % end
+
+@@ upload.html.ep
+% title l('Upload Files');
+% layout 'default';
+<center><p>
+<font color=red size=4><b><%=l('Upload files to')%></b></font>
+<img align=absmiddle src=/img/0folder.gif>
+<font color=blue size=4><b><%=$folder%></b></font>
+<font color=red size=4><b><%=l('Folder')%></b></font>
+%= form_for upload => (method => 'POST', enctype => 'multipart/form-data') => begin
+%= csrf_field
+%= hidden_field folder => $folder
+%= check_box unzip => 1, checked => undef
+%= label_for unzip => l('Please unpack Winzip file')
+<br>
+% if ($filemany) {
+%	for my $z (1..$filemany) {
+		<img align=absmiddle src=/img/upload.gif border=0><%=l('File').$z%>：
+		%= file_field 'upload_file'
+		<br>
+%	}
+% } else {
+	<img align=absmiddle src=/img/upload.gif border=0><%=l('File')%>：
+	%= file_field 'upload_file'
+	<br>
+% }
+%= submit_button l('Upload!')
+% end
+</p></center>
 
 @@ sharemgr.html.ep
 % title l('Share Folders');

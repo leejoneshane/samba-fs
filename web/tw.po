@@ -409,8 +409,11 @@ msgstr "要拷貝到哪個目錄？"
 msgid "Please Check:"
 msgstr "請檢查是否為下列情形造成："
 
-msgid "File was to big to download."
+msgid "File was too big to download."
 msgstr "檔案太大無法下載！"
+
+msgid "File was too big to upload."
+msgstr "檔案太大無法上傳！"
 
 msgid "Unchecked!"
 msgstr "檔案尚未選取"

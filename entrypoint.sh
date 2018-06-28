@@ -30,11 +30,12 @@ else
 fi
 
 if [[ -f /etc/samba/smb.conf ]]; then
-    rc-service samba start
+    smbd -FS &
+    nmbd -FS &
 fi
 
 if [ "$#" -lt 1 ]; then
-    exec /web/wam.pl daemon -m production
+    /web/wam.pl daemon -m production
 else
     exec $@
 fi

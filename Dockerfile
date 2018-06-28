@@ -11,7 +11,7 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add openrc bash sudo zip acl attr wget make \
+    && apk --no-cache --no-progress add bash sudo zip acl attr wget make \
                                         samba openldap-clients openldap openldap-back-mdb \
                                         perl perl-ldap perl-mojolicious perl-locale-maketext-lexicon \
     && wget --no-check-certificate http://bit.ly/cpanm -O /usr/local/bin/cpanm \
