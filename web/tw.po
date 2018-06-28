@@ -370,6 +370,9 @@ msgstr "選取上傳檔案"
 msgid "Upload!"
 msgstr "開始上傳以上檔案"
 
+msgid "Edit File"
+msgstr "編輯檔案內容"
+
 msgid "Cannot open file for edit!"
 msgstr "無法開啟編修檔案"
 
@@ -433,9 +436,6 @@ msgstr "無法開啟下載檔案"
 msgid "Can not save the upload files!"
 msgstr "無法儲存上傳檔案"
 
-msgid "Can not edit the file!"
-msgstr "無法開啟編修檔案"
-
 msgid "Can not read the file!"
 msgstr "無法讀取檔案"
 
@@ -456,15 +456,6 @@ msgstr "您不能移動別人的檔案或目錄"
 
 msgid "Can not move Directory or files to others Directory!"
 msgstr "您不能移動到別人的目錄裡"
-
-msgid "Can not write!"
-msgstr "您沒有寫入"
-
-msgid "Can not edit file!"
-msgstr "您沒有修改"
-
-msgid "Can not read file!"
-msgstr "您沒有讀取"
 
 msgid "privileges name:"
 msgstr "權限名稱"

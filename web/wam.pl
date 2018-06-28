@@ -33,7 +33,9 @@ use Mojolicious::Sessions;
 use Mojo::Util;
 use Mojo::File;
 use Net::LDAP;
+use Encode;
 use File::Basename;
+use Cwd qw(abs_path);
 
 ####################### initialzing ###########################################
 #my $s = app->sessions(Mojolicious::Sessions->new);
@@ -387,10 +389,13 @@ sub account_flag {
 sub get_dir {
 	my($mydir) = @_;
 	my($line, @lines);
+	$mydir = abs_path($mydir);
+	app->dumper($mydir);
 	$mydir = '/mnt' unless defined($mydir);
+	$mydir = '/mnt' if $mydir eq '/';
 	opendir (DIR, "$mydir") || return 0;
 #	@lines = grep { /^[^\.]\w+/ } readdir(DIR);
-	@lines = readdir(DIR);
+	@lines = map { decode('utf8', $_) } readdir(DIR);
 	close(DIR);
 	%FOLDS = ();
 	%FILES = ();
@@ -986,13 +991,13 @@ post '/upload' => sub {
   		$ca->stash(messages => [@MESSAGES]);
   		return $ca->render(template => 'warning', status => 500);
 	} 
-	my @files = $ca->req->every_param('upload_file');
 	if (!app->is_admin) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
-	for my $f (@files) {
-		my $dest = $f->move_to($folder);
+	for my $f (@{ $ca->req->uploads('upload_file') }) {
+		my $fn = $f->filename;
+		$f = $f->move_to("$folder/$fn") if $fn;
 	}
 	$) = 0;
 	$> = 0;
@@ -1008,19 +1013,52 @@ get '/edit_file' => sub {
 	@MESSAGES = ();
 	my $file = $ca->req->param('file');
 	if (!open(REAL,"< $file")) {
-		push @MESSAGES, $file.app->l('Can not edit the file!');
+		push @MESSAGES, app->l('Cannot open file for edit!').$file;
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
 	}
 	my($buf,$context);
 	while(read(REAL, $buf, 1024)) {
-		$buf =~ s/</&lt;/g;
-		$buf =~ s/>/&gt;/g;
 		$context .= $buf;
 	}
-	close(REAL);	
+	close(REAL);
+	$ca->stash(file => $file);
 	$ca->stash(context => $context);
 	$) = 0;
 	$> = 0;
 } => 'edit_file';
+
+post '/edit_file' => sub {
+	my $ca = shift;
+	if (!app->is_admin) {
+		$) = $ca->session->{gid};
+		$> = $ca->session->{uid};
+	}
+	my $v = $ca->validation;
+    @MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $file = $ca->req->param('file');
+	my $folder = dirname($file);
+	my $context = $ca->req->param('context');
+	$context =~ s/\r//g;
+	my $submit = $ca->req->param('save');
+	if (!open(REAL,"> $file")) {
+		push @MESSAGES, app->l('Cannot open file for edit!').$file;
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	print REAL $context;
+	close REAL;
+	if ($submit eq app->l('SAVE')) {
+		$ca->redirect_to('/edit_file?file='.$file);
+	} else {
+		$ca->redirect_to('/filesmgr?folder='.$folder);
+	}
+};
 
 get '/show_file' => sub {
 	my $ca = shift;
@@ -1486,7 +1524,7 @@ if (window.top.location != window.location) {
 % }
 </td><td align=center style="background-color:#6699cc;color:white"><%=l('Pannel')%></td></tr>
 <tr><td bgcolor=#ffffff><a href=javascript:sfile()><img align=absmiddle src=/img/allfile.gif border=0></a>
-<td><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
+<td><a href="<%=url_with->query([folder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
 <td align=center colspan=6>
 %= form_for upload => (method => 'GET') => begin
 %= csrf_field
@@ -1511,7 +1549,7 @@ if (window.top.location != window.location) {
 <tr><td><a href=javascript:snone()><img align=absmiddle src=/img/allnot.gif border=0></a>
 <td><img align=absmiddle src=/img/fm.gif><font color=red><b><%=l('Current Folder:')%></b></font><font color=blue><%=$folder%></font>
 <td bgcolor=#e8f3ff><%=$$folds{'.'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{modify}%></td></tr>
-<tr><td bgcolor=#ffeeee><a href=javascript:sall()><img align=absmiddle src=/img/all.gif border=0></a><td bgcolor=#ffffee><a href="<%=url_with->query([folder => $folder, action => "chdir", chfolder => '..'])%>"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Up to Parent')%></a>
+<tr><td bgcolor=#ffeeee><a href=javascript:sall()><img align=absmiddle src=/img/all.gif border=0></a><td bgcolor=#ffffee><a href="<%=url_with->query([folder => "$folder/.."])%>"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Up to Parent')%></a>
 <td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
 % for my $k (@$sorted_folds) {
 % next if ($k eq '.' || $k eq '..');
@@ -1523,9 +1561,9 @@ if (window.top.location != window.location) {
 <tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
 % $k =~ /.*\.(.*)$/;
 % if (app->types->type($1) =~ /text\/.*/) {
-	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/edit_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+	<td bgcolor=#e8f3ff><a href="<%=url_for('/edit_file')->query([file => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
 % } else {
-	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/show_file')->query([file => $k])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
+	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/show_file')->query([file => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
 %}
 <td bgcolor=#e8f3ff><font color=darkgreen><%=$$files{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$files{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{modify}%></td></tr>
 % }
@@ -1606,6 +1644,21 @@ function snone() {
 %= submit_button l('Upload!')
 % end
 </p></center>
+
+@@ edit_file.html.ep
+% title l('Edit File');
+% layout 'default';
+<center>
+%= form_for edit_file => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field file => $file
+%= text_area context => $context, cols => 80, rows => 30, wrap => 'off'
+<br>
+%= input_tag save => l('SAVE'), type => 'submit'
+%= input_tag save => l('Save And Exit'), type => 'submit'
+%= input_tag undo => l('UNDO'), type => 'reset'
+% end
+</center>
 
 @@ sharemgr.html.ep
 % title l('Share Folders');
