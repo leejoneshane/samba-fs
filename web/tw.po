@@ -476,22 +476,22 @@ msgid "Dir privileges"
 msgstr "目錄的權限"
 
 msgid "you have no privileges to modify"
-msgstr "，不允許修改檔案或目錄名稱"
+msgstr "不允許修改檔案或目錄名稱"
 
 msgid "you have no privileges to Download"
-msgstr "，不允許下載檔案"
+msgstr "不允許下載檔案"
 
 msgid "you have no privileges to edit this file!"
-msgstr "，不允許查看檔案內容"
+msgstr "不允許查看檔案內容"
 
 msgid "you have no privileges to delete this file!"
-msgstr "，不允許刪除目錄或檔案"
+msgstr "不允許刪除目錄或檔案"
 
 msgid "you have no privileges to creat this Directory!"
-msgstr "，不允許建子目錄"
+msgstr "不允許建子目錄"
 
 msgid "you have no privileges to Change Directory!"
-msgstr "，無法切換目錄"
+msgstr "無法切換目錄"
 
 msgid "Share Folders"
 msgstr "共享資料夾"
@@ -668,7 +668,7 @@ msgid "Grade"
 msgstr "年級"
 
 msgid "Class"
-msgstr "班
+msgstr "班"
 
 msgid "Seat"
 msgstr "號"
