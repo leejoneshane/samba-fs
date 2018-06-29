@@ -1239,6 +1239,14 @@ post '/add_one' => sub {
 	$ca->stash(groups => [keys %AVALG]);
 } => 'add_one';
 
+get '/delete' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(users => [keys %AVALU]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'delete';
+
 get '/state' => sub {
 };
 
@@ -1557,7 +1565,7 @@ if (window.top.location != window.location) {
 <img align=absmiddle src=/img/upload.gif><%=l('Upload')%><%= text_field filemany => 5, size => 4 %><%=l('Files')%>
 %= submit_button l('Select Files')
 % end
-%= form_for filesmgr => (id => 'filesmgr') => (method => 'POST') => begin
+%= form_for filesmgr => (id => 'filesmgr', method => 'POST') => begin
 %= csrf_field
 %= hidden_field action => '', id => 'action'
 %= hidden_field folder => $folder
@@ -1719,7 +1727,7 @@ function snone() {
 </table>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
 <tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
-%= form_for add_share => (id => 'sharemgr') => (method => 'POST') => begin
+%= form_for add_share => (id => 'sharemgr', method => 'POST') => begin
 %= csrf_field
 <tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for section => l('Share Name') %></th><td>
 %= text_field 'section'
@@ -1769,7 +1777,7 @@ function snone() {
 <div align=center>
 <table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
 <tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
-%= form_for add_share => (id => 'sharemgr') => (method => 'POST') => begin
+%= form_for add_share => (id => 'sharemgr', method => 'POST') => begin
 %= csrf_field
 %= hidden_field section => $section
 </td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
@@ -1858,7 +1866,7 @@ function check() {
 <li><%= $msg %>
 <% } %>
 </ul></td></tr></table>
-%= form_for add_group => (id => 'myform') => (method => 'POST') => begin
+%= form_for add_group => (id => 'myform', method => 'POST') => begin
 %= csrf_field
 <table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
 <tr><td><img align=absmiddle src=/img/addgrp.gif> <font color=red><b><%=l('Group Name')%></b></font>
@@ -1897,7 +1905,7 @@ function check() {
 <li><%= $msg %>
 <% } %>
 </ul></td></tr></table>
-%= form_for add_one => (id => 'myform') => (method => 'POST') => begin
+%= form_for add_one => (id => 'myform', method => 'POST') => begin
 %= csrf_field
 <table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
 <tr><td><img align=absmiddle src=/img/addone.gif> <font color=red><b><%=l('User Name')%></b></font>
@@ -1920,30 +1928,35 @@ function check() {
 % title l('Delete User or Group');
 % layout 'default';
 %= javascript begin
-function reset(id) {
+function rest(id) {
 	if (id==0) { $('#grp').val(''); $('#words').val(''); }
 	if (id==1) { $('#user').val(''); $('#words').val(''); }
 	if (id==2) { $('#user').val(''); $('#grp').val(''); }
 }
 function check() {
-	if (!$('#user').val() && !$('#grp').val() && !$('words').val()) {
+	if (!$('#user').val() && !$('#grp').val() && !$('#words').val()) {
 		alert('<%=l('You Have Not Select Any Yet!')%>');
+		return false;
 	} else {
-		$('#myform').submit();
+		return true;
 	}
 }
 % end
-<center>
-%= form_for check_del => (id => 'myform') => (method => 'POST') => begin
+<center><table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
+%= form_for check_del => (id => 'myform', onsubmit => 'return check();', method => 'POST') => begin
 %= csrf_field
 <table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
 <tr><th align=right>
 %= l('User Name')
 <td>
-%= t 'select', (size => 1, name => 'user', onchange => 'reset(0)') => begin
+%= t 'select', (id => 'user', size => 1, name => 'user', onchange => 'rest(0)') => begin
 %= t 'option', value => undef
 %= t 'option', value => '999', l('All Users')
-% for my $u (sort keys @$users) {
+% for my $u (sort @$users) {
 %= t 'option', value => $u, $u
 % }
 % end
@@ -1952,19 +1965,19 @@ function check() {
 <br>
 %= l('(Orgnization Unit)')
 <td>
-%= t 'select', (size => 1, name => 'grp', onchange => 'reset(1)') => begin
+%= t 'select', (id => 'grp', size => 1, name => 'grp', onchange => 'rest(1)') => begin
 %= t 'option', value => undef
 %= t 'option', value => '999', l('All Groups')
-% for my $g (sort keys @$groups) {
+% for my $g (sort @$groups) {
 %= t 'option', value => $g, $g
 % }
 % end
 <tr><th align=right><font color=red face="<%=l('Arial')%>"" size=4>
 %= l('Pattern Match')
 </font><td >
-%= text_field 'words' => (id => 'words', onchange => 'reset(2)')
-<tr><td align=right>
-%= submit_button l('Delete these users or groups') => (onclick => 'check()')
+%= text_field 'words' => (id => 'words', onchange => 'rest(2)')
+<tr><th><td>
+%= submit_button l('Delete these users or groups')
 </table>
 % end
 </center>
