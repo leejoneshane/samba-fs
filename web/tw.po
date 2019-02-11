@@ -43,6 +43,12 @@ msgstr "密碼"
 msgid "OK"
 msgstr "確定"
 
+msgid "Confirm"
+msgstr "確定"
+
+msgid "Cancle"
+msgstr "取消"
+
 msgid "CANCEL"
 msgstr "取消"
 
@@ -595,35 +601,44 @@ msgstr "字串比對選取"
 msgid "Delete these users or groups"
 msgstr "刪除以上群組及帳號"
 
-msgid "Group Member"
-msgstr "目前屬於此群組的使用者"
-
 msgid "User Search Result"
 msgstr "目前字串比對成功的使用者"
+
+msgid "Group Member"
+msgstr "目前屬於此群組的使用者"
 
 msgid "Group Search Result"
 msgstr "目前字串比對成功的群組"
 
-msgid "Confirm"
-msgstr "確定"
-
-msgid "Cancle"
-msgstr "取消"
-
-msgid "Delete Ok!"
-msgstr "帳號刪除完畢！"
-
 msgid "Confirm to delete this Group?"
-msgstr "您確認要刪除此群組："
+msgstr "您確認要刪除此群組"
 
 msgid "Confirm delete those user and group?"
-msgstr "您確認要刪除含有此字串的帳號："
+msgstr "您確認要刪除含有此字串的帳號"
 
 msgid "Will Delete all selected user and group?"
-msgstr "以下使用者將會一併刪除："
+msgstr "以下使用者將會一併刪除"
 
-msgid "Deleting Selected User now...."
-msgstr "正在刪除使用者"
+msgid "Deleting User:"
+msgstr "正在刪除使用者："
+
+msgid "Deleting Group:"
+msgstr "正在刪除群組："
+
+msgid "User Deleted!"
+msgstr "帳號刪除完畢！"
+
+msgid "All Users In Group Was Deleted!"
+msgstr "此群組所有帳號已刪除完畢！"
+
+msgid "Users Deleted!"
+msgstr "所有帳號刪除完畢！"
+
+msgid "Group Deleted!"
+msgstr "群組刪除完畢！"
+
+msgid "Groups Deleted!"
+msgstr "所有群組刪除完畢！"
 
 msgid "Auto Create User Account"
 msgstr "自動整批帳號"

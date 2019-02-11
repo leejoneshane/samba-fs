@@ -94,7 +94,7 @@ sub get_accounts {
 	while(($name,$pw,$uid,$gid,$gcos,$dir,$shell) = getpwent()) {
 		$USERS{$name} = { uid => $uid, gid => $gid };
 		$UNAME{$uid} = $name;
-		if ($uid > 1000) {
+		if ($name ne 'nobody' && $uid > 1000) {
 			$AVALU{$name} ++;
 		} else {
 			$RESERVED{$name} ++;
@@ -104,7 +104,7 @@ sub get_accounts {
 	while(my ($name,$pw,$gid,$members) = getgrent()) {
 		$GROUPS{$name} = { gid => $gid, users => $members };
 		$GNAME{$gid} = $name;
-		if ($gid > 1000) {
+		if ($name ne 'nobody' && $name ne 'nogroup' && $gid > 1000) {
 			$AVALG{$name} ++;
 		} else {
 			$RESERVED{$name} ++;
@@ -273,13 +273,17 @@ sub add_wam {
 	my($usr) = @_;
 	$ADMINS{$usr} = 1 unless exists($ADMINS{$usr});
 	$c->{admin} = join( ",", keys %ADMINS);
+	&write_conf;
 }
 
 sub del_wam {
 	my($usr) = @_;
 	return if ($usr eq 'admin');
-	delete $ADMINS{$usr} if exists($ADMINS{$usr});
-	$c->{admin} = join( ",", keys %ADMINS);
+	if (exists($ADMINS{$usr})) {
+		delete $ADMINS{$usr};
+		$c->{admin} = join( ",", keys %ADMINS);
+		&write_conf;
+	}
 	return $usr;
 }
 
@@ -296,22 +300,33 @@ sub add_grp {
 
 sub del_grp {
 	my($grp) = @_;
-	my $gid = $GROUPS{$grp}->{gid};
 	if (exists($GROUPS{$grp})) {
+		my $gid = $GROUPS{$grp}->{gid};
+		my @users = split(/,/, $GROUPS{$grp}->{users});
+		push @MESSAGES, app->l('Deleting Group:')." $grp ，gid: $gid ....";
+		for my $usr (sort @users) {
+			&delone($usr);
+		}
+		push @MESSAGES, app->l('All Users In Group Was Deleted!');
 		system("delgroup $grp");
 		delete $GNAME{$gid};
 		delete $AVALG{$grp};
+		push @MESSAGES, app->l('Group Deleted!');
 	}
 }
 
 sub delone {
 	my($usr) = @_;
-	my $uid = $USERS{$usr}->{uid};
-	push @MESSAGES, "<center>".app->l('del_user_now')." $usr ，uid: $uid ....</center><br>";
-	system("smbpasswd -x $usr || deluser $usr");
-	delete $USERS{$usr};
-	delete $UNAME{$uid};
-	delete $AVALU{$usr};
+	if (exists($USERS{$usr})) {
+		my $uid = $USERS{$usr}->{uid};
+		push @MESSAGES, app->l('Deleting User:')." $usr ，uid: $uid ....";
+		system("smbpasswd -x $usr || deluser $usr");
+		delete $USERS{$usr};
+		delete $UNAME{$uid};
+		delete $AVALU{$usr};
+		&del_wam($usr);
+		push @MESSAGES, app->l('User Deleted!');
+	}
 }
 
 sub reset_pw {
@@ -1247,6 +1262,90 @@ get '/delete' => sub {
 	$ca->stash(groups => [keys %AVALG]);
 } => 'delete';
 
+post '/check_del' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $usr = $ca->req->param('user');
+	my $grp = $ca->req->param('grp');
+	my $ww = $ca->req->param('words');
+	if ($usr ne '') {
+		if ($usr eq '999') {
+			for my $u (keys %AVALU) {
+				&delone($u);
+			}
+		} else {
+			&delone($usr);
+		}
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'notice');
+	}
+	if ($grp ne '') {
+		$ca->stash(grp => $grp);
+		$ca->stash(users => [sort split(/,/, $GROUPS{$grp}->{users})]);
+		return $ca->render(template => 'check_grp');
+	}
+	if ($ww ne '') {
+		my @users = ();
+		for my $u (sort keys %AVALU) {
+			next if ($u !~ /$ww/);
+			push @users, $u;
+		}
+		my @groups = ();
+		for my $g (sort keys %AVALG) {
+			next if ($g !~ /$ww/);
+			push @groups, $g;
+		}
+		$ca->stash(words => $ww);
+		$ca->stash(users => [@users]);
+		$ca->stash(groups => [@groups]);
+		return $ca->render(template => 'check_words');
+	}
+	return $ca->redirect_to('/delete');
+};
+
+post '/do_delete' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	if (defined($ca->req->param('grp'))) {
+		my $grp = $ca->req->param('grp');
+		if ($grp eq '999') {
+			for my $g (keys %AVALG) {
+				&del_grp($g);
+			}
+		} else {
+			&del_grp($grp);
+		}
+	}
+	if (defined($ca->req->param('words'))) {
+		my $ww = $ca->req->param('words');
+		my @groups = ();
+		for my $g (sort keys %AVALU) {
+			next if ($g !~ /$ww/);
+			&del_grp($g);
+		}
+		push @MESSAGES, app->l('Groups Deleted!');
+		my @users = ();
+		for my $u (sort keys %AVALG) {
+			next if ($u !~ /$ww/);
+			&delone($u);
+		}
+		push @MESSAGES, app->l('Users Deleted!');
+	}
+	$ca->stash(messages => [@MESSAGES]);
+} => 'notice';
+
 get '/state' => sub {
 };
 
@@ -1377,7 +1476,7 @@ if (window.top.location != window.location) {
 <tr style=background-color:#E8EFFF><th align=right>
 %= label_for nest => l('Account Hierarchy')
 </th><td>
-%= t 'select', name => 'nest'
+%= t 'select', (name => 'nest') => begin
 % for my $i (1..3) {
 %= t 'option', value => $i, selected => ($config->{nest} eq $i) ? 'selected' : undef, $i
 % }
@@ -1972,13 +2071,68 @@ function check() {
 %= t 'option', value => $g, $g
 % }
 % end
-<tr><th align=right><font color=red face="<%=l('Arial')%>"" size=4>
+<tr><th align=right><font color=red face="<%=l('Arial')%>" size=4>
 %= l('Pattern Match')
 </font><td >
 %= text_field 'words' => (id => 'words', onchange => 'rest(2)')
-<tr><th><td>
+<tr><th></th><td>
 %= submit_button l('Delete these users or groups')
-</table>
+</td></tr></table>
+% end
+</center>
+
+@@ check_grp.html.ep
+% title l('Delete User or Group');
+% layout 'default';
+<center>
+%= form_for do_delete => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field grp => $grp
+<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr><td colspan=8 align=center><b><%=l('Group Member')%><b></td>
+% my $i = 0;
+% for my $u (sort @$users) {
+% 	if ($i % 8 == 0) {
+</tr><tr>
+% 	}
+% 	$i ++;
+<td><%=$u%></td>
+% }
+</tr><tr><td colspan=8 align=center>
+%= submit_button l('Confirm to delete this Group?')
+</td></tr></table>
+% end
+</center>
+
+@@ check_words.html.ep
+% title l('Delete User or Group');
+% layout 'default';
+<center>
+%= form_for do_delete => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field words => $words
+<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr><td colspan=8 align=center><b><%=l('Group Search Result')%><b></td>
+% my $i = 0;
+% for my $g (@$groups) {
+% if ($i % 8 == 0) {
+</tr><tr>
+% }
+% $i ++;
+<td><%=$g%></td>
+% }
+</tr><tr><td colspan=8 align=center><b><%=l('Will Delete all selected user and group?')%><b></td>
+% $i = 0;
+% for my $u (@$users) {
+% if ($i % 8 == 0) {
+</tr><tr>
+% }
+% $i ++;
+<td><%=$u%></td>
+% }
+</tr><tr><td colspan=8 align=center>
+%= submit_button l('Confirm delete those user and group?')
+</td></tr></table>
 % end
 </center>
 
