@@ -53,7 +53,7 @@ my $lang_base = "/web";
 my $account = "/tmp/account.lst";
 my $itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 my $today = int(time / 86400);
-my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,%SMB);
+my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,%SMB,%REQN);
 &get_accounts;
 
 ####################### My Library ############################################
@@ -204,6 +204,7 @@ sub addone {
 	    &add_grp($grp) if (!exists($GROUPS{$grp}));
 		system("adduser -D -H -s /sbin/onlogin -G $grp $usr");
 		system("echo -e \"$pw\\n$pw\" | smbpasswd -as $usr");
+		push @MESSAGES, "$usr ".app->l('New User Created!');
 		my ($name,$pw,$uid,$gid,$gcos,$dir,$shell) = getpwnam($usr);
 		$USERS{$usr} = { uid => $uid, gid => $gid };
 		$UNAME{$uid} = $usr;
@@ -212,7 +213,7 @@ sub addone {
 }
 
 sub read_request {
-	open (REQ, "< $account") || &err_disk("$account app->l('err_cannot_open').<br>");
+	open (REQ, "< $account") || &err_disk("$account ".app->l('Can not read the file!'));
 	while (my $line = <REQ>) {
 		my($uname, $gname, $pwd) = split(/ /, $line);
 		$pwd =~ s/[\n|\r]//g;
@@ -223,32 +224,34 @@ sub read_request {
 
 sub autoadd {
 	my($grp, $pre, $st, $ed, $z, $gst, $ged, $cst, $ced) = @_;
-	my($u1, $u2, $u3, $i, $j, $k, $l1, $l2, $l3, $g, $p, $n, $d);
+	my($u1, $u2, $u3, $i, $j, $k, $l1, $l2, $l3, $p, $n);
+	%REQN = ();
 	$l1 = length($ed);
 	$l2 = length($ged);
 	$l3 = length($ced);
-	if ($c->{nest} eq 1) {
+	if ($c->{nest} == 1) {
 		for ($i=int($st); $i<=int($ed); $i++) {
 			$u1 = '';
 			for (1..$l1-length($i)){$u1 .= '0';}
-			$n = $pre.(($z eq 'yes')?$u1:'').$i;
-			$p = (($c->{passwd_form} eq 'username')?$n:(($c->{passwd_form} eq 'random')?&rnd64:"passwd"));
-			&addone($n, $grp, $p, '');
+			$n = $pre.(($z eq 'yes') ? $u1 : '').$i;
+			$p = (($c->{passwd_form} eq 'username') ? $n : (($c->{passwd_form} eq 'random') ? &rnd64() : 'passwd'));
+			&addone($n, $grp, $p);
+			$REQN{$n} = $p;
 		}
-	} elsif ($c->{nest} eq 2) {
+	} elsif ($c->{nest} == 2) {
 		for ($j=int($gst); $j<=int($ged); $j++) {
 			for ($i=int($st); $i<=int($ed); $i++) {
 				$u1 = '';
 				for (1..$l1-length($i)){$u1 .= '0';}
 				$u2 = '';
 				for (1..$l2-length($j)){$u2 .= '0';}
-				$n = $pre.(($z eq 'yes')?$u2:'').$j.(($z eq 'yes')?$u1:'').$i;
-				$p = (($c->{passwd_form} eq 'username')?$n:(($c->{passwd_form} eq 'random')?&rnd64:"passwd"));
-				$g = $pre.(($z eq 'yes')?$u2:'').$j;
-				&addone($n, $pre, $p, $g);
+				$n = $pre.(($z eq 'yes') ? $u2 : '').$j.(($z eq 'yes') ? $u1 : '').$i;
+				$p = (($c->{passwd_form} eq 'username') ? $n : (($c->{passwd_form} eq 'random') ? &rnd64() : 'passwd'));
+				&addone($n, $grp, $p);
+				$REQN{$n} = $p;
 			}
 		}
-	} elsif ($c->{nest} eq 3) {
+	} elsif ($c->{nest} == 3) {
 		for ($j=int($gst); $j<=int($ged); $j++) {
 			for ($k=int($cst); $k<=int($ced); $k++) {
 				for ($i=int($st); $i<=int($ed); $i++) {
@@ -258,11 +261,10 @@ sub autoadd {
 					for (1..$l2-length($j)){$u2 .= '0';}
 					$u3 = '';
 					for (1..$l3-length($k)){$u3 .= '0';}
-					$n = $pre.(($z eq 'yes')?$u2:'').$j.(($z eq 'yes')?$u3:'').$k.(($z eq 'yes')?$u1:'').$i;
-					$p = (($c->{passwd_form} eq 'username')?$n:(($c->{passwd_form} eq 'random')?&rnd64:"passwd"));
-					$d = $pre.(($z eq 'yes')?$u2:'').$j;
-					$g = $pre.(($z eq 'yes')?$u2:'').$j.(($z eq 'yes')?$u3:'').$k;
-					&addone($n, $pre, $p, "$d/$g");
+					$n = $pre.(($z eq 'yes') ? $u2 : '').$j.(($z eq 'yes') ? $u3 : '').$k.(($z eq 'yes') ? $u1 : '').$i;
+					$p = (($c->{passwd_form} eq 'username') ? $n : (($c->{passwd_form} eq 'random') ? &rnd64() : 'passwd'));
+					&addone($n, $grp, $p);
+					$REQN{$n} = $p;
 				}
 			}
 		}
@@ -292,6 +294,7 @@ sub add_grp {
 	if (!exists($GROUPS{$grp})) {
 		system("addgroup $grp");
 		my $gid = getgrnam($grp);
+		push @MESSAGES, "$grp ".app->l('New Group Created!');
 		$GROUPS{$grp} = { gid => $gid, users => '' };
 		$GNAME{$gid} = $grp;
 		$AVALG{$grp} ++;
@@ -309,9 +312,10 @@ sub del_grp {
 		}
 		push @MESSAGES, app->l('All Users In Group Was Deleted!');
 		system("delgroup $grp");
+		delete $GROUPS{$grp};
 		delete $GNAME{$gid};
 		delete $AVALG{$grp};
-		push @MESSAGES, app->l('Group Deleted!');
+		push @MESSAGES, "$grp ".app->l('Group Deleted!');
 	}
 }
 
@@ -325,7 +329,7 @@ sub delone {
 		delete $UNAME{$uid};
 		delete $AVALU{$usr};
 		&del_wam($usr);
-		push @MESSAGES, app->l('User Deleted!');
+		push @MESSAGES, "$usr ".app->l('User Deleted!');
 	}
 }
 
@@ -389,14 +393,17 @@ sub account_flag {
 	$entry = $result->pop_entry();
 	if (defined($entry)) {
 		$flags = $entry->get_value('sambaAcctFlags');
-		if ($flags =~ /D/) {
-			push @state, app->l('Account disabled');
-		} else {
-			push @state, app->l('Account enabled');
+		if ($flags) {
+			if ($flags =~ /D/) {
+				push @state, app->l('Account disabled');
+			} else {
+				push @state, app->l('Account enabled');
+			}
+			push @state, app->l('No password required') if ($flags =~ /N/);
+			push @state, app->l('Password does not expire') if ($flags =~ /X/);
+			push @state, app->l('Account has been locked') if ($flags =~ /L/);
 		}
-		push @state, app->l('No password required') if ($flags =~ /N/);
-		push @state, app->l('Password does not expire') if ($flags =~ /X/);
-		push @state, app->l('Account has been locked') if ($flags =~ /L/);
+		push @state, app->l('Account enabled') if (!@state);
 		return join(',',@state);
 	}
 }
@@ -653,7 +660,7 @@ sub myoct {
 }
 
 sub check_perm {
-	return 1 if (app->is_admin);
+	return 1 if (app->is_admin());
 	my($target,$flag) = @_;
 	my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($target);
 	my($perm) = &myoct($mode & 07777);
@@ -686,7 +693,7 @@ helper is_admin => sub {
 	my $ca = shift;
 	my $usr = shift;
 	$usr = $ca->session->{user} unless defined($usr);
-	return undef unless defined($usr);
+	return 0 unless defined($usr);
 	return exists($ADMINS{$usr});
 };
 
@@ -810,8 +817,7 @@ post '/do_config' => sub {
 	&write_conf;
 	push @MESSAGES, app->l('Configuration Saved!');
 	$ca->stash(messages => [@MESSAGES]);
-	$ca->render(template => 'notice', status => 200); 
-};
+} => 'notice';
 
 get '/setadmin' => sub {
 	my $ca = shift;
@@ -1212,6 +1218,8 @@ get '/add_group' => sub {
 } => 'add_group';
 
 post '/add_group' => sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
 	@MESSAGES = ();
@@ -1235,6 +1243,8 @@ get '/add_one' => sub {
 } => 'add_one';
 
 post '/add_one' => sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
 	@MESSAGES = ();
@@ -1249,7 +1259,6 @@ post '/add_one' => sub {
 	my $aa = $ca->req->param('admin');
 	&addone($usr,$grp,$pwd);
 	&add_wam($usr) if ($aa eq 'ON');
-	push @MESSAGES, app->l('New User Created!') if (exists($USERS{$usr}));
 	$ca->stash(messages => [@MESSAGES]);
 	$ca->stash(groups => [keys %AVALG]);
 } => 'add_one';
@@ -1263,6 +1272,8 @@ get '/delete' => sub {
 } => 'delete';
 
 post '/check_del' => sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
 	@MESSAGES = ();
@@ -1310,6 +1321,8 @@ post '/check_del' => sub {
 };
 
 post '/do_delete' => sub {
+	$) = 0;
+	$> = 0;
 	my $ca = shift;
 	my $v = $ca->validation;
 	@MESSAGES = ();
@@ -1331,13 +1344,13 @@ post '/do_delete' => sub {
 	if (defined($ca->req->param('words'))) {
 		my $ww = $ca->req->param('words');
 		my @groups = ();
-		for my $g (sort keys %AVALU) {
+		for my $g (sort keys %AVALG) {
 			next if ($g !~ /$ww/);
 			&del_grp($g);
 		}
 		push @MESSAGES, app->l('Groups Deleted!');
 		my @users = ();
-		for my $u (sort keys %AVALG) {
+		for my $u (sort keys %AVALU) {
 			next if ($u !~ /$ww/);
 			&delone($u);
 		}
@@ -1346,8 +1359,54 @@ post '/do_delete' => sub {
 	$ca->stash(messages => [@MESSAGES]);
 } => 'notice';
 
+get '/autoadd' => sub {
+	my $ca = shift;
+	$ca->stash(nest => $c->{nest});
+	$ca->stash(groups => [keys %AVALG]);
+} => 'autoadd';
+
+post '/do_autoadd' => sub {
+	$) = 0;
+	$> = 0;
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $grp = $ca->req->param('grp');
+	my $pre = $ca->req->param('pre');
+	my $grade1 = $ca->req->param('grade1');
+	my $grade2 = $ca->req->param('grade2');
+	my $class1 = $ca->req->param('class1');
+	my $class2 = $ca->req->param('class2');
+	my $num1 = $ca->req->param('num1');
+	my $num2 = $ca->req->param('num2');
+	my $addzero = $ca->req->param('addzero');
+	&autoadd($grp, $pre, $num1, $num2, $addzero, $grade1, $grade2, $class1, $class2);	
+	if ($c->{passwd_form} eq 'random') {
+		$ca->stash(show => 'yes');
+	} else {
+		$ca->stash(show => 'no');
+	}
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(reqn => {%REQN});
+} => 'pwd_table';
+
 get '/state' => sub {
-};
+	my $ca = shift;
+	%REQN = ();
+	if (app->is_admin) {
+		for my $u (keys %AVALU) {
+			$REQN{$u} = &account_flag($u);
+		}
+	} else {
+		$REQN{$ca->session('user')} = &account_flag($ca->session->{user});
+	}
+	$ca->stash(reqn => {%REQN});
+} => 'state_table';
 
 app->secrets(['WAM is meaning Web-base Account Management']);
 app->start;
@@ -1478,7 +1537,11 @@ if (window.top.location != window.location) {
 </th><td>
 %= t 'select', (name => 'nest') => begin
 % for my $i (1..3) {
-%= t 'option', value => $i, selected => ($config->{nest} eq $i) ? 'selected' : undef, $i
+% if (($config->{nest} == $i)) {
+%= t 'option', value => $i, selected => undef, $i
+% } else {
+%= t 'option', value => $i, $i
+% }
 % }
 % end
 </td>
@@ -1486,21 +1549,61 @@ if (window.top.location != window.location) {
 %= label_for passwd_form => l('Password Specified As')
 </th><td>
 %= t 'select', (name => 'passwd_form') => begin
-%= t 'option', value => 'username', selected => ($config->{passwd_form} eq "username") ? 'selected' : undef, l('Same as Account')
-%= t 'option', value => 'random', selected => ($config->{passwd_form} eq "random") ? 'selected' : undef, l('Random')
-%= t 'option', value => 'single', selected => ($config->{passwd_form} eq "single") ? 'selected' : undef, l("All set to 'passwd'")
+% if ($config->{passwd_form} eq "username") {
+%= t 'option', value => 'username', selected => undef, l('Same as Account')
+% } else {
+%= t 'option', value => 'username', l('Same as Account')
+% }
+% if ($config->{passwd_form} eq "random") {
+%= t 'option', value => 'random', selected => undef, l('Random')
+% } else {
+%= t 'option', value => 'random', l('Random')
+% }
+% if ($config->{passwd_form} eq "single") {
+%= t 'option', value => 'single', selected => undef, l("All set to 'passwd'")
+% } else {
+%= t 'option', value => 'single', l("All set to 'passwd'")
+% }
 % end
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_range => l('Set Random Range')
 </th><td>
 %= t 'select', (name => 'passwd_range') => begin
-%= t 'option', value => 'num', selected => ($config->{passwd_range} eq "num") ? 'selected' : undef, l('Number')
-%= t 'option', value => 'lcase', selected => ($config->{passwd_range} eq "lcase") ? 'selected' : undef, l('Lower Case')
-%= t 'option', value => 'ucase', selected => ($config->{passwd_range} eq "ucase") ? 'selected' : undef, l('Upper Case')
-%= t 'option', value => 'allcase', selected => ($config->{passwd_range} eq "allcase") ? 'selected' : undef, l('Upper & Lower Case')
-%= t 'option', value => 'num-lcase', selected => ($config->{passwd_range} eq "num-lcase") ? 'selected' : undef, l('Number & Lower Case')
-%= t 'option', value => 'num-ucase', selected => ($config->{passwd_range} eq "num-ucase") ? 'selected' : undef, l('Number & Upper Case')
-%= t 'option', value => 'all', selected => ($config->{passwd_range} eq "all") ? 'selected' : undef, l('Any Number & Any Case')
+% if ($config->{passwd_range} eq "num") {
+%= t 'option', value => 'num', selected => undef, l('Number')
+% } else {
+%= t 'option', value => 'num', l('Number')
+% }
+% if ($config->{passwd_range} eq "lcase") {
+%= t 'option', value => 'lcase', selected => undef, l('Lower Case')
+% } else {
+%= t 'option', value => 'lcase', l('Lower Case')
+% }
+% if ($config->{passwd_range} eq "ucase") {
+%= t 'option', value => 'ucase', selected => undef, l('Upper Case')
+% } else {
+%= t 'option', value => 'ucase', l('Upper Case')
+% }
+% if ($config->{passwd_range} eq "allcase") {
+%= t 'option', value => 'allcase', selected => undef, l('Upper & Lower Case')
+% } else {
+%= t 'option', value => 'allcase', l('Upper & Lower Case')
+% }
+% if ($config->{passwd_range} eq "num-lcase") {
+%= t 'option', value => 'num-lcase', selected => undef, l('Number & Lower Case')
+% } else {
+%= t 'option', value => 'num-lcase', l('Number & Lower Case')
+% }
+% if ($config->{passwd_range} eq "num-ucase") {
+%= t 'option', value => 'num-ucase', selected => undef, l('Number & Upper Case')
+% } else {
+%= t 'option', value => 'num-ucase', l('Number & Upper Case')
+% }
+% if ($config->{passwd_range} eq "all") {
+%= t 'option', value => 'all', selected => undef, l('Any Number & Any Case')
+% } else {
+%= t 'option', value => 'all', l('Any Number & Any Case')
+% }
 % end
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_rule => l('Password Changing Rule')
@@ -2134,6 +2237,134 @@ function check() {
 %= submit_button l('Confirm delete those user and group?')
 </td></tr></table>
 % end
+</center>
+
+@@ autoadd.html.ep
+% title l('Auto Create User Account');
+% layout 'default';
+<center>
+%= javascript begin
+function chggrp() {
+	var $grp = $('#grps').val();
+	$('#grp').val($grp);
+}
+% if ($nest == 1) {
+function check() { 
+	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
+		alert('<%=l("Group and Serial number cann't be blank!")%>');
+		return false;
+	} else {
+		return true;
+	}
+}
+% } elsif ($nest == 2) {
+function check() { 
+	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#grade1').val() == '' || $('#grade2').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
+		alert('<%=l("User prefix, Grade number and Serial number cann't be blank!")%>');
+		return false;
+	} else {
+		return true;
+	}
+}
+% } elsif ($nest == 3) {
+function check() { 
+	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#grade1').val() == '' || $('#grade2').val() == '' || $('#class1').val() == '' || $('#class2').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
+		alert('<%=l("User prefix, Grade number, Class number and Serial number cann't be blank!")%>');
+		return false;
+	} else {
+		return true;
+	}
+}
+% }
+% end
+<center>
+%= form_for do_autoadd => (id => 'myForm', method => 'POST', onsubmit => 'return check()') => begin
+%= csrf_field
+<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<tr><th align=center colspan=2 align=right><%=l('Group Name')%> <%=l('(Orgnization Unit)')%></th></tr>
+<tr><td align=center colspan=2>
+%= text_field 'grp' => (id => 'grp', size => 12)
+%= t 'select' => (id => 'grps', size => 1, name => 'grps', onchange => 'chggrp()') => begin
+%= t 'option', value => undef
+% for my $g (@$groups) {
+%= t 'option', value => $g, $g
+% }
+% end
+</td></tr>
+<tr><th align=right><font color=darkred><%=l('Account Prefix(Ex:stu)')%></font></th>
+<td><%= text_field 'pre' => (id => 'pre', size => 8)%></td></tr>
+% if ($nest > 1) {
+<tr><th align=right><font color=darkred><%=l('The secend level number.(Grade):')%></font></th>
+<td><%=l('From')%><%= text_field 'grade1' => (id => 'grade1', size => 3)%><%=l('To')%><%= text_field 'grade2' => (id => 'grade2', size => 3)%></td></tr>
+% }
+% if ($nest == 3) {
+<tr><th align=right><font color=darkred><%=l('The third level number(Class):')%></font></th>
+<td><%=l('From')%><%= text_field 'class1' => (id => 'class1', size => 3)%><%=l('To')%><%= text_field 'class2' => (id => 'class2', size => 3)%></td></tr>
+% }
+<tr><th align=right><font color=darkred><%=l('Seriel numbers(Seat):')%></font></th>
+<td><%=l('From')%><%= text_field 'num1' => (id => 'num1', size => 3)%><%=l('To')%><%= text_field 'num2' => (id => 'num2', size => 3)%></td></tr>
+<tr><th align=right><font color=blue><%=l('Add Zero')%></font></th>
+<td><%= check_box 'addzero' => 'yes', checked => undef %></td></tr>
+<tr><td colspan=2><hr size=1 color=6699cc></td>
+% if ($nest == 1) {
+<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23')%></td></tr>
+% }
+% if ($nest == 2) {
+<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Number. Ex:stu523')%></td></tr>
+% }
+% if ($nest == 3) {
+<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308')%></td></tr>
+% }
+<tr><td></td><td>
+%= submit_button l('Create all users')
+</td></table>
+% end
+</center>
+
+@@ pwd_table.html.ep
+% title l('Auto Create User Account');
+% layout 'default';
+<center><table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
+% if ($show eq 'yes') {
+<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<tr><th><%=l('Account')%></th><th><%=l('Password')%></th><th><%=l('Account')%></th><th><%=l('Password')%></th><th><%=l('Account')%></th><th><%=l('Password')%></th></tr>
+<tr>
+% my $i = 0;
+% for my $u (sort keys %$reqn) {
+% if ($i % 3 == 0) {
+</tr><tr>
+% }
+% $i ++;
+<td><%= $u %></td><td><%= $reqn->{$u} %></td>
+% }
+</table>
+% }
+</center>
+
+@@ state_table.html.ep
+% title l('Account Flags');
+% layout 'default';
+<center>
+<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+% if (is_admin) {
+<tr><th><%=l('Account')%></th><th><%=l('State')%></th><th><%=l('Account')%></th><th><%=l('State')%></th><th><%=l('Account')%></th><th><%=l('State')%></th></tr>
+% } else {
+<tr><th><%=l('Account')%></th><th><%=l('State')%></th>
+% }
+<tr>
+% my $i = 0;
+% for my $u (sort keys %$reqn) {
+% if ($i % 3 == 0) {
+</tr><tr>
+% }
+% $i ++;
+<td><%= $u %></td><td><%= $reqn->{$u} %></td>
+% }
+</table>
 </center>
 
 @@ layouts/default.html.ep

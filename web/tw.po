@@ -643,16 +643,16 @@ msgstr "所有群組刪除完畢！"
 msgid "Auto Create User Account"
 msgstr "自動整批帳號"
 
-msgid "Group and user name cann't be blank!"
-msgstr "群組及流水號不可留白"
+msgid "Group and Serial number cann't be blank!"
+msgstr "群組及流水號不可留白！"
 
-msgid "Group and user prefix and number cann't be blank!"
-msgstr "前置碼及流水號不可留白"
+msgid "User prefix, Grade number and Serial number cann't be blank!"
+msgstr "前置碼、年級數和流水號不可留白！"
 
-msgid "prefix and number cann't be blank!"
-msgstr "前置碼及流水號不可留白"
+msgid "User prefix, Grade number, Class number and Serial number cann't be blank!"
+msgstr "前置碼、年級數、班級數和流水號不可留白！"
 
-msgid "Accounts' Prefix(Ex:stu)"
+msgid "Account Prefix(Ex:stu)"
 msgstr "本群組帳號前置碼(如stu)→"
 
 msgid "The secend level number.(Grade):"
@@ -798,6 +798,9 @@ msgstr "密碼變更成功！"
 
 msgid "Account Flags"
 msgstr "檢視帳號的狀態"
+
+msgid "State"
+msgstr "狀態"
 
 msgid "Account disabled"
 msgstr "帳號已停用"
