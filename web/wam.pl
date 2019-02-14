@@ -38,8 +38,6 @@ use File::Basename;
 use Cwd qw(abs_path);
 
 ####################### initialzing ###########################################
-#my $s = app->sessions(Mojolicious::Sessions->new);
-#$s->default_expiration(3600);
 plugin 'RenderFile';
 my $c = plugin Config => {file => '/web/wam.conf'};
 &init_conf unless defined $c->{language};
@@ -660,7 +658,6 @@ sub myoct {
 }
 
 sub check_perm {
-	return 1 if (app->is_admin());
 	my($target,$flag) = @_;
 	my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($target);
 	my($perm) = &myoct($mode & 07777);
@@ -781,8 +778,7 @@ get '/right' => 'right';
 get '/config' => sub {
 	my $ca = shift;
 	my @langs = &get_lang;
-	$ca->stash(langs => @langs);	
-	$ca->stash(config => $c);
+	$ca->stash(langs => @langs);
 } => 'config_form';
 
 post '/do_config' => sub {
@@ -871,7 +867,7 @@ post '/del_admin' => sub {
 
 get '/filesmgr' => sub {
 	my $ca = shift;
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -894,7 +890,7 @@ get '/filesmgr' => sub {
 
 post '/filesmgr' => sub {
 	my $ca = shift;
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -1012,7 +1008,7 @@ post '/upload' => sub {
   		$ca->stash(messages => [@MESSAGES]);
   		return $ca->render(template => 'warning', status => 500);
 	} 
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -1027,7 +1023,7 @@ post '/upload' => sub {
 
 get '/edit_file' => sub {
 	my $ca = shift;
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -1051,7 +1047,7 @@ get '/edit_file' => sub {
 
 post '/edit_file' => sub {
 	my $ca = shift;
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -1083,7 +1079,7 @@ post '/edit_file' => sub {
 
 get '/show_file' => sub {
 	my $ca = shift;
-	if (!app->is_admin) {
+	if (!$ca->is_admin()) {
 		$) = $ca->session->{gid};
 		$> = $ca->session->{uid};
 	}
@@ -1361,7 +1357,6 @@ post '/do_delete' => sub {
 
 get '/autoadd' => sub {
 	my $ca = shift;
-	$ca->stash(nest => $c->{nest});
 	$ca->stash(groups => [keys %AVALG]);
 } => 'autoadd';
 
@@ -1398,17 +1393,19 @@ post '/do_autoadd' => sub {
 get '/state' => sub {
 	my $ca = shift;
 	%REQN = ();
-	if (app->is_admin) {
+	if ($ca->is_admin()) {
 		for my $u (keys %AVALU) {
 			$REQN{$u} = &account_flag($u);
 		}
 	} else {
-		$REQN{$ca->session('user')} = &account_flag($ca->session->{user});
+		$REQN{$ca->session->{user}} = &account_flag($ca->session->{user});
 	}
 	$ca->stash(reqn => {%REQN});
 } => 'state_table';
 
 app->secrets(['WAM is meaning Web-base Account Management']);
+app->sessions->default_expiration(3600);
+#app->sessions->secure('true');
 app->start;
 
 __DATA__
@@ -1464,7 +1461,7 @@ if (window.top.location != window.location) {
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_one" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/delete" style="text-decoration: none"><%=l('Delete User or Group')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/autoadd" style="text-decoration: none"><%=l('Auto Create User Account')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/upload" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/multiple" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/resetpw" style="text-decoration: none"><%=l('Reset Password')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/chgpw" style="text-decoration: none"><%=l('Change My Password')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/state" style="text-decoration: none"><%=l('Account Flags')%></a></td></tr>
@@ -1474,6 +1471,7 @@ if (window.top.location != window.location) {
 <tr><td align=center bgColor=#FFCC00 width=100% height=40px><a href="/help/help_user.htm" style="text-decoration: none"><b><font color=black><%=l('User Manual')%></b></font></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/filesmgr" style="text-decoration: none"><%=l('File Manager')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/chgpw" style="text-decoration: none"><%=l('Change My Password')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/state" style="text-decoration: none"><%=l('Account Flags')%></a></td></tr>
 <tr><td align=center bgColor=#ffcc00 width=100% height=40px><b><%=l('Log Out')%></td></tr>
 <tr><td align=center bgColor=#3E7BB9 width=100% height=40px><a href="/relogon" target=_top style="text-decoration: none"><%=l('Log Out')%></a></td></tr>
 % }
@@ -1513,14 +1511,14 @@ if (window.top.location != window.location) {
 </th><td>
 %= t 'select', (name => 'language') => begin
 % for my $lang ($langs) {
-%= t 'option', value => $lang, selected => ($config->{language} eq $lang) ? 'selected' : undef, $lang
+%= t 'option', value => $lang, selected => (config('language') eq $lang) ? 'selected' : undef, $lang
 % }
 % end
 </td>
 <tr style=background-color:#6582CD><th align=right><font color=#ffffff>
 %= label_for acltype => l('ACL Control')
 </font></th><td><font color=#ffffff>
-% if ($config->{acltype} eq 1) {
+% if (config('acltype') eq 1) {
 <%= radio_button acltype => 1, checked => 'checked' %><%=l('Allow IP')%>
 <%= radio_button acltype => 0, checked => undef %><%=l('Deny IP')%>
 % } else {
@@ -1530,14 +1528,14 @@ if (window.top.location != window.location) {
 </font></td><tr style=background-color:#ddeeff><th align=right>
 %= label_for acls => l('Rules')
 </th><td>
-%= text_area acls => $config->{acls}, rows => 3, cols => 30
+%= text_area acls => config('acls'), rows => 3, cols => 30
 </td></tr>
 <tr style=background-color:#E8EFFF><th align=right>
 %= label_for nest => l('Account Hierarchy')
 </th><td>
 %= t 'select', (name => 'nest') => begin
 % for my $i (1..3) {
-% if (($config->{nest} == $i)) {
+% if ((config('nest') == $i)) {
 %= t 'option', value => $i, selected => undef, $i
 % } else {
 %= t 'option', value => $i, $i
@@ -1549,17 +1547,17 @@ if (window.top.location != window.location) {
 %= label_for passwd_form => l('Password Specified As')
 </th><td>
 %= t 'select', (name => 'passwd_form') => begin
-% if ($config->{passwd_form} eq "username") {
+% if (config('passwd_form') eq "username") {
 %= t 'option', value => 'username', selected => undef, l('Same as Account')
 % } else {
 %= t 'option', value => 'username', l('Same as Account')
 % }
-% if ($config->{passwd_form} eq "random") {
+% if (config('passwd_form') eq "random") {
 %= t 'option', value => 'random', selected => undef, l('Random')
 % } else {
 %= t 'option', value => 'random', l('Random')
 % }
-% if ($config->{passwd_form} eq "single") {
+% if (config('passwd_form') eq "single") {
 %= t 'option', value => 'single', selected => undef, l("All set to 'passwd'")
 % } else {
 %= t 'option', value => 'single', l("All set to 'passwd'")
@@ -1569,37 +1567,37 @@ if (window.top.location != window.location) {
 %= label_for passwd_range => l('Set Random Range')
 </th><td>
 %= t 'select', (name => 'passwd_range') => begin
-% if ($config->{passwd_range} eq "num") {
+% if (config('passwd_range') eq "num") {
 %= t 'option', value => 'num', selected => undef, l('Number')
 % } else {
 %= t 'option', value => 'num', l('Number')
 % }
-% if ($config->{passwd_range} eq "lcase") {
+% if (config('passwd_range') eq "lcase") {
 %= t 'option', value => 'lcase', selected => undef, l('Lower Case')
 % } else {
 %= t 'option', value => 'lcase', l('Lower Case')
 % }
-% if ($config->{passwd_range} eq "ucase") {
+% if (config('passwd_range') eq "ucase") {
 %= t 'option', value => 'ucase', selected => undef, l('Upper Case')
 % } else {
 %= t 'option', value => 'ucase', l('Upper Case')
 % }
-% if ($config->{passwd_range} eq "allcase") {
+% if (config('passwd_range') eq "allcase") {
 %= t 'option', value => 'allcase', selected => undef, l('Upper & Lower Case')
 % } else {
 %= t 'option', value => 'allcase', l('Upper & Lower Case')
 % }
-% if ($config->{passwd_range} eq "num-lcase") {
+% if (config('passwd_range') eq "num-lcase") {
 %= t 'option', value => 'num-lcase', selected => undef, l('Number & Lower Case')
 % } else {
 %= t 'option', value => 'num-lcase', l('Number & Lower Case')
 % }
-% if ($config->{passwd_range} eq "num-ucase") {
+% if (config('passwd_range') eq "num-ucase") {
 %= t 'option', value => 'num-ucase', selected => undef, l('Number & Upper Case')
 % } else {
 %= t 'option', value => 'num-ucase', l('Number & Upper Case')
 % }
-% if ($config->{passwd_range} eq "all") {
+% if (config('passwd_range') eq "all") {
 %= t 'option', value => 'all', selected => undef, l('Any Number & Any Case')
 % } else {
 %= t 'option', value => 'all', l('Any Number & Any Case')
@@ -1608,28 +1606,28 @@ if (window.top.location != window.location) {
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_rule => l('Password Changing Rule')
 </th><td>
-% if (int($config->{passwd_rule})%2) {
+% if (int(config('passwd_rule')) % 2) {
 %= check_box passwd_rule1 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule1 => 1
 % }
 <%=l('Lenght Limit 4-8')%></td>
 <tr style=background-color:#E8EFFF><th></th><td>
-% if (int($config->{passwd_rule})%4 >= 2) {
+% if (int(config('passwd_rule')) % 4 >= 2) {
 %= check_box passwd_rule2 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule2 => 1
 % }
 <%=l('Only Number & Letter')%></td>
 <tr style=background-color:#E8EFFF><th></th><td>
-% if (int($config->{passwd_rule})%8 >= 4) {
+% if (int(config('passwd_rule')) % 8 >= 4) {
 %= check_box passwd_rule3 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule3 => 1
 % }
 <%=l('Limit Diffrent Letter')%></td>
 <tr style=background-color:#E8EFFF><th></th><td>
-% if (int($config->{passwd_rule}) >= 8) {
+% if (int(config('passwd_rule')) >= 8) {
 %= check_box passwd_rule4 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule4 => 1
@@ -1638,19 +1636,19 @@ if (window.top.location != window.location) {
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_length => l('Minimum Password Length')
 </th><td>
-%= text_field passwd_length => $config->{passwd_length}
+%= text_field passwd_length => config('passwd_length')
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_age => l('Maximum Password Age(seconds,unlimited by -1)')
 </th><td>
-%= text_field passwd_age => $config->{passwd_age}
+%= text_field passwd_age => config('passwd_age')
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_lock => l('Lockout after bad logon attempts')
 </th><td>
-%= text_field passwd_lock => $config->{passwd_lock}
+%= text_field passwd_lock => config('passwd_lock')
 </td><tr style=background-color:#E8EFFF><th align=right>
 %= label_for passwd_release => l('Reset lockout count after minutes(default:30)')
 </th><td>
-%= text_field passwd_release => $config->{passwd_release}
+%= text_field passwd_release => config('passwd_release')
 </td><tr><td colspan=2 align=center><img align=absmiddle src=/img/chgpw.gif>
 %= submit_button l('Save All Configuration')
 </td></table>
@@ -2248,7 +2246,7 @@ function chggrp() {
 	var $grp = $('#grps').val();
 	$('#grp').val($grp);
 }
-% if ($nest == 1) {
+% if (config('nest') == 1) {
 function check() { 
 	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
 		alert('<%=l("Group and Serial number cann't be blank!")%>');
@@ -2257,7 +2255,7 @@ function check() {
 		return true;
 	}
 }
-% } elsif ($nest == 2) {
+% } elsif (config('nest') == 2) {
 function check() { 
 	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#grade1').val() == '' || $('#grade2').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
 		alert('<%=l("User prefix, Grade number and Serial number cann't be blank!")%>');
@@ -2266,7 +2264,7 @@ function check() {
 		return true;
 	}
 }
-% } elsif ($nest == 3) {
+% } elsif (config('nest') == 3) {
 function check() { 
 	if ($('#grp').val() == '' || $('#pre').val() == '' || $('#grade1').val() == '' || $('#grade2').val() == '' || $('#class1').val() == '' || $('#class2').val() == '' || $('#num1').val() == '' || $('#num2').val() == '') {
 		alert('<%=l("User prefix, Grade number, Class number and Serial number cann't be blank!")%>');
@@ -2293,11 +2291,11 @@ function check() {
 </td></tr>
 <tr><th align=right><font color=darkred><%=l('Account Prefix(Ex:stu)')%></font></th>
 <td><%= text_field 'pre' => (id => 'pre', size => 8)%></td></tr>
-% if ($nest > 1) {
+% if (config('nest') > 1) {
 <tr><th align=right><font color=darkred><%=l('The secend level number.(Grade):')%></font></th>
 <td><%=l('From')%><%= text_field 'grade1' => (id => 'grade1', size => 3)%><%=l('To')%><%= text_field 'grade2' => (id => 'grade2', size => 3)%></td></tr>
 % }
-% if ($nest == 3) {
+% if (config('nest') == 3) {
 <tr><th align=right><font color=darkred><%=l('The third level number(Class):')%></font></th>
 <td><%=l('From')%><%= text_field 'class1' => (id => 'class1', size => 3)%><%=l('To')%><%= text_field 'class2' => (id => 'class2', size => 3)%></td></tr>
 % }
@@ -2306,13 +2304,13 @@ function check() {
 <tr><th align=right><font color=blue><%=l('Add Zero')%></font></th>
 <td><%= check_box 'addzero' => 'yes', checked => undef %></td></tr>
 <tr><td colspan=2><hr size=1 color=6699cc></td>
-% if ($nest == 1) {
+% if (config('nest') == 1) {
 <tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23')%></td></tr>
 % }
-% if ($nest == 2) {
+% if (config('nest') == 2) {
 <tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Number. Ex:stu523')%></td></tr>
 % }
-% if ($nest == 3) {
+% if (config('nest') == 3) {
 <tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308')%></td></tr>
 % }
 <tr><td></td><td>
@@ -2331,7 +2329,13 @@ function check() {
 </ul></td></tr></table>
 % if ($show eq 'yes') {
 <table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr><th><%=l('Account')%></th><th><%=l('Password')%></th><th><%=l('Account')%></th><th><%=l('Password')%></th><th><%=l('Account')%></th><th><%=l('Password')%></th></tr>
+<tr>
+% my $cols = scalar %$reqn;
+% $cols = 5 if ($cols >5);
+% for (my $i=0;$i<$cols;$i++) {
+<th><%=l('Account')%></th><th><%=l('Password')%></th>
+% }
+</tr>
 <tr>
 % my $i = 0;
 % for my $u (sort keys %$reqn) {
@@ -2350,10 +2354,11 @@ function check() {
 % layout 'default';
 <center>
 <table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-% if (is_admin) {
-<tr><th><%=l('Account')%></th><th><%=l('State')%></th><th><%=l('Account')%></th><th><%=l('State')%></th><th><%=l('Account')%></th><th><%=l('State')%></th></tr>
-% } else {
-<tr><th><%=l('Account')%></th><th><%=l('State')%></th>
+<tr>
+% my $cols = scalar %$reqn;
+% $cols = 5 if ($cols >5);
+% for (my $i=0;$i<$cols;$i++) {
+<th><%=l('Account')%></th><th><%=l('State')%></th>
 % }
 <tr>
 % my $i = 0;
