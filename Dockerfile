@@ -18,8 +18,6 @@ RUN apk update \
     && chmod +x /usr/local/bin/cpanm \
     && cpanm Mojolicious::Plugin::RenderFile \
     && adduser -G wheel -D -h /mnt -s /bin/bash admin \
-    && addgroup wam \
-    && addgroup admin wam \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
