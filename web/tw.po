@@ -700,6 +700,9 @@ msgstr "新增下列使用者帳號："
 msgid "Creat User Account from File"
 msgstr "手動整批帳號"
 
+msgid "You have not selected any file yet!"
+msgstr "您尚未選取要上傳的檔案！"
+
 msgid "You MUST upload a UNIX Compatable text file to Create Accounts! Like this:"
 msgstr "您上傳的檔案必須是純文字檔，格式如下："
 
@@ -709,17 +712,14 @@ msgstr "使用者名稱　群組名稱　密碼"
 msgid "Ex:I got two diffrent user and group"
 msgstr "例如,有兩個不同群組的使用者："
 
-msgid "shane admin super123<br>ddjohn teacher dd1234"
-msgstr "shane admin super123<br>ddjohn teacher dd1234"
-
-msgid "read this:You have to had space between all Coloum ,each account a line,<br>and the last row MUST be blank!"
-msgstr "說明：每個欄位之間空一格，一個帳號寫一行，<br>最後一行必須是空白行。"
+msgid "PS: You have to had space between all Coloum ,each account a line, and the last row MUST be blank!"
+msgstr "說明：每個欄位之間空一格，一個帳號寫一行，最後一行必須是空白行。"
 
 msgid "Upload your Account text file..."
 msgstr "請選取您要上傳的檔案"
 
 msgid "Upload and Create Account!"
-msgstr "上傳到主機端大量建立帳號"
+msgstr "上傳到主機端，大量建立帳號"
 
 msgid "Reset Password"
 msgstr "重設密碼"
@@ -909,9 +909,6 @@ msgstr "請登入系統控制台，進行磁碟檢測"
 
 msgid "Please check the configuration!"
 msgstr "如果是參數設定錯誤，請您"
-
-msgid "Setup Configuration!"
-msgstr "設定參數"
 
 msgid "You can Not use this links!"
 msgstr "您無權從此位置執行程式！"

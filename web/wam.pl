@@ -48,7 +48,6 @@ my $ldap_result = $ldap->bind("cn=Manager,$base_dn", password => $ENV{'SAMBA_ADM
 die $ldap_result->error_text unless ($ldap_result->code eq 0);
 my %ADMINS = map { $_ => 1 } split(/,/, $c->{admin});
 my $lang_base = "/web";
-my $account = "/tmp/account.lst";
 my $itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 my $today = int(time / 86400);
 my(@MESSAGES,%RESERVED,%AVALU,%AVALG,%USERS,%UNAME,%GROUPS,%GNAME,%FOLDS,%FILES,%SMB,%REQN);
@@ -210,14 +209,18 @@ sub addone {
 	}
 }
 
-sub read_request {
-	open (REQ, "< $account") || &err_disk("$account ".app->l('Can not read the file!'));
-	while (my $line = <REQ>) {
-		my($uname, $gname, $pwd) = split(/ /, $line);
-		$pwd =~ s/[\n|\r]//g;
-		&addone($uname, $gname, $pwd) if ($uname && $gname && $pwd);
+sub delone {
+	my($usr) = @_;
+	if (exists($USERS{$usr})) {
+		my $uid = $USERS{$usr}->{uid};
+		push @MESSAGES, app->l('Deleting User:')." $usr ，uid: $uid ....";
+		system("smbpasswd -x $usr || deluser $usr");
+		delete $USERS{$usr};
+		delete $UNAME{$uid};
+		delete $AVALU{$usr};
+		&del_wam($usr);
+		push @MESSAGES, "$usr ".app->l('User Deleted!');
 	}
-	close(REQ);
 }
 
 sub autoadd {
@@ -314,20 +317,6 @@ sub del_grp {
 		delete $GNAME{$gid};
 		delete $AVALG{$grp};
 		push @MESSAGES, "$grp ".app->l('Group Deleted!');
-	}
-}
-
-sub delone {
-	my($usr) = @_;
-	if (exists($USERS{$usr})) {
-		my $uid = $USERS{$usr}->{uid};
-		push @MESSAGES, app->l('Deleting User:')." $usr ，uid: $uid ....";
-		system("smbpasswd -x $usr || deluser $usr");
-		delete $USERS{$usr};
-		delete $UNAME{$uid};
-		delete $AVALU{$usr};
-		&del_wam($usr);
-		push @MESSAGES, "$usr ".app->l('User Deleted!');
 	}
 }
 
@@ -1390,6 +1379,35 @@ post '/do_autoadd' => sub {
 	$ca->stash(reqn => {%REQN});
 } => 'pwd_table';
 
+get '/manuadd' => 'manuadd';
+
+post '/do_manuadd' => sub {
+	$) = 0;
+	$> = 0;
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $file = $ca->req->upload('upload_file');
+	if (!$file) {
+  		push @MESSAGES, app->l('Can not read the file!').$file;
+	} else {
+		$file->move_to('/tmp/account_list.txt');
+		open (REQ, '< /tmp/account_list.txt');
+		while (my $line = <REQ>) {
+			my($uname, $gname, $pwd) = split(/ /, $line);
+			$pwd =~ s/[\n|\r]//g;
+			&addone($uname, $gname, $pwd) if ($uname && $gname && $pwd);
+		}
+		close(REQ);
+	}
+	$ca->stash(messages => [@MESSAGES]);
+} => 'notice';
+
 get '/state' => sub {
 	my $ca = shift;
 	%REQN = ();
@@ -1461,7 +1479,7 @@ if (window.top.location != window.location) {
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_one" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/delete" style="text-decoration: none"><%=l('Delete User or Group')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/autoadd" style="text-decoration: none"><%=l('Auto Create User Account')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/multiple" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
+<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/manuadd" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/resetpw" style="text-decoration: none"><%=l('Reset Password')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/chgpw" style="text-decoration: none"><%=l('Change My Password')%></a></td></tr>
 <tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/state" style="text-decoration: none"><%=l('Account Flags')%></a></td></tr>
@@ -2164,7 +2182,7 @@ function check() {
 %= l('Group Name')
 <br>
 %= l('(Orgnization Unit)')
-<td>
+<th>
 %= t 'select', (id => 'grp', size => 1, name => 'grp', onchange => 'rest(1)') => begin
 %= t 'option', value => undef
 %= t 'option', value => '999', l('All Groups')
@@ -2349,6 +2367,43 @@ function check() {
 % }
 </center>
 
+@@ manuadd.html.ep
+% title l('Creat User Account from File');
+% layout 'default';
+<center>
+%= javascript begin
+function check() { 
+	if ($('#upload_file').val() == '') {
+		alert('<%=l("You have not selected any file yet!")%>');
+		return false;
+	} else {
+		return true;
+	}
+}
+% end
+<center>
+%= form_for do_manuadd => (id => 'myForm', method => 'POST', enctype => 'multipart/form-data', onsubmit => 'return check()') => begin
+%= csrf_field
+<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<tr><td colspan=2 align=left>
+%= l('You MUST upload a UNIX Compatable text file to Create Accounts! Like this:')
+<br><font color=green><b>
+%= l('Username Groupname Password')
+</b></font><br>
+%= l('Ex:I got two diffrent user and group')
+<br><font color=red><b>
+shane admin super123<br>ddjohn teacher dd1234
+</b></font><br>
+%= l('PS: You have to had space between all Coloum ,each account a line, and the last row MUST be blank!')
+<br><hr></td></tr>
+<tr><th align=right><img align=absmiddle src=/img/0folder.gif><%=l('Upload your Account text file...')%></th><td>
+%= file_field 'upload_file', id => 'upload_file'
+<tr><td></td><td>
+%= submit_button l('Upload and Create Account!')
+</td></table>
+% end
+</center>
+
 @@ state_table.html.ep
 % title l('Account Flags');
 % layout 'default';
@@ -2384,8 +2439,8 @@ function check() {
    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>  
 <![endif]-->
 </head>
-<body style='font-size:11pt' bgcolor=#ffffff><center>
-<font size=+2 face="<%=l('Arial')%>" color=darkblue><%= title %></font></center>
+<body style='font-size:11pt' bgcolor=#ffffff>
+<p align=center><font size=+2 face="<%=l('Arial')%>" color=darkblue><%= title %></font></p>
 <%=content%>
 <hr color=#FF0000><center><font size=3>
 【<a href="javascript:history.go(-1)"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Go Back')%></a>  】
