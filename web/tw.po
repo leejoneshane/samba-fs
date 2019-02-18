@@ -118,9 +118,6 @@ msgstr "授與以下IP存取"
 msgid "Deny IP"
 msgstr "拒絕以下IP存取"
 
-msgid "Rules"
-msgstr "規則"
-
 msgid "Account Hierarchy"
 msgstr "自動帳號階層數"
 
@@ -265,8 +262,8 @@ msgstr "操作面板"
 msgid "Root"
 msgstr "《根目錄》"
 
-msgid "Please click the icon to see the description"
-msgstr "請點選圖示查看說明"
+msgid "Please read the description first:"
+msgstr "請先閱讀說明："
 
 msgid "Please input dir name"
 msgstr "請在右邊文字框輸入目錄的名稱〔限英文或數字〕！"
@@ -723,9 +720,6 @@ msgstr "上傳到主機端，大量建立帳號"
 
 msgid "Reset Password"
 msgstr "重設密碼"
-
-msgid "Nothing Selected!"
-msgstr "尚未選取重設對象"
 
 msgid "Reset Password to:"
 msgstr "密碼重設成"

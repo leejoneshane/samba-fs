@@ -360,13 +360,13 @@ sub chg_passwd {
 		exec("echo -e \"$p1\\n$p1\" | smbpasswd -as $usr");
 	} else {
 		&head(app->l('title_chgpw'));
-		print "<hr><center><table border=0 style=font-size:11pt><tr><td><p>app->l('err_bad_passwd')</p>\n";
+		print "<hr><center><table style=font-size:11pt><tr><td><p>app->l('err_bad_passwd')</p>\n";
 		print "app->l('err_cannot_continue_change_passwd').<br>";
 		print '<ul>';
 		print "<li>app->l('msg_passwd_must_same')";
 		print '</ul>';
 		print '<hr color="#FF0000">';
-		print "<center><a href=\"javascript:history.go(-1)\"><img align=absmiddle src=/img/upfolder.gif border=0>  app->l('backto_prev_page')</a></center>";
+		print "<center><a href=\"javascript:history.go(-1)\"><img src=/img/upfolder.gif>  app->l('backto_prev_page')</a></center>";
 		print '</table></center></body>';
 		print "</html>";
 		exit 1;
@@ -1456,62 +1456,63 @@ if (window.top.location != window.location) {
 }
 </script>
 </head>
-<FRAMESET COLS="130,*"  framespacing=0 border=0 frameborder=0>
+<FRAMESET COLS="130,*"  framespacing=0 frameborder=0>
 <FRAME SRC=/left NAME=wam_left marginwidth=0 marginheight=0 noresize>
 <FRAME SRC=/right NAME=wam_main>
 </FRAMESET>
 
 @@ left.html.ep
 <head><meta http-equiv=Content-Type content="<%=l('text/html; charset=utf-8')%>">
-<base target=wam_main></head>
-<body link=#FFFFFF vlink=#ffffff alink=#FFCC00  style="SCROLLBAR-FACE-COLOR: #ddeeff; SCROLLBAR-HIGHLIGHT-COLOR: #ffffff; SCROLLBAR-SHADOW-COLOR: #ABDBEC; SCROLLBAR-3DLIGHT-COLOR: #A4DFEF; SCROLLBAR-ARROW-COLOR: steelblue; SCROLLBAR-TRACK-COLOR: #DDF0F6; SCROLLBAR-DARKSHADOW-COLOR: #9BD6E6">
-<table style="font-size: 11 pt; border-collapse:collapse" height=100% width=100% border=1 cellspadding=2 bordercolorlight=#808080 bordercolordark=#C0C0C0 cellpadding=2 align=left bordercolor=#FFFFFF cellspacing=1>
-<tr><td align=center bgcolor=#3E7BB9 width=100% height=40px><b><font color=#FFFFFF>WAM</font></b></td></tr>
+<base target=wam_main>
+%= stylesheet '/left.css'
+</head><body>
+<table class="menu">
+<tr><td class="title nav">WAM</td></tr>
 % if (is_admin) {
-<tr><td align=center bgColor=#6699cc width=100% height=40px><a href="/help/help_root.htm" style="text-decoration: none"><%=l('Admin User Manual')%></a></td></tr>
-<tr><td align=center bgcolor=#FFCC00 width=100% height=40px><b><%=l('System Management')%></b></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/config" style="text-decoration: none"><%=l('Config Your System')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/setadmin" style="text-decoration: none"><%=l('Setup WAM Manager')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/filesmgr" style="text-decoration: none"><%=l('File Manager')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/sharemgr" style="text-decoration: none"><%=l('Share Folders')%></a></td></tr>
-<tr><td align=center bgColor=#FFCC00 width=100% height=40px><b><%=l('Account Management')%></b></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_group" style="text-decoration: none"><%=l('Add Group')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/add_one" style="text-decoration: none"><%=l('Creat an Account')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/delete" style="text-decoration: none"><%=l('Delete User or Group')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/autoadd" style="text-decoration: none"><%=l('Auto Create User Account')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/manuadd" style="text-decoration: none"><%=l('Creat User Account from File')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/resetpw" style="text-decoration: none"><%=l('Reset Password')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/chgpw" style="text-decoration: none"><%=l('Change My Password')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/state" style="text-decoration: none"><%=l('Account Flags')%></a></td></tr>
-<tr><td align=center bgColor=#ffcc00 width=100% height=40px><b><%=l('Log Out')%></td></tr>
-<tr><td align=center bgColor=#3E7BB9 width=100% height=40px><a href="/relogon" target=_top style="text-decoration: none"><%=l('Log Out')%></a></td></tr>
+<tr><td class="item"><a href="/help/help_root.htm"><%=l('Admin User Manual')%></a></td></tr>
+<tr><td class="cap"><%=l('System Management')%></td></tr>
+<tr><td class="item"><a href="/config"><%=l('Config Your System')%></a></td></tr>
+<tr><td class="item"><a href="/setadmin"><%=l('Setup WAM Manager')%></a></td></tr>
+<tr><td class="item"><a href="/filesmgr"><%=l('File Manager')%></a></td></tr>
+<tr><td class="item"><a href="/sharemgr"><%=l('Share Folders')%></a></td></tr>
+<tr><td class="cap"><%=l('Account Management')%></td></tr>
+<tr><td class="item"><a href="/add_group"><%=l('Add Group')%></a></td></tr>
+<tr><td class="item"><a href="/add_one"><%=l('Creat an Account')%></a></td></tr>
+<tr><td class="item"><a href="/delete"><%=l('Delete User or Group')%></a></td></tr>
+<tr><td class="item"><a href="/autoadd"><%=l('Auto Create User Account')%></a></td></tr>
+<tr><td class="item"><a href="/manuadd"><%=l('Creat User Account from File')%></a></td></tr>
+<tr><td class="item"><a href="/resetpw"><%=l('Reset Password')%></a></td></tr>
+<tr><td class="item"><a href="/chgpw"><%=l('Change My Password')%></a></td></tr>
+<tr><td class="item"><a href="/state"><%=l('Account Flags')%></a></td></tr>
+<tr><td class="cap"><%=l('Log Out')%></td></tr>
+<tr><td class="nav"><a href="/relogon" target="_top"><%=l('Log Out')%></a></td></tr>
 % } else {
-<tr><td align=center bgColor=#FFCC00 width=100% height=40px><a href="/help/help_user.htm" style="text-decoration: none"><b><font color=black><%=l('User Manual')%></b></font></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/filesmgr" style="text-decoration: none"><%=l('File Manager')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/chgpw" style="text-decoration: none"><%=l('Change My Password')%></a></td></tr>
-<tr><td align=center bgColor=#6699CC width=100% height=40px><a href="/state" style="text-decoration: none"><%=l('Account Flags')%></a></td></tr>
-<tr><td align=center bgColor=#ffcc00 width=100% height=40px><b><%=l('Log Out')%></td></tr>
-<tr><td align=center bgColor=#3E7BB9 width=100% height=40px><a href="/relogon" target=_top style="text-decoration: none"><%=l('Log Out')%></a></td></tr>
+<tr><td class="item"><a href="/help/help_user.htm"><%=l('User Manual')%></a></td></tr>
+<tr><td class="item"><a href="/filesmgr"><%=l('File Manager')%></a></td></tr>
+<tr><td class="item"><a href="/chgpw"><%=l('Change My Password')%></a></td></tr>
+<tr><td class="item"><a href="/state"><%=l('Account Flags')%></a></td></tr>
+<tr><td class="cap"><%=l('Log Out')%></td></tr>
+<tr><td class="nav"><a href="/relogon" target="_top"><%=l('Log Out')%></a></td></tr>
 % }
 </table></body></html>
 
 @@ right.html.ep
 % title l('Login WAM');
 % layout 'default';
-<center><a href="javascript:onclick=alert('<%=l('Please type your Account & Password below first!!')%>')" border=0><img align=absmiddle src=/img/wam.gif border=0></a>
+<center><a href="javascript:onclick=alert('<%=l('Please type your Account & Password below first!!')%>')"><img src=/img/wam.gif></a>
 
 @@ logon_form.html.ep
 % title l('Login WAM');
 % layout 'default';
-<center><a href="javascript:onclick=alert('<%=l('Please type your Account & Password below first!!')%>')" border=0><img align=absmiddle src=/img/wam.gif border=0></a>
+<center><a href="javascript:onclick=alert('<%=l('Please type your Account & Password below first!!')%>')"><img src=/img/wam.gif></a>
 %= form_for logon => (method => 'POST') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
+<table>
 <tr><th align=left><%= label_for user => l('Account') %>：<td>
 %= text_field 'user', maxlength => 20, size => 20
-<th align=right><%= label_for password => l('Password') %>：<td>
+<td align=right><%= label_for password => l('Password') %>：<td>
 %= password_field 'password', size => 20
-<td  colspan=2 align=center>
+<td colspan=2 align=center>
 %= submit_button l('Login WAM')
 </table>
 % end
@@ -1523,8 +1524,8 @@ if (window.top.location != window.location) {
 <center>
 %= form_for do_config => (method => 'POST') => begin
 %= csrf_field
-<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr style=background-color:#E8EFFF><th align=right>
+<table width=80%>
+<tr class="cell"><th align=right>
 %= label_for language => l('Choose Language')
 </th><td>
 %= t 'select', (name => 'language') => begin
@@ -1533,9 +1534,9 @@ if (window.top.location != window.location) {
 % }
 % end
 </td>
-<tr style=background-color:#6582CD><th align=right><font color=#ffffff>
+<tr class="nav"><th align=right>
 %= label_for acltype => l('ACL Control')
-</font></th><td><font color=#ffffff>
+</th><td>
 % if (config('acltype') eq 1) {
 <%= radio_button acltype => 1, checked => 'checked' %><%=l('Allow IP')%>
 <%= radio_button acltype => 0, checked => undef %><%=l('Deny IP')%>
@@ -1543,12 +1544,10 @@ if (window.top.location != window.location) {
 <%= radio_button acltype => 1, checked => undef %><%=l('Allow IP')%>
 <%= radio_button acltype => 0, checked => 'checked' %><%=l('Deny IP')%>
 % }
-</font></td><tr style=background-color:#ddeeff><th align=right>
-%= label_for acls => l('Rules')
-</th><td>
-%= text_area acls => config('acls'), rows => 3, cols => 30
+<br>
+%= text_area acls => config('acls'), rows => 3, cols => 50
 </td></tr>
-<tr style=background-color:#E8EFFF><th align=right>
+<tr class="cell"><th align=right>
 %= label_for nest => l('Account Hierarchy')
 </th><td>
 %= t 'select', (name => 'nest') => begin
@@ -1561,7 +1560,7 @@ if (window.top.location != window.location) {
 % }
 % end
 </td>
-<tr style=background-color:#E8EFFF><th align=right>
+<tr class="cell"><th align=right>
 %= label_for passwd_form => l('Password Specified As')
 </th><td>
 %= t 'select', (name => 'passwd_form') => begin
@@ -1581,7 +1580,7 @@ if (window.top.location != window.location) {
 %= t 'option', value => 'single', l("All set to 'passwd'")
 % }
 % end
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_range => l('Set Random Range')
 </th><td>
 %= t 'select', (name => 'passwd_range') => begin
@@ -1621,7 +1620,7 @@ if (window.top.location != window.location) {
 %= t 'option', value => 'all', l('Any Number & Any Case')
 % }
 % end
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_rule => l('Password Changing Rule')
 </th><td>
 % if (int(config('passwd_rule')) % 2) {
@@ -1630,44 +1629,44 @@ if (window.top.location != window.location) {
 %= check_box passwd_rule1 => 1
 % }
 <%=l('Lenght Limit 4-8')%></td>
-<tr style=background-color:#E8EFFF><th></th><td>
+<tr class="cell"><th></th><td>
 % if (int(config('passwd_rule')) % 4 >= 2) {
 %= check_box passwd_rule2 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule2 => 1
 % }
 <%=l('Only Number & Letter')%></td>
-<tr style=background-color:#E8EFFF><th></th><td>
+<tr class="cell"><th></th><td>
 % if (int(config('passwd_rule')) % 8 >= 4) {
 %= check_box passwd_rule3 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule3 => 1
 % }
 <%=l('Limit Diffrent Letter')%></td>
-<tr style=background-color:#E8EFFF><th></th><td>
+<tr class="cell"><th></th><td>
 % if (int(config('passwd_rule')) >= 8) {
 %= check_box passwd_rule4 => 1, checked => 'checked'
 % } else {
 %= check_box passwd_rule4 => 1
 % }
 %= l('Not Allow Keyboard Sequence')
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_length => l('Minimum Password Length')
 </th><td>
 %= text_field passwd_length => config('passwd_length')
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_age => l('Maximum Password Age(seconds,unlimited by -1)')
 </th><td>
 %= text_field passwd_age => config('passwd_age')
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_lock => l('Lockout after bad logon attempts')
 </th><td>
 %= text_field passwd_lock => config('passwd_lock')
-</td><tr style=background-color:#E8EFFF><th align=right>
+</td><tr class="cell"><th align=right>
 %= label_for passwd_release => l('Reset lockout count after minutes(default:30)')
 </th><td>
 %= text_field passwd_release => config('passwd_release')
-</td><tr><td colspan=2 align=center><img align=absmiddle src=/img/chgpw.gif>
+</td><tr><td colspan=2 align=center><img src=/img/chgpw.gif>
 %= submit_button l('Save All Configuration')
 </td></table>
 % end
@@ -1684,35 +1683,35 @@ if (window.top.location != window.location) {
 </ul></td></tr></table>
 %= form_for add_admin => (method => 'POST') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><td align=center bgcolor=#6699cc><font color=white><b><img align=absmiddle src=/img/addone.gif><%=l('Choose New WAM Manager')%></b></font>
-<tr><td>
+<table>
+<tr><td class="item"><img src=/img/addone.gif><%=l('Choose New WAM Manager')%></td></tr>
+<tr><td class="cell">
 %= t 'select', (size => 1, name => 'user') => begin
 %= t 'option', value => undef
 % for my $user (sort @$users) {
 %= t 'option', value => $user, $user
 % }
 % end
-<tr><td align=left><img align=absmiddle src=/img/chgpw.gif>
+<tr><td align=left><img src=/img/chgpw.gif>
 %= submit_button l('Add New WAM Manager')
 </table>
 % end
 <hr>
 %= form_for del_admin => (method => 'POST') => begin
 %= csrf_field
-<table border=6 style=font-size:11pt width=65%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr><td colspan=5 align=left bgcolor=#6699cc><font color=white><b><img align=absmiddle src=/img/addgrp.gif><%=l('Wam Manager')%></b></font>
+<table width=65%>
+<tr><td colspan=5 class="item"><img src=/img/addgrp.gif><%=l('Wam Manager')%></td></tr><tr>
 % my $i=0;
 % for my $user (sort @$admins) {
 % if (($i % 5) eq 0) {
 <tr>
 % }
 % $i ++;
-<td>
+<td class="cell">
 %= check_box user => $user
 %= label_for user => $user
 % }
-<tr><td align=center colspan=5><img align=absmiddle src=/img/del.gif>
+<tr><td align=center colspan=5><img src=/img/del.gif>
 %= submit_button l('Remove WAM Manager')
 </table>
 % end
@@ -1721,113 +1720,13 @@ if (window.top.location != window.location) {
 @@ filesmgr.html.ep
 % title l('File Manager');
 % layout 'default';
-<div align=center>
-<table><tr><td><ul>
-<% for my $msg (@$messages) { %>
-<li><%= $msg %>
-<% } %>
-</ul></td></tr></table>
-<table border=6 style=font-size:11pt width=95%  border-collapse: collapse  cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-% my $used = $$free[3]*0.6;
-<tr><td colspan=9><center><font color=green><%=l('Total Spaces:')%><%=$$free[0]%>M</font> <font color=darkred><%=l('Used:')%><%=$$free[1]%>M</font> <font color=blue><%=l('Free:')%><%=$$free[2]%>M</font> <font color=red><%=l('Usage:')%><img align=absmiddle src=/img/used.jpg width=<%=$used%> height=10><img align=absmiddle src=/img/unused.jpg width=<%=int(60-$used)%> height=10><%=$$free[3]%>%</font></center></td></tr>
-<tr bgcolor=#ffffff><td align=center bgcolor=#6699cc><font color=white><b><%=l('Select')%></b></font></td>
-<td align=center bgcolor=#6699cc>
-% if ($sort_key eq 'name' || $sort_key eq '') {
-%= link_to l('Name') => url_with->query([folder => $folder, sort => "name_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Name') => url_with->query([folder => $folder, sort => "name"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'type') {
-%= link_to l('Type') => url_with->query([folder => $folder, sort => "type_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Type') => url_with->query([folder => $folder, sort => "type"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'perm') {
-%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'owner') {
-%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'gowner') {
-%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'size') {
-%= link_to l('Size') => url_with->query([folder => $folder, sort => "size_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Size') => url_with->query([folder => $folder, sort => "size"]) => ( style => 'color:white' )
-% }
-</td><td bgcolor=#6699cc>
-% if ($sort_key eq 'time') {
-%= link_to l('Update') => url_with->query([folder => $folder, sort => "time_rev"]) => ( style => 'color:white' )
-% } else {
-%= link_to l('Update') => url_with->query([folder => $folder, sort => "time"]) => ( style => 'color:white' )
-% }
-</td><td align=center style="background-color:#6699cc;color:white"><%=l('Pannel')%></td></tr>
-<tr><td bgcolor=#ffffff><a href=javascript:sfile()><img align=absmiddle src=/img/allfile.gif border=0></a>
-<td><a href="<%=url_with->query([folder => "/mnt"])%>"><img align=absmiddle src=/img/home.gif border=0><%=l('Root')%></a>
-<td align=center colspan=6>
-%= form_for upload => (method => 'GET') => begin
-%= csrf_field
-%= hidden_field folder => $folder
-<img align=absmiddle src=/img/upload.gif><%=l('Upload')%><%= text_field filemany => 5, size => 4 %><%=l('Files')%>
-%= submit_button l('Select Files')
-% end
-%= form_for filesmgr => (id => 'filesmgr', method => 'POST') => begin
-%= csrf_field
-%= hidden_field action => '', id => 'action'
-%= hidden_field folder => $folder
-<td bgcolor=#6699cc rowspan=20><p><font color=white><%=l('Please click the icon to see the description')%></font></p>
-<p><a href=javascript:onclick=alert('<%=l('Please input dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=chfolder id=chfolder size=12><input type=button value="<%=l('Change Dir')%>" onclick=check0()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please input new dir name')%>') border=0><img align=absmiddle src=/img/newfd.gif border=0></a><input type=text name=newfolder id=newfolder size=12><input type=button value="<%=l('Create Dir')%>" onclick=check1()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check files then input priv, such as 755.')%>') border=0><img align=absmiddle src=/img/chmod.gif border=0></a><input type=text name=newperm id=newperm size=4><input type=button value="<%=l('Change Mode')%>" onclick=check2()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check files then input owner name.')%>') border=0><img align=absmiddle src=/img/chown.gif border=0></a><input type=text name=newowner id=newowner size=10><input type=button value="<%=l('Change Owner')%>" onclick=check3()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check single file then input new file name.')%>') border=0><img align=absmiddle src=/img/rename.gif border=0></a><input type=text name=newname id=newname size=16><input type=button value="<%=l('Rename')%>" onclick=check4()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check one file then input new filename or folder to move into.')%>') border=0><img align=absmiddle src=/img/mv.gif border=0></a><input type=text name=movefolder id=movefolder size=16><input type=button value="<%=l('Move')%>" onclick=check5()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check one file then input the filename you want to copy to.')%>') border=0><img align=absmiddle src=/img/copy.gif border=0></a><input type=text name=copypath id=copypath size=16><input type=button value="<%=l('Copy')%>" onclick=check6()></p>
-<p><a href=javascript:onclick=alert('<%=l('Please check files these you want to delete then click delete.')%>') border=0><img align=absmiddle src=/img/del.gif border=0></a><input type=button value="<%=l('Delete')%>" onclick=check7()></p>
-<p><a href=javascript:onclick=alert('<%=l('please check files these you want to download then click download.')%>') border=0><img align=absmiddle src=/img/fd.gif border=0></a><input type=button value="<%=l('Download')%>" onclick=check8()></p>
-<tr><td><a href=javascript:snone()><img align=absmiddle src=/img/allnot.gif border=0></a>
-<td><img align=absmiddle src=/img/fm.gif><font color=red><b><%=l('Current Folder:')%></b></font><font color=blue><%=$folder%></font>
-<td bgcolor=#e8f3ff><%=$$folds{'.'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'.'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'.'}->{modify}%></td></tr>
-<tr><td bgcolor=#ffeeee><a href=javascript:sall()><img align=absmiddle src=/img/all.gif border=0></a><td bgcolor=#ffffee><a href="<%=url_with->query([folder => "$folder/.."])%>"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Up to Parent')%></a>
-<td bgcolor=#e8f3ff><%=$$folds{'..'}->{type}%></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{'.'}->{perm}%></font></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{'..'}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{'..'}->{modify}%></td></tr>
-% for my $k (@$sorted_folds) {
-% next if ($k eq '.' || $k eq '..');
-<tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
-<td bgcolor=#e8f3ff><a href="<%=url_with->query([folder => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$folds{$k}->{image}%>" border=0><%=$k%></a></td>
-<td bgcolor=#e8f3ff><font color=darkgreen><%=$$folds{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$folds{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$folds{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$folds{$k}->{modify}%></td></tr>
-% }
-% for my $k (@$sorted_files) {
-<tr><td bgcolor=#ddeeff><input type=checkbox name=sel id=sel value=<%=$k%>></td>
-% $k =~ /.*\.(.*)$/;
-% if (app->types->type($1) =~ /text\/.*/) {
-	<td bgcolor=#e8f3ff><a href="<%=url_for('/edit_file')->query([file => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
-% } else {
-	<td bgcolor=#e8f3ff><a target=_blank href="<%=url_for('/show_file')->query([file => "$folder/$k"])%>"><img align=absmiddle src="/img/<%=$$files{$k}->{image}%>" border=0><%=$k%></a></td>
-%}
-<td bgcolor=#e8f3ff><font color=darkgreen><%=$$files{$k}->{type}%></font></td><td bgcolor=#e8f3ff><font color=blue><%=$$files{$k}->{perm}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{owner}%></td><td bgcolor=#e8f3ff><%=$$files{$k}->{group}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{size}%></td><td bgcolor=#e8f3ff align=right><%=$$files{$k}->{modify}%></td></tr>
-% }
-% for (1..18 - int(keys %$folds) - int(keys %$files)) {
-<tr><td bgcolor=#6699cc colspan=8>　</td></tr>
-% }
-</table>
-% end
-</div>
 %= javascript begin
 var rows = <%=int(keys %$folds) + int(keys %$files) %>;
 var dirs = <%=keys %$folds%>;
 function mysubmit(myaction) { $('#action').val(myaction); $('#filesmgr').submit(); }
+function showdesc(memo) {
+	$('#description').text(memo);
+}
 function check() {
 	var n = $('#sel:checked').length;
 	if (n == 0) { alert('<%=l('Please select one file or Directory!')%>'); }
@@ -1866,15 +1765,144 @@ function snone() {
 	});
 }
 % end
+<div align=center>
+<table><tr><td><ul>
+<% for my $msg (@$messages) { %>
+<li><%= $msg %>
+<% } %>
+</ul></td></tr></table>
+<table width=95%>
+% my $used = $$free[3]*0.6;
+<tr><td colspan=9 align=center><span class="green"><%=l('Total Spaces:')%><%=$$free[0]%>M</span> <span class="darkred"><%=l('Used:')%><%=$$free[1]%>M</span> <span class="blue"><%=l('Free:')%><%=$$free[2]%>M</span> <span class="red"><%=l('Usage:')%><img src=/img/used.jpg width=<%=$used%> height=10><img src=/img/unused.jpg width=<%=int(60-$used)%> height=10><%=$$free[3]%>%<span></td></tr>
+<tr><td align=center class="item" width="25px"><%=l('Select')%></td>
+<td align=center class="item">
+% if ($sort_key eq 'name' || $sort_key eq '') {
+%= link_to l('Name') => url_with->query([folder => $folder, sort => "name_rev"])
+% } else {
+%= link_to l('Name') => url_with->query([folder => $folder, sort => "name"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'type') {
+%= link_to l('Type') => url_with->query([folder => $folder, sort => "type_rev"])
+% } else {
+%= link_to l('Type') => url_with->query([folder => $folder, sort => "type"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'perm') {
+%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm_rev"])
+% } else {
+%= link_to l('Mode') => url_with->query([folder => $folder, sort => "perm"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'owner') {
+%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner_rev"])
+% } else {
+%= link_to l('Owner') => url_with->query([folder => $folder, sort => "owner"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'gowner') {
+%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner_rev"])
+% } else {
+%= link_to l('Group') => url_with->query([folder => $folder, sort => "gowner"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'size') {
+%= link_to l('Size') => url_with->query([folder => $folder, sort => "size_rev"])
+% } else {
+%= link_to l('Size') => url_with->query([folder => $folder, sort => "size"])
+% }
+</td><td align=center class="item">
+% if ($sort_key eq 'time') {
+%= link_to l('Update') => url_with->query([folder => $folder, sort => "time_rev"])
+% } else {
+%= link_to l('Update') => url_with->query([folder => $folder, sort => "time"])
+% }
+</td><td align=center class="item"><%=l('Pannel')%></td></tr>
+<tr><td width="25px"><a href=javascript:sfile()><img src=/img/allfile.gif></a></td>
+<td><a href="<%=url_with->query([folder => "/mnt"])%>"><img src=/img/home.gif><%=l('Root')%></a></td>
+<td align=center colspan=6>
+%= form_for upload => (method => 'GET') => begin
+%= csrf_field
+%= hidden_field folder => $folder
+<img src=/img/upload.gif><%=l('Upload')%><%= text_field filemany => 5, size => 4 %><%=l('Files')%>
+%= submit_button l('Select Files')
+% end
+%= form_for filesmgr => (id => 'filesmgr', method => 'POST') => begin
+%= csrf_field
+%= hidden_field action => '', id => 'action'
+%= hidden_field folder => $folder
+<td class="item" rowspan=20><p><%=l('Please read the description first:')%></p>
+<div id="description" class="desc"></div>
+<p onmouseover="showdesc('<%=l('Please input dir name')%>')"><img src=/img/newfd.gif>
+%= text_field chfolder => '', id => 'chfolder', size => 12
+%= t 'button', onclick => 'check0()', l('Change Dir')
+</p>
+<p onmouseover="showdesc('<%=l('Please input new dir name')%>')"><img src=/img/newfd.gif>
+%= text_field newfolder => '', id => 'newfolder', size => 12
+%= t 'button', onclick => 'check1()', l('Create Dir')
+</p>
+<p onmouseover="showdesc('<%=l('Please check files then input priv, such as 755.')%>')"><img src=/img/chmod.gif>
+%= text_field newperm => '', id => 'newperm', size => 4
+%= t 'button', onclick => 'check2()', l('Change Mode')
+</p>
+<p onmouseover="showdesc('<%=l('Please check files then input owner name.')%>')"><img src=/img/chown.gif>
+%= text_field newowner => '', id => 'newowner', size => 10
+%= t 'button', onclick => 'check3()', l('Change Owner')
+</p>
+<p onmouseover="showdesc('<%=l('Please check single file then input new file name.')%>')"><img src=/img/rename.gif>
+%= text_field newname => '', id => 'newname', size => 16
+%= t 'button', onclick => 'check4()', l('Rename')
+</p>
+<p onmouseover="showdesc('<%=l('Please check one file then input new filename or folder to move into.')%>')"><img src=/img/mv.gif>
+%= text_field movefolder => '', id => 'movefolder', size => 16
+%= t 'button', onclick => 'check5()', l('Move')
+</p>
+<p onmouseover="showdesc('<%=l('Please check one file then input the filename you want to copy to.')%>')"><img src=/img/copy.gif>
+%= text_field copypath => '', id => 'copypath', size => 16
+%= t 'button', onclick => 'check6()', l('Copy')
+</p>
+<p onmouseover="showdesc('<%=l('Please check files these you want to delete then click delete.')%>')"><img src=/img/del.gif>
+%= t 'button', onclick => 'check7()', l('Delete')
+</p>
+<p onmouseover="showdesc('<%=l('please check files these you want to download then click download.')%>')"><img src=/img/fd.gif>
+%= t 'button', onclick => 'check8()', l('Download')
+</p>
+<tr class="cell"><td width="25px"><a href=javascript:snone()><img src=/img/allnot.gif></a></td>
+<td><img src=/img/fm.gif><span class="red"><%=l('Current Folder:')%></span><span class="blue"><%=$folder%></span></td>
+<td align=center><%=$$folds{'.'}->{type}%></td><td align=center class="blue"><%=$$folds{'.'}->{perm}%></td><td align=right><%=$$folds{'.'}->{owner}%></td><td align=right><%=$$folds{'.'}->{group}%></td><td align=right><%=$$folds{'.'}->{size}%></td><td align=right><%=$$folds{'.'}->{modify}%></td></tr>
+<tr class="cell"><td width="25px"><a href=javascript:sall()><img src=/img/all.gif></a></td>
+<td><a href="<%=url_with->query([folder => "$folder/.."])%>"><img src=/img/upfolder.gif><%=l('Up to Parent')%></a></td>
+<td align=center><%=$$folds{'..'}->{type}%></td><td align=center class="blue"><%=$$folds{'.'}->{perm}%></td><td align=right><%=$$folds{'..'}->{owner}%></td><td align=right><%=$$folds{'..'}->{group}%></td><td align=right><%=$$folds{'..'}->{size}%></td><td align=right><%=$$folds{'..'}->{modify}%></td></tr>
+% for my $k (@$sorted_folds) {
+% next if ($k eq '.' || $k eq '..');
+<tr class="folder"><td><input type=checkbox name=sel id=sel value=<%=$k%>></td>
+<td><a href="<%=url_with->query([folder => "$folder/$k"])%>"><img src="/img/<%=$$folds{$k}->{image}%>"><%=$k%></a></td>
+<td align=center class="darkgreen"><%=$$folds{$k}->{type}%></td><td class="blue"><%=$$folds{$k}->{perm}%></td><td align=right><%=$$folds{$k}->{owner}%></td><td align=right><%=$$folds{$k}->{group}%></td><td align=right><%=$$folds{$k}->{size}%></td><td align=right><%=$$folds{$k}->{modify}%></td></tr>
+% }
+% for my $k (@$sorted_files) {
+<tr class="cell"><td><input type=checkbox name=sel id=sel value=<%=$k%>></td>
+% $k =~ /.*\.(.*)$/;
+% if (app->types->type($1) =~ /text\/.*/) {
+	<td><a href="<%=url_for('/edit_file')->query([file => "$folder/$k"])%>"><img src="/img/<%=$$files{$k}->{image}%>"><%=$k%></a></td>
+% } else {
+	<td><a target=_blank href="<%=url_for('/show_file')->query([file => "$folder/$k"])%>"><img src="/img/<%=$$files{$k}->{image}%>"><%=$k%></a></td>
+%}
+<td align=center class="darkgreen"><%=$$files{$k}->{type}%></td><td align=center class="blue"><%=$$files{$k}->{perm}%></td><td align=right><%=$$files{$k}->{owner}%></td><td align=right><%=$$files{$k}->{group}%></td><td align=right><%=$$files{$k}->{size}%></td><td align=right><%=$$files{$k}->{modify}%></td></tr>
+% }
+% for (1..18 - int(keys %$folds) - int(keys %$files)) {
+<tr class="item"><td colspan=8>　</td></tr>
+% }
+</table>
+% end
+</div>
 
 @@ upload.html.ep
 % title l('Upload Files');
 % layout 'default';
-<center><p>
-<font color=red size=4><b><%=l('Upload files to')%></b></font>
-<img align=absmiddle src=/img/0folder.gif>
-<font color=blue size=4><b><%=$folder%></b></font>
-<font color=red size=4><b><%=l('Folder')%></b></font>
+<center>
+<p class="red"><%=l('Upload files to')%><img src=/img/0folder.gif>
+<span class="blue"><%=$folder%></span>
+<span class="red"><%=l('Folder')%></span>
 %= form_for upload => (method => 'POST', enctype => 'multipart/form-data') => begin
 %= csrf_field
 %= hidden_field folder => $folder
@@ -1883,12 +1911,12 @@ function snone() {
 <br>
 % if ($filemany) {
 %	for my $z (1..$filemany) {
-		<img align=absmiddle src=/img/upload.gif border=0><%=l('File').$z%>：
+		<img src=/img/upload.gif><%=l('File').$z%>：
 		%= file_field 'upload_file'
 		<br>
 %	}
 % } else {
-	<img align=absmiddle src=/img/upload.gif border=0><%=l('File')%>：
+	<img src=/img/upload.gif><%=l('File')%>：
 	%= file_field 'upload_file'
 	<br>
 % }
@@ -1914,14 +1942,14 @@ function snone() {
 @@ sharemgr.html.ep
 % title l('Share Folders');
 % layout 'default';
-<div align=center>
+<center>
 <table><tr><td><ul>
 <% for my $msg (@$messages) { %>
 <li><%= $msg %>
 <% } %>
 </ul></td></tr></table>
-<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr  bgcolor="#6699cc"><td width="50%"><%=l('Share Folders List')%></td><td colspan=3><%=l('Sharing Management')%></td></tr>
+<table width=60%>
+<tr class="item"><td width="50%"><%=l('Share Folders List')%></td><td colspan=3><%=l('Sharing Management')%></td></tr>
 % for my $sec (keys %$samba) {
 % next if ($sec eq 'global');
 <tr><td><%=$sec%></td><td>
@@ -1943,41 +1971,41 @@ function snone() {
 </td></tr>
 % }
 </table>
-<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
+<table width=60%>
+<tr class="item"><td colspan=2><%=l('Create a share folder')%></td></tr>
 %= form_for add_share => (id => 'sharemgr', method => 'POST') => begin
 %= csrf_field
-<tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for section => l('Share Name') %></th><td>
+<tr class="cell"><th align=right width="50%"><%= label_for section => l('Share Name') %></th><td>
 %= text_field 'section'
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
+</td></tr><tr class="cell"><th align=right><%= label_for real_path => l('Real Path') %></th><td>/mnt/
 %= text_field 'real_path'
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for browse => l('Browserable') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for browse => l('Browserable') %></th><td>
 %= check_box 'browse' => 1
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for readonly => l('Read Only') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for readonly => l('Read Only') %></th><td>
 %= check_box 'readonly' => 1
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Sharing to which Groups') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for users => l('Sharing to which Groups') %></th><td>
 % for my $group (sort @$groups) {
 <%= check_box valid => $group %><%= label_for valid => $group %>
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Who want to Administration') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for users => l('Who want to Administration') %></th><td>
 % for my $admin (sort @$admins) {
 <%= check_box admin => $admin %><%= label_for admin => $admin %>
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for veto => l('Veto Files') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for veto => l('Veto Files') %></th><td>
 %= text_area veto => '/*.exe/*.com/*.pif/*.lnk/*.eml/*.bat/*.vbs/*.inf/.DS_Store/_.DS_Store', rows => 3, cols => 30
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
 %= check_box delete_veto => 1
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for file_force => l('Grant Folder Permission') %></th><td>
 %= t 'select', (name => 'file_force') => begin 
 %= t 'option', value => '700', l('Only Owner Can Access')
 %= t 'option', value => '755', l('Allow Valid Users to Read')
 %= t 'option', value => '777', l('Allow Valid Users to Write')
 % end
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
 <%= check_box owner_del => 1 %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
 <%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
 </td></tr>
-<tr style=background-color:#E8EFFF><th align=right width="50%">
+<tr class="cell"><th align=right>
 %= label_for recycle => l('Allow Recycle')
 </th><td>
 %= check_box 'recycle' => 1
@@ -1987,32 +2015,32 @@ function snone() {
 </td></tr>
 % end
 </table>
-</div>
+</center>
 
 @@ share_form.html.ep
 % title l('Configure Sharing');
 % layout 'default';
-<div align=center>
-<table border=6 style="font-size:11pt;" width=60% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr bgcolor="#6699cc"><td colspan=2><%=l('Create a share folder')%></td></tr>
+<center>
+<table width=60%>
+<tr class="item"><td colspan=2><%=l('Create a share folder')%></td></tr>
 %= form_for add_share => (id => 'sharemgr', method => 'POST') => begin
 %= csrf_field
 %= hidden_field section => $section
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
+</td></tr><tr class="cell"><th align=right width="50%"><%= label_for real_path => l('Real Path') %></th><td>/mnt/
 %= text_field 'real_path' => %$samba{$section}->{path} =~ m/\/mnt\/(.*)/
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for browse => l('Browserable') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for browse => l('Browserable') %></th><td>
 % if (defined(%$samba{$section}->{browseable}) && %$samba{$section}->{browseable} eq 'yes') {
 %= check_box 'browse' => 1, checked => undef
 % } else {
 %= check_box 'browse' => 1
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for readonly => l('Read Only') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for readonly => l('Read Only') %></th><td>
 % if (defined(%$samba{$section}->{writeable}) && %$samba{$section}->{writeable} eq 'yes') {
 %= check_box 'readonly' => 1
 % } else {
 %= check_box 'readonly' => 1, checked => undef
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Sharing to which Groups') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for users => l('Sharing to which Groups') %></th><td>
 % my @users = grep { $_ =~ m/\+(.*)/ } split(',', %$samba{$section}->{'valid users'});
 % @users = grep { $_ =~ s/\+// } @users;
 % for my $group (sort @$groups) {
@@ -2022,7 +2050,7 @@ function snone() {
 <%= check_box valid => $group %><%= label_for valid => $group %>
 % }
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for users => l('Who want to Administration') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for users => l('Who want to Administration') %></th><td>
 % @users = split(',', %$samba{$section}->{'admin users'});
 % for my $admin (sort @$admins) {
 % if (grep { $admin eq $_ } @users) {
@@ -2031,21 +2059,21 @@ function snone() {
 <%= check_box admin => $admin %><%= label_for admin => $admin %>
 % }
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for veto => l('Veto Files') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for veto => l('Veto Files') %></th><td>
 %= text_area veto => defined(%$samba{$section}->{'veto files'}) ? %$samba{$section}->{'veto files'} : '', rows => 3, cols => 30
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for delete_veto => l('Delete Veto Files') %></th><td>
 % if (defined(%$samba{$section}->{'delete veto files'}) && %$samba{$section}->{'delete veto files'} eq 'yes') {
 %= check_box delete_veto => 1, checked => undef
 % } else {
 %= check_box delete_veto => 1
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for file_force => l('Grant Folder Permission') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for file_force => l('Grant Folder Permission') %></th><td>
 %= t 'select', (name => 'file_force') => begin 
 %= t 'option', value => '700', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '700') ? 'selected' : undef, l('Only Owner Can Access')
 %= t 'option', value => '755', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '755') ? 'selected' : undef, l('Allow Valid Users to Read')
 %= t 'option', value => '777', selected => (defined(%$samba{$section}->{'force create mode'}) && %$samba{$section}->{'force create mode'} eq '777') ? 'selected' : undef, l('Allow Valid Users to Write')
 % end
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
+</td></tr><tr cxlass="cell"><th align=right><%= label_for folder_force => l('Grant Folder Permission') %></th><td>
 % if (defined(%$samba{$section}->{'force directory mode'}) && %$samba{$section}->{'force directory mode'} =~ /1[0-9]{3}/) {
 <%= check_box owner_del => 1, checked => undef %><%= label_for owner_del => l('Only Owner Can Delete') %><br>
 % } else {
@@ -2056,7 +2084,7 @@ function snone() {
 % } else {
 <%= check_box can_write => 1 %><%= label_for can_write => l('Allow Valid Users to Create and Delete') %>
 % }
-</td></tr><tr style=background-color:#E8EFFF><th align=right width="50%"><%= label_for recycle => l('Allow Recycle') %></th><td>
+</td></tr><tr class="cell"><th align=right><%= label_for recycle => l('Allow Recycle') %></th><td>
 % if (defined(%$samba{$section}->{'vfs object'}) && %$samba{$section}->{'vfs object'} eq 'recycle') {
 %= check_box 'recycle' => 1, checked => undef
 % } else {
@@ -2086,20 +2114,21 @@ function check() {
 </ul></td></tr></table>
 %= form_for add_group => (id => 'myform', method => 'POST') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><td><img align=absmiddle src=/img/addgrp.gif> <font color=red><b><%=l('Group Name')%></b></font>
+<table>
+<tr><td class="item"><img src=/img/addgrp.gif> <%=l('Group Name')%></td><td class="cell">
 %= text_field 'grp' => (id => 'grp')
 </td></tr>
-<tr><td align=center>
+<tr><td colspan=2 align=center>
 %= input_tag create => l('Creat this group'), type => 'button', onclick => 'check()'
 </td></tr></table>
 % end
-<table border=6 style=font-size:11pt width=95% cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr><td colspan=8 align=center bgcolor=#6699cc><font color=white><b><%=l('Created Groups')%></b></font></td>
+<table width=95%>
+<tr class="item"><th colspan=8 align=center><%=l('Created Groups')%></th>
+<tr class="cell">
 % my $i = 0;
 % for my $gname (@$groups) {
 % if ($i % 8 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % }
 % $i ++;
 <td><%=$gname%></td>
@@ -2125,19 +2154,19 @@ function check() {
 </ul></td></tr></table>
 %= form_for add_one => (id => 'myform', method => 'POST') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><td><img align=absmiddle src=/img/addone.gif> <font color=red><b><%=l('User Name')%></b></font>
+<table>
+<tr><td class="item"><img src=/img/addone.gif> <%=l('User Name')%></td><td class="cell">
 %= text_field 'user' => (id => 'user')
 </td></tr>
-<tr><td><img align=absmiddle src=/img/password.gif> <font color=red><b><%=l('Password')%></b></font>
+<tr><td class="item"><img src=/img/password.gif> <%=l('Password')%><td class="cell">
 %= text_field 'pass' => (id => 'pass')
 </td></tr>
-<tr><td><img align=absmiddle src=/img/addgrp.gif> <font color=red><b><%=l('Add This One To Group:')%></b></font>
+<tr><td class="item"><img src=/img/addgrp.gif> <%=l('Add This One To Group:')%><td class="cell">
 %= select_field 'grp' => $groups 
 </td></tr>
-<tr><td><img align=absmiddle src=/img/chgpw.gif> <font color=red><b><%=l('Join WAM Manager Group')%></b></font>
+<tr><td colspan=2 class="red cell"><img src=/img/chgpw.gif> <%=l('Join WAM Manager Group')%>
 %= check_box 'admin' => 'ON'
-<tr><td align=center>
+</td></tr><tr><td colspan=2 align=center>
 %= input_tag create => l('Confirm Creat new User'), type => 'button', onclick => 'check()'
 </td></tr></table>
 % end
@@ -2167,10 +2196,8 @@ function check() {
 </ul></td></tr></table>
 %= form_for check_del => (id => 'myform', onsubmit => 'return check();', method => 'POST') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><th align=right>
-%= l('User Name')
-<td>
+<table>
+<tr><td class="item"><%= l('User Name') %></td><td class="cell">
 %= t 'select', (id => 'user', size => 1, name => 'user', onchange => 'rest(0)') => begin
 %= t 'option', value => undef
 %= t 'option', value => '999', l('All Users')
@@ -2178,11 +2205,11 @@ function check() {
 %= t 'option', value => $u, $u
 % }
 % end
-<tr><th align=right>
+</td></tr><tr><td class="item">
 %= l('Group Name')
 <br>
 %= l('(Orgnization Unit)')
-<th>
+</td><td class="cell">
 %= t 'select', (id => 'grp', size => 1, name => 'grp', onchange => 'rest(1)') => begin
 %= t 'option', value => undef
 %= t 'option', value => '999', l('All Groups')
@@ -2190,11 +2217,11 @@ function check() {
 %= t 'option', value => $g, $g
 % }
 % end
-<tr><th align=right><font color=red face="<%=l('Arial')%>" size=4>
+</td></tr><tr><td class="red cell">
 %= l('Pattern Match')
-</font><td >
+</td><td class="cell">
 %= text_field 'words' => (id => 'words', onchange => 'rest(2)')
-<tr><th></th><td>
+</td></tr><tr><td colspan=2 align=center>
 %= submit_button l('Delete these users or groups')
 </td></tr></table>
 % end
@@ -2207,12 +2234,13 @@ function check() {
 %= form_for do_delete => (method => 'POST') => begin
 %= csrf_field
 %= hidden_field grp => $grp
-<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr><td colspan=8 align=center><b><%=l('Group Member')%><b></td>
+<table width=95%>
+<tr class="item"><td colspan=8 align=center><b><%=l('Group Member')%></td></tr>
+<tr class="cell">
 % my $i = 0;
 % for my $u (sort @$users) {
 % 	if ($i % 8 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % 	}
 % 	$i ++;
 <td><%=$u%></td>
@@ -2230,21 +2258,23 @@ function check() {
 %= form_for do_delete => (method => 'POST') => begin
 %= csrf_field
 %= hidden_field words => $words
-<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr><td colspan=8 align=center><b><%=l('Group Search Result')%><b></td>
+<table width=95%>
+<tr class="item"><td colspan=8 align=center><b><%=l('Group Search Result')%></td></tr>
+<tr class="cell">
 % my $i = 0;
 % for my $g (@$groups) {
 % if ($i % 8 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % }
 % $i ++;
 <td><%=$g%></td>
 % }
-</tr><tr><td colspan=8 align=center><b><%=l('Will Delete all selected user and group?')%><b></td>
+</tr><tr class="item"><td colspan=8 align=center><b><%=l('Will Delete all selected user and group?')%></td></tr>
+<tr class="cell">
 % $i = 0;
 % for my $u (@$users) {
 % if ($i % 8 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % }
 % $i ++;
 <td><%=$u%></td>
@@ -2296,9 +2326,9 @@ function check() {
 <center>
 %= form_for do_autoadd => (id => 'myForm', method => 'POST', onsubmit => 'return check()') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><th align=center colspan=2 align=right><%=l('Group Name')%> <%=l('(Orgnization Unit)')%></th></tr>
-<tr><td align=center colspan=2>
+<table>
+<tr><td align=center class="item"><%=l('Group Name')%><br><%=l('(Orgnization Unit)')%></td>
+<td class="cell">
 %= text_field 'grp' => (id => 'grp', size => 12)
 %= t 'select' => (id => 'grps', size => 1, name => 'grps', onchange => 'chggrp()') => begin
 %= t 'option', value => undef
@@ -2307,20 +2337,21 @@ function check() {
 % }
 % end
 </td></tr>
-<tr><th align=right><font color=darkred><%=l('Account Prefix(Ex:stu)')%></font></th>
-<td><%= text_field 'pre' => (id => 'pre', size => 8)%></td></tr>
+<tr><td align=right class="item"><%=l('Account Prefix(Ex:stu)')%></td>
+<td class="cell"><%= text_field 'pre' => (id => 'pre', size => 8)%></td></tr>
 % if (config('nest') > 1) {
-<tr><th align=right><font color=darkred><%=l('The secend level number.(Grade):')%></font></th>
-<td><%=l('From')%><%= text_field 'grade1' => (id => 'grade1', size => 3)%><%=l('To')%><%= text_field 'grade2' => (id => 'grade2', size => 3)%></td></tr>
+<tr><td align=right class="item"><%=l('The secend level number.(Grade):')%></td>
+<td class="cell"><%=l('From')%><%= text_field 'grade1' => (id => 'grade1', size => 3)%><%=l('To')%><%= text_field 'grade2' => (id => 'grade2', size => 3)%></td></tr>
 % }
 % if (config('nest') == 3) {
-<tr><th align=right><font color=darkred><%=l('The third level number(Class):')%></font></th>
-<td><%=l('From')%><%= text_field 'class1' => (id => 'class1', size => 3)%><%=l('To')%><%= text_field 'class2' => (id => 'class2', size => 3)%></td></tr>
+<tr><td align=right class="item"><%=l('The third level number(Class):')%></td>
+<td class="cell"><%=l('From')%><%= text_field 'class1' => (id => 'class1', size => 3)%><%=l('To')%><%= text_field 'class2' => (id => 'class2', size => 3)%></td></tr>
 % }
-<tr><th align=right><font color=darkred><%=l('Seriel numbers(Seat):')%></font></th>
-<td><%=l('From')%><%= text_field 'num1' => (id => 'num1', size => 3)%><%=l('To')%><%= text_field 'num2' => (id => 'num2', size => 3)%></td></tr>
-<tr><th align=right><font color=blue><%=l('Add Zero')%></font></th>
-<td><%= check_box 'addzero' => 'yes', checked => undef %></td></tr>
+<tr><td align=right class="item"><%=l('Seriel numbers(Seat):')%></td>
+<td class="cell"><%=l('From')%><%= text_field 'num1' => (id => 'num1', size => 3)%><%=l('To')%><%= text_field 'num2' => (id => 'num2', size => 3)%></td></tr>
+<tr><td colspan=2 align=center class="blue cell"><%=l('Add Zero')%>
+%= check_box 'addzero' => 'yes', checked => undef
+</td></tr>
 <tr><td colspan=2><hr size=1 color=6699cc></td>
 % if (config('nest') == 1) {
 <tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23')%></td></tr>
@@ -2331,7 +2362,7 @@ function check() {
 % if (config('nest') == 3) {
 <tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308')%></td></tr>
 % }
-<tr><td></td><td>
+<tr><td colspan=2 align=center>
 %= submit_button l('Create all users')
 </td></table>
 % end
@@ -2346,19 +2377,19 @@ function check() {
 <% } %>
 </ul></td></tr></table>
 % if ($show eq 'yes') {
-<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
+<table width=95%>
 <tr>
 % my $cols = scalar %$reqn;
 % $cols = 5 if ($cols >5);
 % for (my $i=0;$i<$cols;$i++) {
-<th><%=l('Account')%></th><th><%=l('Password')%></th>
+<th class="item"><%=l('Account')%></th><th><%=l('Password')%></th>
 % }
 </tr>
-<tr>
+<tr class="cell">
 % my $i = 0;
 % for my $u (sort keys %$reqn) {
 % if ($i % 3 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % }
 % $i ++;
 <td><%= $u %></td><td><%= $reqn->{$u} %></td>
@@ -2384,21 +2415,21 @@ function check() {
 <center>
 %= form_for do_manuadd => (id => 'myForm', method => 'POST', enctype => 'multipart/form-data', onsubmit => 'return check()') => begin
 %= csrf_field
-<table border=0 cellpadding=3 cellspacing=1 style=font-size:11pt>
-<tr><td colspan=2 align=left>
+<table>
+<tr><td colspan=2 align=left class="green">
 %= l('You MUST upload a UNIX Compatable text file to Create Accounts! Like this:')
-<br><font color=green><b>
+<br>
 %= l('Username Groupname Password')
-</b></font><br>
+<br>
 %= l('Ex:I got two diffrent user and group')
-<br><font color=red><b>
+<br><span class="red">
 shane admin super123<br>ddjohn teacher dd1234
-</b></font><br>
+</span><br>
 %= l('PS: You have to had space between all Coloum ,each account a line, and the last row MUST be blank!')
 <br><hr></td></tr>
-<tr><th align=right><img align=absmiddle src=/img/0folder.gif><%=l('Upload your Account text file...')%></th><td>
+<tr><td align=right class="item"><img src=/img/0folder.gif><%=l('Upload your Account text file...')%></td><td class="cell">
 %= file_field 'upload_file', id => 'upload_file'
-<tr><td></td><td>
+</td></tr><tr><td colspan=2 align=center>
 %= submit_button l('Upload and Create Account!')
 </td></table>
 % end
@@ -2408,23 +2439,95 @@ shane admin super123<br>ddjohn teacher dd1234
 % title l('Account Flags');
 % layout 'default';
 <center>
-<table border=6 style=font-size:11pt width=95%	cellspacing=1 cellspadding=1 bordercolor=#6699cc>
-<tr>
+<table width=95%>
+<tr class="item">
 % my $cols = scalar %$reqn;
 % $cols = 5 if ($cols >5);
 % for (my $i=0;$i<$cols;$i++) {
-<th><%=l('Account')%></th><th><%=l('State')%></th>
+<td><%=l('Account')%></td><td><%=l('State')%></td>
 % }
-<tr>
+<tr class="cell">
 % my $i = 0;
 % for my $u (sort keys %$reqn) {
 % if ($i % 3 == 0) {
-</tr><tr>
+</tr><tr class="cell">
 % }
 % $i ++;
 <td><%= $u %></td><td><%= $reqn->{$u} %></td>
 % }
 </table>
+</center>
+
+@@ resetpw.html.ep
+% title l('Reset Password');
+% layout 'default';
+<center>
+%= javascript begin
+function rest(id) {
+	if (id==0) { $('#grp').val(''); $('#words').val(''); }
+	if (id==1) { $('#user').val(''); $('#words').val(''); }
+	if (id==2) { $('#user').val(''); $('#grp').val(''); }
+}
+function check() {
+	if (!$('#user').val() && !$('#grp').val() && !$('#words').val()) {
+		alert('<%=l('You Have Not Select Any Yet!')%>');
+		return false;
+	} else {
+		return true;
+	}
+}
+% end
+<center>
+%= form_for restpw => (method => 'POST', onsubmit => 'return check()') => begin
+%= csrf_field
+<table>
+<tr><td class="item" align=right>
+%= l('User Name')
+</td><td class="cell">
+%= t 'select', (id => 'user', size => 1, onchange => 'rest(0)') => begin
+%= t 'option', value => undef
+% for my $u (sort @$users) {
+%= t 'option', value => $u, $u
+% }
+% end
+<tr><td align=right class="item">
+%= l('Group Name')
+</td><td class="cell">
+%= t 'select', (id => 'grp', size => 1, onchange => 'rest(1)') => begin
+%= t 'option', value => undef
+% for my $g (sort @$groups) {
+%= t 'option', value => $g, $g
+% }
+% end
+</td></tr><tr><td align=right class="item">
+%= l('Pattern Match')
+</td><td class="cell">
+%= text_field 'words' => (id => 'words', onchange => 'rest(2)')
+</td></tr><tr><th align=right class="item">
+%= l('Password Specified As')
+</th><td class="cell">
+%= t 'select', (size => 1, id => 'passwd_form') => begin
+% if (config('passwd_form') eq "username") {
+%= t 'option', value => 'username', selected => undef, l('Same as Account')
+% } else {
+%= t 'option', value => 'username', l('Same as Account')
+% }
+% if (config('passwd_form') eq "random") {
+%= t 'option', value => 'random', selected => undef, l('Random')
+% } else {
+%= t 'option', value => 'random', l('Random')
+% }
+% if (config('passwd_form') eq "single") {
+%= t 'option', value => 'single', selected => undef, l("All set to 'passwd'")
+% } else {
+%= t 'option', value => 'single', l("All set to 'passwd'")
+% }
+% end
+</td></tr><tr><td colspan=2 align=center>
+%= submit_button l('Delete these users or groups')
+</td></tr>
+</table>
+% end
 </center>
 
 @@ layouts/default.html.ep
@@ -2433,36 +2536,100 @@ shane admin super123<br>ddjohn teacher dd1234
 <meta http-equiv="Content-Type" content="<%=l('text/html; charset=Windows-1252')%>">
 <META HTTP-EQUIV="Pargma" CONTENT="no-cache">
 <title><%=title%></title>
-<link rel='stylesheet' type='text/css' href='test.css'>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+%= stylesheet '/default.css'
+%= javascript 'http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'
 <!--[if IE]>  
-   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>  
+%= javascript 'http://html5shiv.googlecode.com/svn/trunk/html5.js'  
 <![endif]-->
 </head>
-<body style='font-size:11pt' bgcolor=#ffffff>
-<p align=center><font size=+2 face="<%=l('Arial')%>" color=darkblue><%= title %></font></p>
+<body>
+<p align=center class="title darkblue"><%= title %></p>
 <%=content%>
 <hr color=#FF0000><center><font size=3>
-【<a href="javascript:history.go(-1)"><img align=absmiddle src=/img/upfolder.gif border=0><%=l('Go Back')%></a>  】
+【<a href="javascript:history.go(-1)"><img src=/img/upfolder.gif><%=l('Go Back')%></a>  】
 </font></center>
 </body>
 </html>
 
-@@ test.css
-body	{
+@@ default.css
+body {
 	background-color: #FFFFFF;
+	font-size: 11pt;
+}
+a:link { color:#0000cc; text-decoration: none; }
+a:visited { color:#551a8b; text-decoration: none; }
+a:active { color:#ff0000; text-decoration: none; }
+a:hover { color: #E96606; text-decoration: underline; }
+ul { list-style-type: none; }
+img { vertical-align: middle; }
+table {
+	border: 6px;
+	padding: 1px;
+	border-spacing: 1px;
 }
 .title {
 	font-size: 24px;
-	background-color: #FFF878 ; 
-	color: #1E3EBE; 
 	padding: 4px;
+	font-family: <%=l('Arial')%>;
 }
-a:link{color:#0000cc;text-decoration: none}
-a:visited{color:#551a8b;text-decoration: none}
-a:active{color:#ff0000;text-decoration: none}
-a:hover {color: #E96606;text-decoration: underline}
-ul {list-style-type: none}
+.desc {
+    display: block;
+    width: 250px;
+    word-wrap: break-word;
+}
+.nav { color: #fff; background-color: #3E7BB9; text-decoration: bold; }
+.item { color: #fff; background-color: #69c; }
+.item a:link { color: #fff; text-decoration: none; }
+.item a:visited { color: #fff; text-decoration: none; }
+.item a:active { color: #fc0; text-decoration: none; }
+.item a:hover { color: #fc0; text-decoration: none; }
+.cell { color: #000; background-color: #e8efff; font-family: <%=l('Arial')%>; }
+.folder { color: #000; background-color: #fee; }
+.blue { color: blue; }
+.green { color: green; }
+.red { color: red; }
+.darkblue { color: darkblue; }
+.darkgreen { color: darkgreen; }
+.darkred { color: darkred; }
+
+@@ left.css
+body {
+	SCROLLBAR-FACE-COLOR: #def;
+	SCROLLBAR-HIGHLIGHT-COLOR: #fff;
+	SCROLLBAR-SHADOW-COLOR: #ABDBEC;
+	SCROLLBAR-3DLIGHT-COLOR: #A4DFEF;
+	SCROLLBAR-ARROW-COLOR: steelblue;
+	SCROLLBAR-TRACK-COLOR: #DDF0F6;
+	SCROLLBAR-DARKSHADOW-COLOR: #9BD6E6;
+	font-size: 11pt;
+}
+a:link { color: #fff; text-decoration: none; }
+a:visited { color: #fff; text-decoration: none; }
+a:active { color: #fc0; text-decoration: none; }
+a:hover { color: #fc0; text-decoration: none; }
+table {
+	border-collapse: collapse;
+	height: 100%;
+	width: 100%;
+	border: 1px solid #fff;
+	padding: 2px;
+	border-spacing: 1px;
+}
+td {
+	text-align: center;
+	width: 100%;
+	height: 40px;
+}
+.title {
+	text-align: center;
+	font-weight: bold;
+	color: #fff;
+	width: 100%;
+	height: 40px;
+}
+.nav { color: #fff; background-color: #3E7BB9; text-decoration: bold; }
+.cap { color: #000; background-color: #fc0; text-decoration: bold; }
+.item { color: #fff; background-color: #69c; }
 
 @@ img/wam.gif (base64)
 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
