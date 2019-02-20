@@ -119,10 +119,10 @@ msgid "Deny IP"
 msgstr "拒絕以下IP存取"
 
 msgid "Account Hierarchy"
-msgstr "自動帳號階層數"
+msgstr "自動產生帳號的階層數"
 
 msgid "Password Specified As"
-msgstr "自動帳號的密碼格式"
+msgstr "將密碼指定為"
 
 msgid "Same as Account"
 msgstr "與帳號相同"
@@ -565,9 +565,6 @@ msgstr "加入為 WAM 管理員"
 msgid "Confirm Creat new User"
 msgstr "確定建立此帳號"
 
-msgid "Account & Password Cannot blank"
-msgstr "帳號密碼不能留白"
-
 msgid "New User Created!"
 msgstr "帳號新增完成！"
 
@@ -607,11 +604,11 @@ msgstr "目前屬於此群組的使用者"
 msgid "Group Search Result"
 msgstr "目前字串比對成功的群組"
 
-msgid "Confirm to delete this Group?"
-msgstr "您確認要刪除此群組"
+msgid "Confirm to delete this Group!"
+msgstr "確定要刪除此群組"
 
-msgid "Confirm delete those user and group?"
-msgstr "您確認要刪除含有此字串的帳號"
+msgid "Confirm delete those user and group!"
+msgstr "確定要刪除以上的帳號和群組"
 
 msgid "Will Delete all selected user and group?"
 msgstr "以下使用者將會一併刪除"
@@ -679,14 +676,14 @@ msgstr "號"
 msgid "Add Zero"
 msgstr "要補零"
 
-msgid "Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23"
-msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋帳號流水號。如stu23"
+msgid "Attention:Creat new Account will be Prefix+Number. Ex:stu23"
+msgstr "注意：建立好的帳號將會是帳號前置碼＋帳號流水號。如stu23"
 
-msgid "Attention:Creat new Account will be<br>Prefix+Second Lever Number+Number. Ex:stu523"
-msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋第二階層流水號＋帳號流水號。如stu523"
+msgid "Attention:Creat new Account will be Prefix+Second Lever Number+Number. Ex:stu523"
+msgstr "注意：建立好的帳號將會是帳號前置碼＋第二階層流水號＋帳號流水號。如stu523"
 
-msgid "Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308"
-msgstr "注意：建立好的帳號將會是<br>帳號前置碼＋第二階層流水號＋第三階層流水號＋帳號流水號。如：stu50308"
+msgid "Attention:Creat new Account will be Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308"
+msgstr "注意：建立好的帳號將會是帳號前置碼＋第二階層流水號＋第三階層流水號＋帳號流水號。如：stu50308"
 
 msgid "Create all users"
 msgstr "確定建立以上帳號"
@@ -733,11 +730,11 @@ msgstr "密碼重設完成"
 msgid "Account and Password table:"
 msgstr "帳號密碼對照表"
 
-msgid "Confirm Reset This group?"
-msgstr "您確認要重設此群組帳號："
+msgid "Confirm Reset This group!"
+msgstr "確定要重設此群組所有帳號！"
 
-msgid "onfirm Reset those selected Account?"
-msgstr "您確認要重設含有此字串的帳號："
+msgid "Confirm Reset those selected Account!"
+msgstr "確定要重設以上的帳號！"
 
 msgid "Will Reset Selected Users:"
 msgstr "以下使用者將會重設密碼："
@@ -746,7 +743,10 @@ msgid "Change My Password"
 msgstr "變更個人密碼"
 
 msgid "Password Typemiss!"
-msgstr "兩次密碼不相同"
+msgstr "密碼不可留白！"
+
+msgid "Password must be the same."
+msgstr "您輸入的兩個密碼，必須完全相同"
 
 msgid "The Length MUST between 4-8 Letters(Numbers)"
 msgstr "密碼長度要介於四到八個字元間"
@@ -769,23 +769,23 @@ msgstr "再輸入一次"
 msgid "Change My Password!"
 msgstr "確定變更密碼"
 
-msgid "Please set a more complicated"
-msgstr "＊設定密碼不要太過簡單，請注意以下規則："
+msgid "Please set a more complicated:"
+msgstr "設定密碼不要太過簡單，請注意以下規則："
 
 msgid "Please do not use words as a password."
-msgstr "儘量不要以英文單字做密碼。"
+msgstr "＊ 儘量不要以英文單字做密碼。"
 
 msgid "Password Lenght must between 4 ~ 8 char."
-msgstr "密碼長度要介於四到八個字元間。"
+msgstr "＊ 密碼長度要介於四到八個字元間。"
 
 msgid "Passowrd Must include Upper Case and Lower Cast, numbers ,or symbol any two of them."
-msgstr "必須包含英文字大、小寫，數字、符號共四類中的兩類以上。"
+msgstr "＊ 必須包含英文字大、小寫，數字、符號共四類中的兩類以上。"
 
 msgid "Not allow repeat char."
-msgstr "重覆字不得超過二次 (七碼以上，不得超過三次)。"
+msgstr "＊ 重覆字不得超過二次 (七碼以上，不得超過三次)。"
 
 msgid "Do not use keyboard,or letter,or number sequence."
-msgstr "不要以鍵盤、數字或字母順序做密碼設定。"
+msgstr "＊ 不要以鍵盤、數字或字母順序做密碼設定。"
 
 msgid "Password changed successfully."
 msgstr "密碼變更成功！"
@@ -858,9 +858,6 @@ msgstr "請先確定您是否擁有使用權限！"
 
 msgid "Please contect your Administrator."
 msgstr "如果權限設定有問題，請您聯絡系統管理師處理"
-
-msgid "Password must be the same."
-msgstr "您輸入的兩個密碼，必須完全相同"
 
 msgid "Please Delete user first!"
 msgstr "請先刪除上面列出的使用者名稱"

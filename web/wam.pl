@@ -202,6 +202,9 @@ sub addone {
 		system("adduser -D -H -s /sbin/onlogin -G $grp $usr");
 		system("echo -e \"$pw\\n$pw\" | smbpasswd -as $usr");
 		push @MESSAGES, "$usr ".app->l('New User Created!');
+		my @users = split(/,/, $GROUPS{$grp}->{users});
+		push @users, $usr;
+		$GROUPS{$grp}->{users} = join(',', @users);
 		my ($name,$pw,$uid,$gid,$gcos,$dir,$shell) = getpwnam($usr);
 		$USERS{$usr} = { uid => $uid, gid => $gid };
 		$UNAME{$uid} = $usr;
@@ -320,56 +323,39 @@ sub del_grp {
 	}
 }
 
-sub reset_pw {
-	my($u, $g, $w, $pf) = @_;
-	my($usr, @CHGPW, $pw);
-	if ($u eq '999') {
-		$g = '';
-		$w = '';
-		for $usr (%USERS) { push @CHGPW, $usr; }
-	} elsif ($u ne '') {
-		$g = '';
-		$w = '';
-		push (@CHGPW, $u) if (user_exists($u));
-	}
-	if ($g ne '') {
-		$w = '';
-		return if (int($GROUPS{$g}->gid)<1000);
-		if (group_exists($g)) {
-			for $usr (%USERS) { push @CHGPW, $usr if ($USERS{$usr}->{gid} eq $GROUPS{$g}->{gid}); }
-		}
-	}
-	if ($w ne '') {
-		for $usr (%USERS) { push @CHGPW, $usr if ($usr =~ /$w/); }
-	}
-	for $usr (@CHGPW) {
-		if ($pf eq 'username') {
-			exec("echo -e \"$usr\\n$usr\" | smbpasswd -as $usr");
-		} elsif ($pf eq 'random') {
-			$pw = &rnd64;
-			exec("echo -e \"$pw\\n$pw\" | smbpasswd -as $usr");
-		} elsif ($pf eq 'single') {
-			exec("echo -e \"password\\npassword\" | smbpasswd -as $usr");
-		}
-	}
+sub chgpw {
+	my($usr, $pw) = @_;
+	return if (!exists($USERS{$usr}) || exists($RESERVED{$usr}));
+	exec("echo -e \"$pw\\n$pw\" | smbpasswd -as $usr");
 }
 
-sub chg_passwd {
-	my($usr, $p1, $p2) = @_;
-	if ($p1 eq $p2) {
-		exec("echo -e \"$p1\\n$p1\" | smbpasswd -as $usr");
-	} else {
-		&head(app->l('title_chgpw'));
-		print "<hr><center><table style=font-size:11pt><tr><td><p>app->l('err_bad_passwd')</p>\n";
-		print "app->l('err_cannot_continue_change_passwd').<br>";
-		print '<ul>';
-		print "<li>app->l('msg_passwd_must_same')";
-		print '</ul>';
-		print '<hr color="#FF0000">';
-		print "<center><a href=\"javascript:history.go(-1)\"><img src=/img/upfolder.gif>  app->l('backto_prev_page')</a></center>";
-		print '</table></center></body>';
-		print "</html>";
-		exit 1;
+sub reset_pw {
+	my($usr, $grp, $ww, $pf) = @_;
+	my($pw, @users);
+	@users = ();
+	%REQN = ();
+	if ($usr) {
+		push @users, $usr; 
+	}
+	if ($grp) {
+		@users = split(/,/, $GROUPS{$grp}->{users}); 
+	}
+	if ($ww) {
+		for my $u (sort keys %AVALU) {
+			next if ($u !~ /$ww/);
+			push @users, $u;
+		}
+	}
+	for my $uu (sort @users) {
+		if ($pf eq 'username') {
+			$pw = $uu;
+		} elsif ($pf eq 'random') {
+			$pw = &rnd64();
+			$REQN{$uu} = $pw;
+		} elsif ($pf eq 'single') {
+			$pw = 'password';
+		}
+		&chgpw($uu, $pw);
 	}
 }
 
@@ -1256,7 +1242,7 @@ get '/delete' => sub {
 	$ca->stash(groups => [keys %AVALG]);
 } => 'delete';
 
-post '/check_del' => sub {
+post '/delete' => sub {
 	$) = 0;
 	$> = 0;
 	my $ca = shift;
@@ -1284,7 +1270,7 @@ post '/check_del' => sub {
 	if ($grp ne '') {
 		$ca->stash(grp => $grp);
 		$ca->stash(users => [sort split(/,/, $GROUPS{$grp}->{users})]);
-		return $ca->render(template => 'check_grp');
+		return $ca->render(template => 'del_members');
 	}
 	if ($ww ne '') {
 		my @users = ();
@@ -1300,7 +1286,7 @@ post '/check_del' => sub {
 		$ca->stash(words => $ww);
 		$ca->stash(users => [@users]);
 		$ca->stash(groups => [@groups]);
-		return $ca->render(template => 'check_words');
+		return $ca->render(template => 'del_pattern');
 	}
 	return $ca->redirect_to('/delete');
 };
@@ -1328,13 +1314,11 @@ post '/do_delete' => sub {
 	}
 	if (defined($ca->req->param('words'))) {
 		my $ww = $ca->req->param('words');
-		my @groups = ();
 		for my $g (sort keys %AVALG) {
 			next if ($g !~ /$ww/);
 			&del_grp($g);
 		}
 		push @MESSAGES, app->l('Groups Deleted!');
-		my @users = ();
 		for my $u (sort keys %AVALU) {
 			next if ($u !~ /$ww/);
 			&delone($u);
@@ -1405,6 +1389,110 @@ post '/do_manuadd' => sub {
 		}
 		close(REQ);
 	}
+	$ca->stash(messages => [@MESSAGES]);
+} => 'notice';
+
+get '/resetpw' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+	$ca->stash(users => [keys %AVALU]);
+	$ca->stash(groups => [keys %AVALG]);
+} => 'resetpw';
+
+post '/resetpw' => sub {
+	$) = 0;
+	$> = 0;
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $usr = $ca->req->param('user');
+	my $grp = $ca->req->param('grp');
+	my $ww = $ca->req->param('words');
+	my $pf = $ca->req->param('passwd_form');
+	if (defined($ca->req->param('usr'))) {
+		&reset_pw($usr,'','',$pf);
+  		push @MESSAGES, app->l('Password Reset Completed!');
+		if ($pf eq 'random') {
+			$ca->stash(reqn => {%REQN});
+  			$ca->stash(messages => [@MESSAGES]);
+	  		return $ca->render(template => 'pwd_table');
+		} else {
+  			$ca->stash(messages => [@MESSAGES]);
+	  		return $ca->render(template => 'notice');
+		}
+	}
+	if (defined($ca->req->param('grp'))) {
+		$ca->stash(pf => $pf);
+		$ca->stash(grp => $grp);
+		$ca->stash(users => [sort split(/,/, $GROUPS{$grp}->{users})]);
+		return $ca->render(template => 'reset_members');
+	}
+	if (defined($ca->req->param('words'))) {
+		my @users = ();
+		for my $u (sort keys %AVALU) {
+			next if ($u !~ /$ww/);
+			push @users, $u;
+		}
+		$ca->stash(pf => $pf);
+		$ca->stash(words => $ww);
+		$ca->stash(users => [@users]);
+		return $ca->render(template => 'reset_pattern');
+	}
+#	return $ca->redirect_to('/resetpw');
+};
+
+post '/do_resetpw' => sub {
+	$) = 0;
+	$> = 0;
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $pf = $ca->req->param('passwd_form');
+	if (defined($ca->req->param('grp'))) {
+		my $grp = $ca->req->param('grp');
+		&reset_pw('',$grp,'',$pf);
+	}
+	if (defined($ca->req->param('words'))) {
+		my $ww = $ca->req->param('words');
+		&reset_pw('','',$ww,$pf);
+	}
+	push @MESSAGES, app->l('Password Reset Completed!');
+	if ($pf eq 'random') {
+		$ca->stash(reqn => {%REQN});
+		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'pwd_table');
+	} else {
+		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'notice');
+	}
+};
+
+get '/chgpw' => 'chgpw';
+
+post '/chgpw' => sub {
+	my $ca = shift;
+	my $v = $ca->validation;
+	@MESSAGES = ();
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);
+  		return $ca->render(template => 'warning', status => 500); 
+	}
+	my $usr = $ca->session->{user};
+	my $pwd = $ca->req->param('pwd');
+	&chgpw($usr, $pwd);
+	push @MESSAGES, app->l('Password changed successfully.');
 	$ca->stash(messages => [@MESSAGES]);
 } => 'notice';
 
@@ -2194,7 +2282,7 @@ function check() {
 <li><%= $msg %>
 <% } %>
 </ul></td></tr></table>
-%= form_for check_del => (id => 'myform', onsubmit => 'return check();', method => 'POST') => begin
+%= form_for delete => (id => 'myform', onsubmit => 'return check();', method => 'POST') => begin
 %= csrf_field
 <table>
 <tr><td class="item"><%= l('User Name') %></td><td class="cell">
@@ -2227,7 +2315,7 @@ function check() {
 % end
 </center>
 
-@@ check_grp.html.ep
+@@ del_members.html.ep
 % title l('Delete User or Group');
 % layout 'default';
 <center>
@@ -2246,12 +2334,12 @@ function check() {
 <td><%=$u%></td>
 % }
 </tr><tr><td colspan=8 align=center>
-%= submit_button l('Confirm to delete this Group?')
+%= submit_button l('Confirm to delete this Group!')
 </td></tr></table>
 % end
 </center>
 
-@@ check_words.html.ep
+@@ del_pattern.html.ep
 % title l('Delete User or Group');
 % layout 'default';
 <center>
@@ -2280,7 +2368,7 @@ function check() {
 <td><%=$u%></td>
 % }
 </tr><tr><td colspan=8 align=center>
-%= submit_button l('Confirm delete those user and group?')
+%= submit_button l('Confirm delete those user and group!')
 </td></tr></table>
 % end
 </center>
@@ -2354,13 +2442,13 @@ function check() {
 </td></tr>
 <tr><td colspan=2><hr size=1 color=6699cc></td>
 % if (config('nest') == 1) {
-<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Number. Ex:stu23')%></td></tr>
+<tr><td colspan=2><%=l('Attention:Creat new Account will be Prefix+Number. Ex:stu23')%></td></tr>
 % }
 % if (config('nest') == 2) {
-<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Number. Ex:stu523')%></td></tr>
+<tr><td colspan=2><%=l('Attention:Creat new Account will be Prefix+Second Lever Number+Number. Ex:stu523')%></td></tr>
 % }
 % if (config('nest') == 3) {
-<tr><td colspan=2><%=l('Attention:Creat new Account will be<br>Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308')%></td></tr>
+<tr><td colspan=2><%=l('Attention:Creat new Account will be Prefix+Second Lever Number+Third Level Number+Number. Ex:stu50308')%></td></tr>
 % }
 <tr><td colspan=2 align=center>
 %= submit_button l('Create all users')
@@ -2369,7 +2457,7 @@ function check() {
 </center>
 
 @@ pwd_table.html.ep
-% title l('Auto Create User Account');
+% title l('Account and Password table:');
 % layout 'default';
 <center><table><tr><td><ul>
 <% for my $msg (@$messages) { %>
@@ -2435,33 +2523,9 @@ shane admin super123<br>ddjohn teacher dd1234
 % end
 </center>
 
-@@ state_table.html.ep
-% title l('Account Flags');
-% layout 'default';
-<center>
-<table width=95%>
-<tr class="item">
-% my $cols = scalar %$reqn;
-% $cols = 5 if ($cols >5);
-% for (my $i=0;$i<$cols;$i++) {
-<td><%=l('Account')%></td><td><%=l('State')%></td>
-% }
-<tr class="cell">
-% my $i = 0;
-% for my $u (sort keys %$reqn) {
-% if ($i % 3 == 0) {
-</tr><tr class="cell">
-% }
-% $i ++;
-<td><%= $u %></td><td><%= $reqn->{$u} %></td>
-% }
-</table>
-</center>
-
 @@ resetpw.html.ep
 % title l('Reset Password');
 % layout 'default';
-<center>
 %= javascript begin
 function rest(id) {
 	if (id==0) { $('#grp').val(''); $('#words').val(''); }
@@ -2478,7 +2542,7 @@ function check() {
 }
 % end
 <center>
-%= form_for restpw => (method => 'POST', onsubmit => 'return check()') => begin
+%= form_for resetpw => (method => 'POST', onsubmit => 'return check()') => begin
 %= csrf_field
 <table>
 <tr><td class="item" align=right>
@@ -2503,9 +2567,9 @@ function check() {
 %= l('Pattern Match')
 </td><td class="cell">
 %= text_field 'words' => (id => 'words', onchange => 'rest(2)')
-</td></tr><tr><th align=right class="item">
-%= l('Password Specified As')
-</th><td class="cell">
+</td></tr><tr><td align=right class="item">
+%= l('Reset Password to:')
+</td><td class="cell">
 %= t 'select', (size => 1, id => 'passwd_form') => begin
 % if (config('passwd_form') eq "username") {
 %= t 'option', value => 'username', selected => undef, l('Same as Account')
@@ -2524,10 +2588,193 @@ function check() {
 % }
 % end
 </td></tr><tr><td colspan=2 align=center>
-%= submit_button l('Delete these users or groups')
+%= submit_button l('Confirm Reset Password!')
 </td></tr>
 </table>
 % end
+</center>
+
+@@ reset_members.html.ep
+% title l('Reset Password');
+% layout 'default';
+<center>
+%= form_for do_resetpw => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field grp => $grp
+%= hidden_field passwd_form => $pf
+<table width=95%>
+<tr class="item"><td colspan=8 align=center><b><%=l('Group Member')%></td></tr>
+<tr class="cell">
+% my $i = 0;
+% for my $u (sort @$users) {
+% 	if ($i % 8 == 0) {
+</tr><tr class="cell">
+% 	}
+% 	$i ++;
+<td><%=$u%></td>
+% }
+</tr><tr><td colspan=8 align=center>
+%= submit_button l('Confirm Reset This group!')
+</td></tr></table>
+% end
+</center>
+
+@@ reset_pattern.html.ep
+% title l('Reset Password');
+% layout 'default';
+<center>
+%= form_for do_resetpw => (method => 'POST') => begin
+%= csrf_field
+%= hidden_field words => $words
+%= hidden_field passwd_form => $pf
+<table width=95%>
+<tr class="item"><td colspan=8 align=center><b><%=l('Will Reset Selected Users:')%></td></tr>
+<tr class="cell">
+% my $i = 0;
+% for my $u (sort @$users) {
+% 	if ($i % 8 == 0) {
+</tr><tr class="cell">
+% 	}
+% 	$i ++;
+<td><%=$u%></td>
+% }
+</tr><tr><td colspan=8 align=center>
+%= submit_button l('Confirm Reset those selected Account!')
+</td></tr></table>
+% end
+</center>
+
+@@ chgpw.html.ep
+% title l('Change My Password');
+% layout 'default';
+%= javascript begin
+function chk_diff(p1,p2) { return !(p1==p2); }
+function chk_len(p1) { return !(p1.value.length>=4 && p1.value.length<=8); }
+function pattern(p1) {
+	var Ap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var ch = 'abcdefghijklmnopqrstuvwxyz';
+	var Num = '0123456789';
+	var pps = '~`!@#$%^&*()_-=[]{}\|.,/?:;';
+	var c1=c2=c3=c4=0;
+	for (i=0;i<p1.length;i++) {
+		if (Ap.indexOf(p1.substr(i,1))!=-1) c1=1;
+		if (ch.indexOf(p1.substr(i,1))!=-1) c2=1;
+		if (Num.indexOf(p1.substr(i,1))!=-1) c3=1;
+		if (pps.indexOf(p1.substr(i,1))!=-1) c4=1;
+	}
+	return ((c1+c2+c3+c4) < 2);
+}
+function sequence(p1) {
+	var Ap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()QWERTYUIOPASDFGHJKLZXCVBNMZYXWVUTSRQPONMLKJIHGFEDCBA0987654321|+_)(*&^%$#@!POIUYTREWQLKJHGFDSAMNBVCXZ';
+	var chmode=oldChMode=0, mstr='';
+	p1 = p1.toUpperCase();
+	for(i=0;i<p1.length;i++) {
+		if (p1.length>=i+3) {
+			mstr = p1.substr(i,3);
+			if (Ap.indexOf(mstr)!=-1) return true;
+		}
+	} 
+}
+function Mrepeat(p1) {
+	var maxch=ch=0, maxcan=2;
+	for (i=0;i<p1.length;i++) {
+		ch=1;
+		for (j=i+1;j<p1.length;j++) {
+			if (p1.substr(i,1)==p1.substr(j,1)) ch++;
+		}
+		if (maxch<ch) maxch=ch;
+	}
+	if (p1.length>6) maxcan =3;
+	return (maxch > maxcan); 
+}
+function check() {
+	var errors='';
+	var pwd1=$('#pwd').val();
+	var pwd2=$('#pwd2').val();
+	if (chk_empty(pwd1) || chk_empty(pwd2)) errors='<%=l('Password Typemiss!')%>';
+	else if (chk_diff(pwd1,pwd2)) errors='<%=l('Password must be the same.')%>';
+% if (config('passwd_rule') % 2) {
+	else if (chk_len(pwd1)) errors='<%=l('The Length MUST between 4-8 Letters(Numbers)')%>';
+% }
+% if (config('passwd_rule') % 4 >= 2) {
+	else if (pattern(pwd1)) errors='<%=l('Can not set this passowrd !Password Must Contain Lower or Upper Case Letter,Number,or symbol Char.)')%>';
+% }
+% if (config('passwd_rule') % 8 >= 4) {
+	else if (Mrepeat(pwd1)) errors='<%=l('Too many Same letter Are Not allow to set as password!')%>';
+% }
+% if (config('passwd_rule') >= 8) {
+	else if (sequence(pwd1)) errors='<%=l('Please DO NOT use keyboard sequence.')%>';
+% }
+	if (errors == '') {
+		return true;
+	} else {
+		alert(errors);
+		$('#pwd').val('');
+		$('#pwd2').val('');
+		return false;
+	}
+}
+% end
+<center>
+<table>
+<tr><td colspan=2 class=blue>
+%= l('Please set a more complicated:')
+<br>
+%= l('Please do not use words as a password.')
+<br>
+% if (config('passwd_rule') % 2) {
+%= l('Password Lenght must between 4 ~ 8 char.')
+<br>
+% }
+% if (config('passwd_rule') % 4 >= 2) {
+%=l('Passowrd Must include Upper Case and Lower Cast, numbers ,or symbol any two of them.')
+<br>
+% }
+% if (config('passwd_rule') % 8 >= 4) {
+%=l('Not allow repeat char.')
+<br>
+% }
+% if (config('passwd_rule') >= 8) {
+%=l('Do not use keyboard,or letter,or number sequence.')
+<br>
+% }
+</td></tr>
+<tr><td colspan=2><hr size=1 color=6699cc></td></tr>
+%= form_for chgpw => (method => 'POST', onsubmit => 'return check()') => begin
+<tr><td class="item" align=right><%=l('New Password:')%><img src=/img/chgpw.gif></td>
+<td class="cell">
+%= password_field 'pwd', id => 'pwd', maxlength => 12, size => 16
+</td></tr><tr><td class="item" align=right><%=l('Confirm Password:')%><img src=/img/mdb.gif></td>
+<td class="cell">
+%= password_field 'pwd2', id => 'pwd2', maxlength => 12, size => 16
+</td></tr>
+<tr><td colspan=2 align=center>
+%= submit_button l('Change My Password!')
+</td></tr></table>
+% end
+</center>
+
+@@ state_table.html.ep
+% title l('Account Flags');
+% layout 'default';
+<center>
+<table width=95%>
+<tr class="item">
+% my $cols = scalar %$reqn;
+% $cols = 5 if ($cols >5);
+% for (my $i=0;$i<$cols;$i++) {
+<td><%=l('Account')%></td><td><%=l('State')%></td>
+% }
+<tr class="cell">
+% my $i = 0;
+% for my $u (sort keys %$reqn) {
+% if ($i % 3 == 0) {
+</tr><tr class="cell">
+% }
+% $i ++;
+<td><%= $u %></td><td><%= $reqn->{$u} %></td>
+% }
+</table>
 </center>
 
 @@ layouts/default.html.ep
