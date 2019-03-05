@@ -72,6 +72,16 @@ sub init_conf {
     	$domain =~ tr/a-z/A-Z/;
     	$c->{domain} = $domain;
 	}
+	$c->{album_title} = app->l('Album') unless defined $c->{album_title};
+	$c->{album_notice} = '' unless defined $c->{album_notice};
+	$c->{album_showdate} = 1 unless defined $c->{album_showdate};
+	$c->{album_showsize} = 0 unless defined $c->{album_showsize};
+	$c->{album_shownew} = 0 unless defined $c->{album_shownew};
+	$c->{album_bgcolor} = '#000000' unless defined $c->{album_bgcolor};
+	$c->{album_bgimg} = '' unless defined $c->{album_bgimg};
+	$c->{album_rowcount} = 8 unless defined $c->{album_rowcount};
+	$c->{album_imgwidth} = 64 unless defined $c->{album_imgwidth};
+	$c->{album_imgheight} = 'auto' unless defined $c->{album_imgheight};
 	&write_conf;
 }
 
@@ -1181,6 +1191,41 @@ post '/del_share' =>sub {
 	$ca->stash(admins => [keys %ADMINS]);
 } => 'sharemgr';
 
+get '/set_album' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	$ca->stash(messages => [@MESSAGES]);
+} => 'set_album';
+
+post '/set_album' => sub {
+	my $ca = shift;
+	@MESSAGES = ();
+	# Check CSRF token
+	my $v = $ca->validation;
+  	if ($v->csrf_protect->has_error('csrf_token')) {
+  		push @MESSAGES, app->l('Bad CSRF token!');
+  		$ca->stash(messages => [@MESSAGES]);  		
+  		$ca->render(template => 'warning', status => 500); 
+	}
+	$c->{album_title} = $ca->req->param('title');
+	$c->{album_notice} = $ca->req->param('notice');
+	$c->{album_showdate} = $ca->req->param('showdate');
+	$c->{album_showsize} = $ca->req->param('showsize');
+	$c->{album_shownew} = $ca->req->param('shownew');
+	$c->{album_bgcolor} = $ca->req->param('bgcolor');
+	$c->{album_bgimg} = $ca->req->param('bgimg');
+	$c->{album_rowcount} = $ca->req->param('rowcount');
+	$c->{album_imgwidth} = $ca->req->param('imgwidth');
+	$c->{album_imgheight} = $ca->req->param('imgheight');
+	&write_conf;
+	push @MESSAGES, app->l('Configuration Saved!');
+	$ca->stash(messages => [@MESSAGES]);
+} => 'notice';
+
+get '/album' => sub {
+	my $ca = shift;
+} => 'album';
+
 get '/add_group' => sub {
 	my $ca = shift;
 	@MESSAGES = ();
@@ -1563,6 +1608,8 @@ if (window.top.location != window.location) {
 <tr><td class="item"><a href="/setadmin"><%=l('Setup WAM Manager')%></a></td></tr>
 <tr><td class="item"><a href="/filesmgr"><%=l('File Manager')%></a></td></tr>
 <tr><td class="item"><a href="/sharemgr"><%=l('Share Folders')%></a></td></tr>
+<tr><td class="item"><a href="/set_album"><%=l('Configure Album')%></a></td></tr>
+<tr><td class="item"><a href="/album"><%=l('Album')%></a></td></tr>
 <tr><td class="cap"><%=l('Account Management')%></td></tr>
 <tr><td class="item"><a href="/add_group"><%=l('Add Group')%></a></td></tr>
 <tr><td class="item"><a href="/add_one"><%=l('Creat an Account')%></a></td></tr>
@@ -1621,7 +1668,7 @@ if (window.top.location != window.location) {
 %= t 'option', value => $lang, selected => (config('language') eq $lang) ? 'selected' : undef, $lang
 % }
 % end
-</td>
+</td></tr>
 <tr class="nav"><th align=right>
 %= label_for acltype => l('ACL Control')
 </th><td>
@@ -1647,7 +1694,7 @@ if (window.top.location != window.location) {
 % }
 % }
 % end
-</td>
+</td></tr>
 <tr class="cell"><th align=right>
 %= label_for passwd_form => l('Password Specified As')
 </th><td>
@@ -1668,7 +1715,8 @@ if (window.top.location != window.location) {
 %= t 'option', value => 'single', l("All set to 'passwd'")
 % }
 % end
-</td><tr class="cell"><th align=right>
+</td></tr>
+<tr class="cell"><th align=right>
 %= label_for passwd_range => l('Set Random Range')
 </th><td>
 %= t 'select', (name => 'passwd_range') => begin
@@ -1708,7 +1756,8 @@ if (window.top.location != window.location) {
 %= t 'option', value => 'all', l('Any Number & Any Case')
 % }
 % end
-</td><tr class="cell"><th align=right>
+</td></tr>
+<tr class="cell"><th align=right>
 %= label_for passwd_rule => l('Password Changing Rule')
 </th><td>
 % if (int(config('passwd_rule')) % 2) {
@@ -1756,7 +1805,7 @@ if (window.top.location != window.location) {
 %= text_field passwd_release => config('passwd_release')
 </td><tr><td colspan=2 align=center><img src=/img/chgpw.gif>
 %= submit_button l('Save All Configuration')
-</td></table>
+</td></tr></table>
 % end
 </center>
 
@@ -2775,6 +2824,81 @@ function check() {
 <td><%= $u %></td><td><%= $reqn->{$u} %></td>
 % }
 </table>
+</center>
+
+@@ set_album.html.ep
+% title l('Configure Album');
+% layout 'default';
+<center>
+%= form_for set_album => (method => 'POST') => begin
+%= csrf_field
+<table width=80%>
+<tr class="cell"><th align=right>
+%= label_for title => l('Album Title')
+</th><td>
+%= text_field title => config('album_title')
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for notice => l('Notice Messages')
+</th><td>
+%= text_area notice => config('album_notice'), rows => 3, cols => 50
+</td></tr>
+<tr class="cell"><th>
+%= label_for showdate => l('Show Created Date')
+</th><td>
+% if (config('album_showdate') == 1) {
+%= check_box showdate => 1, checked => 'checked'
+% } else {
+%= check_box showdate => 1
+% }
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for showsize => l('Show File Size')
+</th><td>
+% if (config('album_showsize') == 1) {
+%= check_box showsize => 1, checked => 'checked'
+% } else {
+%= check_box showsize => 1
+% }
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for shownew => l('Show New Tip')
+</th><td>
+% if (config('album_shownew') == 1) {
+%= check_box shownew => 1, checked => 'checked'
+% } else {
+%= check_box shownew => 1
+% }
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for bgcolor => l('Background Color')
+</th><td>
+%= color_field bgcolor => config('album_bgcolor') ?: '#000000'
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for bgimg => l('Background Image')
+</th><td>
+%= text_field bgimg => config('album_bgimg') ?: 'https://img.lovepik.com/photo/{id}'
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for rowcount => l('How Many Thumbnails Per Row')
+</th><td>
+%= text_field rowcount => config('album_rowcount') ?: 8
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for imgwidth => l('Thumbnails Width: Pixel or Persent')
+</th><td>
+%= text_field imgwidth => config('album_imgwidth') ?: 64
+</td></tr>
+<tr class="cell"><th align=right>
+%= label_for imgheight => l('Thumbnails Height: Pixel or Persent')
+</th><td>
+%= text_field imgheight => config('album_imgheight') ?: 'auto'
+</td></tr>
+<tr><td colspan=2 align=center>
+%= submit_button l('Configure For Me')
+</td></table>
+% end
 </center>
 
 @@ layouts/default.html.ep

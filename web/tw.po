@@ -838,17 +838,23 @@ msgstr "背景圖片網址"
 msgid "How Many Thumbnails Per Row"
 msgstr "每列顯示圖片個數"
 
-msgid "Thumbnails Width"
-msgstr "圖片寬度"
+msgid "Thumbnails Width: Pixel or Persent"
+msgstr "圖片寬度：像素或百分比"
 
-msgid "Thumbnails Height"
-msgstr "圖片高度"
+msgid "Thumbnails Height: Pixel or Persent"
+msgstr "圖片高度：像素或百分比"
+
+msgid "auto"
+msgstr "自動"
 
 msgid "Configure For Me"
 msgstr "確定"
 
 msgid "Album Configuration completed!"
 msgstr "電子相簿組態設定完成！"
+
+msgid "Album"
+msgstr "電子相簿"
 
 msgid "Log Out"
 msgstr "登出系統"
