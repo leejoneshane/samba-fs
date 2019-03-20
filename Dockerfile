@@ -11,13 +11,13 @@ ADD initldap.ldif /etc/openldap/initldap.ldif
 ADD web /web
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo zip acl attr wget make \
+    && apk --no-cache --no-progress add bash sudo zip acl attr wget gcc make libc-dev \
                                         samba openldap-clients openldap openldap-back-mdb \
-                                        perl perl-ldap perl-mojolicious perl-locale-maketext-lexicon \
+                                        perl perl-dev perl-ldap perl-mojolicious perl-locale-maketext-lexicon \
     && wget --no-check-certificate http://bit.ly/cpanm -O /usr/local/bin/cpanm \
     && chmod +x /usr/local/bin/cpanm \
     && cpanm Mojolicious::Plugin::RenderFile \
-    && cpanm Mojolicious::Plugin::Thumbnail \
+    && cpanm Mojolicious::Plugin::Thumbnail --force \
     && adduser -G wheel -D -h /mnt -s /bin/bash admin \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
