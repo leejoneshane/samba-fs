@@ -40,8 +40,6 @@ use File::Basename;
 use Cwd qw(abs_path);
 
 ####################### initialzing ###########################################
-my $st = Mojolicious::Static->new;
-$st->paths(['/web/static']);
 my $c = plugin Config => {file => '/web/wam.conf'};
 &init_conf unless defined $c->{language};
 my $lh = WAM::I18N->get_handle($c->{language}) || die "What language?";
@@ -1567,6 +1565,7 @@ get '/state' => sub {
 app->secrets(['WAM is meaning Web-base Account Management']);
 app->sessions->default_expiration(3600);
 #app->sessions->secure('true');
+app->static->paths(['/web/static']);
 app->start;
 
 __DATA__
