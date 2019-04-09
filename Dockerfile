@@ -8,7 +8,6 @@ ADD samba.schema /etc/openldap/schema/samba.schema
 ADD samba.ldif /etc/openldap/schema/samba.ldif
 ADD slapd.conf /etc/openldap/slapd.conf
 ADD initldap.ldif /etc/openldap/initldap.ldif
-ADD web /web
 
 RUN apk update \
     && apk --no-cache --no-progress add bash sudo zip acl attr make imagemagick \
@@ -27,7 +26,8 @@ RUN apk update \
     && cp -p /root/group /sam/group \
     && ln -s /sam/passwd /etc/passwd \
     && ln -s /sam/shadow /etc/shadow \
-    && ln -s /sam/group /etc/group
+    && ln -s /sam/group /etc/group \
+    && git clone https://github.com/leejoneshane/WAM.git web
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt", "/sam", "/web"]
