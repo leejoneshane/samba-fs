@@ -1,5 +1,6 @@
 #!/bin/sh
 if [[ ! -f /sam/passwd ]]; then
+    mkdir -p /sam/openldap
     cp -p /root/passwd /sam/passwd
     ln -s /sam/passwd /etc/passwd
 fi
