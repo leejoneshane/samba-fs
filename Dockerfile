@@ -27,7 +27,8 @@ RUN apk update \
     && ln -s /sam/passwd /etc/passwd \
     && ln -s /sam/shadow /etc/shadow \
     && ln -s /sam/group /etc/group \
-    && git clone https://github.com/leejoneshane/WAM.git web
+    && git clone https://github.com/leejoneshane/WAM.git /root/web \
+    && mkdir /web && cp -p /root/web /web
 
 EXPOSE 137/udp 138/udp 139 3000
 VOLUME ["/mnt", "/sam", "/web"]
