@@ -10,7 +10,7 @@ ADD slapd.conf /etc/openldap/slapd.conf
 ADD initldap.ldif /etc/openldap/initldap.ldif
 
 RUN apk update \
-    && apk --no-cache --no-progress add bash sudo zip acl attr make imagemagick \
+    && apk --no-cache --no-progress add bash git sudo zip acl attr make imagemagick \
                                         samba openldap-clients openldap openldap-back-mdb \
                                         perl perl-app-cpanminus perl-ldap perl-mojolicious perl-locale-maketext-lexicon \
     && adduser -G wheel -D -h /mnt -s /bin/bash admin \
