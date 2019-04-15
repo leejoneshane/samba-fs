@@ -17,7 +17,7 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && mkdir -p /sam/openldap /root/web \
+    && mkdir -p /root/web \
     && mv /etc/passwd /root/passwd \
     && mv /etc/shadow /root/shadow \
     && mv /etc/group /root/group \
