@@ -30,6 +30,6 @@ RUN apk update \
     && cd /root/web && git clone https://github.com/leejoneshane/WAM.git . \
     && mkdir /web && cp -Rp /root/web/. /web
 
-EXPOSE 137/udp 138/udp 139 3000
+EXPOSE 137/udp 138/udp 139 445 3000
 VOLUME ["/mnt", "/sam", "/web"]
 ENTRYPOINT ["entrypoint.sh"]
