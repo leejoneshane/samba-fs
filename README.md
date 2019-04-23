@@ -4,7 +4,7 @@ This is a docker images to run a file server for Windows Network Neighborhood sh
 
 # How to use
 
-This image has no SSL Certification buildin, so please use it with [letsnginx](https://hub.docker.com/r/leejoneshane/letsnginx) or [traefik](https://hub.docker.com/_/traefik).
+This image has no SSL Certification build-in, so please use it with [letsnginx](https://hub.docker.com/r/leejoneshane/letsnginx) or [traefik](https://hub.docker.com/_/traefik).
 
 ```
 docker run -p 80:3000 -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 \
