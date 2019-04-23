@@ -7,5 +7,7 @@ This is a docker images to run a file server for Windows Network Neighborhood sh
 This image has no SSL Certification buildin, so please use it with [letsnginx](https://hub.docker.com/r/leejoneshane/letsnginx) or [traefik](https://hub.docker.com/_/traefik).
 
 ```
-docker run -p 80:80 -v ./permanent_storage/files:/mnt -v ./permanent_storage/users:/sam -d leejoneshane/samba-fs
+docker run -p 80:3000 -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 \
+-v ./permanent_storage/files:/mnt -v ./permanent_storage/users:/sam \
+-d leejoneshane/samba-fs
 ```
