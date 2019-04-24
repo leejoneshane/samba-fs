@@ -15,7 +15,7 @@ if [[ ! -f /sam/group ]]; then
 fi
 
 if [[ ! -f /web/wam.pl ]]; then
-    cp -p /root/web/. /web
+    cp -Rp /root/web /web
 fi
 
 if [[ ! -f /etc/openldap/is.done ]]; then
