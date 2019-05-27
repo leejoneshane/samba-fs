@@ -34,7 +34,6 @@ fi
 
 if [[ -f /etc/samba/smb.conf ]]; then
     smbd -FS &
-    nmbd -FS &
 fi
 
 if [ "$#" -lt 1 ]; then
