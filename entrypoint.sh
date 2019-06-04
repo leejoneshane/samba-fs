@@ -37,7 +37,7 @@ if [[ -f /etc/samba/smb.conf ]]; then
 fi
 
 if [ "$#" -lt 1 ]; then
-    /web/wam.pl daemon -m production
+    hypnotoad -f /web/wam.pl
 else
     exec $@
 fi
