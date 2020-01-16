@@ -17,19 +17,9 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && mkdir -p /sam /root/web \
-    && mv /etc/passwd /root/passwd \
-    && mv /etc/shadow /root/shadow \
-    && mv /etc/group /root/group \
-    && cp -p /root/passwd /sam/passwd \
-    && cp -p /root/shadow /sam/shadow \
-    && cp -p /root/group /sam/group \
-    && ln -s /sam/passwd /etc/passwd \
-    && ln -s /sam/shadow /etc/shadow \
-    && ln -s /sam/group /etc/group \
     && cd /root/web && git clone https://github.com/leejoneshane/WAM.git . \
     && mkdir /web && cp -Rp /root/web/. /web
 
 EXPOSE 137/udp 138/udp 139 445 8080
-VOLUME ["/mnt", "/sam", "/web"]
+VOLUME ["/mnt", "/etc", "/web"]
 ENTRYPOINT ["entrypoint.sh"]
