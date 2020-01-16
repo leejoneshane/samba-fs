@@ -17,7 +17,7 @@ RUN apk update \
     && echo "wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wheel \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
-    && cd /root/web && git clone https://github.com/leejoneshane/WAM.git . \
+    && mkdir -p /root/web && git clone https://github.com/leejoneshane/WAM.git /root/web \
     && mkdir /web && cp -Rp /root/web/. /web
 
 EXPOSE 137/udp 138/udp 139 445 8080
