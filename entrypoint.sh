@@ -1,19 +1,4 @@
 #!/bin/sh
-if [[ ! -f /sam/passwd ]]; then
-    cp -p /root/passwd /sam/passwd
-    ln -s /sam/passwd /etc/passwd
-fi
-
-if [[ ! -f /sam/shadow ]]; then
-    cp -p /root/shadow /sam/shadow
-    ln -s /sam/shadow /etc/shadow
-fi
-
-if [[ ! -f /sam/group ]]; then
-    cp -p /root/group /sam/group
-    ln -s /sam/group /etc/group
-fi
-
 if [[ ! -f /web/wam.pl ]]; then
     cp -Rp /root/web /web
 fi
