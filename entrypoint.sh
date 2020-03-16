@@ -3,6 +3,10 @@ if [[ ! -f /web/wam.pl ]]; then
     cp -Rp /root/web /web
 fi
 
+if [[ ! -f /etc/passwd ]]; then
+    cp -Rp /root/etc /etc
+fi
+
 if [[ ! -f /etc/openldap/is.done ]]; then
     SECRET=`slappasswd -s "$SAMBA_ADMIN_PASSWORD" -n`
     sed -ri "s#SAMBA_ADMIN_SECRET#$SECRET#g" /etc/openldap/initldap.ldif
