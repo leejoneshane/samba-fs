@@ -18,6 +18,7 @@ RUN apk update \
     && chmod 0440 /etc/sudoers.d/wheel \
     && chmod +x /usr/sbin/entrypoint.sh \
     && mkdir -p /root/web && git clone https://github.com/leejoneshane/WAM.git /root/web \
+    && mkdir -p /root/etc && cp -Rp /etc /root/etc \
     && mkdir /web && cp -Rp /root/web/. /web
 
 EXPOSE 137/udp 138/udp 139 445 8080
